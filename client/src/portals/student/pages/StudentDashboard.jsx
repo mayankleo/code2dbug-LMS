@@ -163,7 +163,7 @@ const Dashboard = () => {
   // --- LEADERBOARD COMPONENT ---
   const LeaderboardView = () => (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-end gap-4 bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-6 rounded-3xl border border-white/10 relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-end gap-4 bg-linear-to-r from-blue-900/40 to-purple-900/40 p-6 rounded-3xl border border-white/10 relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl font-bold mb-2">Leaderboard</h2>
           <p className="text-zinc-400 max-w-lg">
@@ -414,7 +414,7 @@ const Dashboard = () => {
           </div>
 
           {/* Notice */}
-          <div className="bg-gradient-to-br from-blue-900/50 to-purple-900/50 border border-blue-800/30 rounded-3xl p-6 relative overflow-hidden">
+          <div className="bg-linear-to-br from-blue-900/50 to-purple-900/50 border border-blue-800/30 rounded-3xl p-6 relative overflow-hidden">
             <div className="relative z-10">
               <h3 className="text-lg font-bold mb-2 text-white">Live Masterclass</h3>
               <p className="text-sm text-blue-100 mb-4">
@@ -471,7 +471,7 @@ const Dashboard = () => {
 
           <div className="p-4 border-t border-zinc-800">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 transition-colors cursor-pointer">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
                 AJ
               </div>
               <div className="flex-1 min-w-0">

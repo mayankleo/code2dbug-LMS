@@ -153,7 +153,7 @@ const Leaderboard = () => {
           {/* User Profile */}
           <div className="p-4 border-t border-zinc-800">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 transition-colors cursor-pointer">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
                 AJ
               </div>
               <div className="flex-1 min-w-0">
@@ -206,7 +206,7 @@ const Leaderboard = () => {
         <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar relative">
           <div className="max-w-5xl mx-auto space-y-8">
             {/* Hero Banner */}
-            <div className="flex flex-col sm:flex-row justify-between items-end gap-4 bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-8 rounded-3xl border border-white/10 relative overflow-hidden shadow-2xl">
+            <div className="flex flex-col sm:flex-row justify-between items-end gap-4 bg-linear-to-r from-blue-900/40 to-purple-900/40 p-8 rounded-3xl border border-white/10 relative overflow-hidden shadow-2xl">
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 text-white">Hall of Fame 🏆</h2>
                 <p className="text-blue-200 max-w-lg">
