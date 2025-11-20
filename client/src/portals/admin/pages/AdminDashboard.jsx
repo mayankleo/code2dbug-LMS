@@ -25,39 +25,32 @@ function AdminDashboard() {
     { category: 'Ads', value: 10, color: '#B84DFF' },
   ];
   return (
-    <div className=" flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <TopBar className="h-24" />
-        <div className="max-w-full mx-[2vw] py-[1vw]  overflow-x-auto ">
-          {/* Header with Time Filters */}
-          <DashboardHeader />
+    <main className="flex-1 overflow-y-auto p-8">
+      {/* Header with Time Filters */}
+      <DashboardHeader />
 
-          {/* College and Course Filters */}
-          <FilterSection />
+      {/* College and Course Filters */}
+      <FilterSection />
 
-          {/* Statistics Cards */}
-          <StatsCardsSection />
+      {/* Statistics Cards */}
+      <StatsCardsSection />
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-2 gap-5 mb-5 ">
-            <div className="bg-white rounded-xl p-1 border border-gray-200">
-              <h2 className="text-xl text-black font-semibold mb-4"></h2>
-              <ColumnWithRotatedLabels data={chartData} height={350} />
-            </div>
-            <div className="bg-white rounded-xl p-1 border border-gray-200">
-              <DoughnutChart data={donutData} height={360} innerRadiusPercent={60} />
-            </div>
-          </div>
-
-          {/* Recent Enrollments Table */}
-          <EnrollmentsTable />
+      {/* Charts Section */}
+      <div className="grid grid-cols-2 gap-5 mb-5 ">
+        <div className="bg-white rounded-xl p-1 border border-gray-200">
+          <h2 className="text-xl text-black font-semibold mb-4"></h2>
+          <ColumnWithRotatedLabels data={chartData} height={350} />
+        </div>
+        <div className="bg-white rounded-xl p-1 border border-gray-200">
+          <DoughnutChart data={donutData} height={360} innerRadiusPercent={60} />
         </div>
       </div>
-    </div>
+
+      {/* Recent Enrollments Table */}
+      <EnrollmentsTable />
+    </main>
   );
 }
 
 export default AdminDashboard;
+

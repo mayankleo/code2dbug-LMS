@@ -54,30 +54,19 @@ const Ongoing = () => {
     },
   ]);
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar />
+    <main className="flex-1 overflow-y-auto p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard: Active Students</h1>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <TopBar />
-
-        {/* Dashboard Content */}
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard: Active Students</h1>
-
-            {/* Statistics Section */}
-            <StatisticsSection />
-          </div>
-          <div>
-            <StudentsTable data={studentsData} />
-          </div>
-        </main>
+        {/* Statistics Section */}
+        <StatisticsSection />
       </div>
-    </div>
+      <div>
+        <StudentsTable data={studentsData} />
+      </div>
+    </main>
   );
 };
 
 export default Ongoing;
+

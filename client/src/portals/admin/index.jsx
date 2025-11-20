@@ -9,10 +9,11 @@ const AdminPortal = () => {
     <Routes>
       <Route element={<AdminLayout />}>
         <Route path="/" element={<AdminDashboard />} />
-        <Route path="/student" element={<Ongoing />} />
+        <Route path="/students" element={<Ongoing />} />
       </Route>
     </Routes>
   );
 };
 
 export default AdminPortal;
+
