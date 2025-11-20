@@ -16,12 +16,15 @@ const StudentPortal = () => {
       <Route element={<StudentLayout />}>
         <Route path="/" element={<StudentDashboard />} />
         <Route path="/my-courses" element={<MyCourses />} />
-        <Route path="/course-learning" element={<CourseLearningInterface />} />
+        <Route path="/courses" element={<CourseLearningInterface />} />
+        {/* <Route path="/assignments" element={<Assignments />} /> */}
+        {/* <Route path="/quizzes" element={<Quizzes />} /> */}
         <Route path="/leaderboard" element={<StudentLeaderBoard />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/certificates" element={<StudentCertificates />} />
         <Route path="/refer-and-earn" element={<ReferandEarnPage />} />
         <Route path="/support" element={<SupportPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   );
