@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 
 const StudentProfilePage = () => {
-  // --- PROFILE STATE ---
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState('https://api.dicebear.com/7.x/avataaars/svg?seed=Alex');
   const [formData, setFormData] = useState({
@@ -27,6 +26,7 @@ const StudentProfilePage = () => {
     portfolio: '',
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [isEditing, setIsEditing] = useState(false); // Toggle read/edit mode
 
   const handleInputChange = e => {

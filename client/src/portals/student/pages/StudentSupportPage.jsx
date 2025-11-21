@@ -41,10 +41,8 @@ const StudentSupportPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-500 selection:text-white flex overflow-hidden">
-
       {/* --- MAIN CONTENT --- */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-
         {/* Support Form Content */}
         <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar flex justify-center">
           <div className="w-full max-w-2xl">
