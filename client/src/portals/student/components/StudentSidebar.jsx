@@ -57,10 +57,9 @@ const StudentNavbar = () => {
             key={item.label}
             onClick={() => handleClick(item)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 
-              ${
-                activeTab === item.navigation
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-medium'
-                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+              ${activeTab === item.navigation
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-medium'
+                : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
               }
             `}
           >
@@ -72,7 +71,10 @@ const StudentNavbar = () => {
 
       {/* Footer */}
       <div className="p-4 border-t border-zinc-800">
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 transition-colors cursor-pointer">
+        <div
+          onClick={() => navigateAndStore('/student/profile')}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 transition-colors cursor-pointer"
+        >
           <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
             AJ
           </div>
@@ -80,7 +82,6 @@ const StudentNavbar = () => {
             <p className="text-sm font-medium truncate text-white">studentName</p>
             <p className="text-xs text-zinc-500 truncate">Student ID: 9021</p>
           </div>
-          <LogOut size={18} className="text-zinc-400 hover:text-red-400 transition-colors" />
         </div>
       </div>
     </div>
