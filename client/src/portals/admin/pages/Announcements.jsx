@@ -82,7 +82,6 @@ export default function Announcements() {
 
   return (
     <div className="flex-1 overflow-y-auto p-8">
-
       {/* New Announcement Form */}
       <div className="bg-zinc-800 border border-zinc-700 rounded-2xl shadow p-6 mb-10">
         <h2 className="font-bold text-lg mb-5 text-zinc-100">Create a New Announcement</h2>
@@ -100,16 +99,25 @@ export default function Announcements() {
             <label className="block text-sm font-medium text-zinc-300 mb-2">Status</label>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full flex items-center justify-between bg-zinc-900 border-zinc-700 text-zinc-200 hover:bg-zinc-800">
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-between bg-zinc-900 border-zinc-700 text-zinc-200 hover:bg-zinc-800"
+                >
                   {status}
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40 bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setStatus('Published')} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setStatus('Published')}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Published
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatus('Draft')} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setStatus('Draft')}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Draft
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -135,19 +143,31 @@ export default function Announcements() {
         <div className="flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 {filterStatus}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem onClick={() => setFilterStatus('All Status')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilterStatus('All Status')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 All Status
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus('Published')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilterStatus('Published')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Published
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus('Draft')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilterStatus('Draft')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Draft
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -155,19 +175,31 @@ export default function Announcements() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 Sort by: {sortBy}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem onClick={() => setSortBy('Latest')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setSortBy('Latest')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Latest
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortBy('Oldest')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setSortBy('Oldest')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Oldest
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortBy('Title')} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setSortBy('Title')}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Title
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -179,7 +211,10 @@ export default function Announcements() {
       <h2 className="font-bold text-lg mb-4 text-zinc-100">Existing Announcements</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {filteredAnnouncements.map(a => (
-          <div key={a.id} className="bg-zinc-800 border border-zinc-700 rounded-2xl shadow p-4 flex flex-col hover:border-zinc-600 transition-all">
+          <div
+            key={a.id}
+            className="bg-zinc-800 border border-zinc-700 rounded-2xl shadow p-4 flex flex-col hover:border-zinc-600 transition-all"
+          >
             <div className="flex justify-between items-center mb-1">
               <div className="font-semibold text-zinc-100">{a.title}</div>
               <div className="flex items-center gap-2">
@@ -202,7 +237,10 @@ export default function Announcements() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-zinc-800 border-zinc-700">
-                    <DropdownMenuItem onClick={() => handleEdit(a.id)} className="text-zinc-200 hover:bg-zinc-700">
+                    <DropdownMenuItem
+                      onClick={() => handleEdit(a.id)}
+                      className="text-zinc-200 hover:bg-zinc-700"
+                    >
                       <Pencil size={14} className="mr-2" />
                       Edit
                     </DropdownMenuItem>

@@ -175,9 +175,7 @@ export default function Analytics() {
               <h2 className="text-xl font-semibold text-zinc-100 mb-1">
                 Overall Performance Metrics
               </h2>
-              <p className="text-sm text-zinc-400">
-                360° view of key performance indicators
-              </p>
+              <p className="text-sm text-zinc-400">360° view of key performance indicators</p>
             </div>
             <RadarChart data={performanceMetrics} height={400} />
           </div>
@@ -185,12 +183,8 @@ export default function Analytics() {
           {/* Student Growth Line Chart */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-                Total Student Growth
-              </h2>
-              <p className="text-sm text-zinc-400">
-                Cumulative student registration over time
-              </p>
+              <h2 className="text-xl font-semibold text-zinc-100 mb-1">Total Student Growth</h2>
+              <p className="text-sm text-zinc-400">Cumulative student registration over time</p>
             </div>
             <LineChart data={studentGrowth} height={400} />
           </div>
@@ -222,12 +216,8 @@ export default function Analytics() {
           {/* Course Completion Status */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-                Course Completion Status
-              </h2>
-              <p className="text-sm text-zinc-400">
-                Overall completion rate across all courses
-              </p>
+              <h2 className="text-xl font-semibold text-zinc-100 mb-1">Course Completion Status</h2>
+              <p className="text-sm text-zinc-400">Overall completion rate across all courses</p>
             </div>
             <DoughnutChart
               data={courseCompletionData}
@@ -240,9 +230,7 @@ export default function Analytics() {
           {/* Enrollment by Category */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-                Enrollment by Category
-              </h2>
+              <h2 className="text-xl font-semibold text-zinc-100 mb-1">Enrollment by Category</h2>
               <p className="text-sm text-zinc-400">
                 Distribution of students across course categories
               </p>
@@ -277,9 +265,7 @@ export default function Analytics() {
               <h2 className="text-xl font-semibold text-zinc-100 mb-1">
                 Course Completions by Month
               </h2>
-              <p className="text-sm text-zinc-400">
-                Number of courses completed each month
-              </p>
+              <p className="text-sm text-zinc-400">Number of courses completed each month</p>
             </div>
             <ColumnWithRotatedLabels data={courseCompletionByMonth} height={320} />
           </div>
@@ -288,9 +274,7 @@ export default function Analytics() {
         {/* Weekly Progress Stacked Bar - Full Width */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-6">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-              Weekly Course Progress
-            </h2>
+            <h2 className="text-xl font-semibold text-zinc-100 mb-1">Weekly Course Progress</h2>
             <p className="text-sm text-zinc-400">
               Track completed, in-progress, and not started courses by week
             </p>
@@ -303,9 +287,7 @@ export default function Analytics() {
           {/* Assessment Performance */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-                Assessment Performance
-              </h2>
+              <h2 className="text-xl font-semibold text-zinc-100 mb-1">Assessment Performance</h2>
               <p className="text-sm text-zinc-400">
                 Student performance distribution on assessments
               </p>
@@ -321,9 +303,7 @@ export default function Analytics() {
           {/* User Engagement Levels */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold text-zinc-100 mb-1">
-                User Engagement Levels
-              </h2>
+              <h2 className="text-xl font-semibold text-zinc-100 mb-1">User Engagement Levels</h2>
               <p className="text-sm text-zinc-400">
                 Active user engagement based on platform activity
               </p>

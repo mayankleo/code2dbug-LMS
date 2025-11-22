@@ -11,12 +11,25 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   getPaginationRowModel,
-  useReactTable
+  useReactTable,
 } from '@tanstack/react-table';
 import { Input } from '../../../common/components/ui/input';
 import { Label } from '../../../common/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../common/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../common/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../common/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../common/components/ui/table';
 import TablePagination from '@/common/components/TablePagination';
 
 const columns = [
@@ -24,7 +37,9 @@ const columns = [
     header: 'Student Name',
     accessorKey: 'studentName',
     meta: { filterVariant: 'text' },
-    cell: ({ row }) => <div className="font-medium text-zinc-100">{row.getValue('studentName')}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium text-zinc-100">{row.getValue('studentName')}</div>
+    ),
   },
   {
     header: 'Course',
@@ -48,9 +63,9 @@ const columns = [
   {
     accessorKey: 'email',
     header: 'Email',
-    meta: { filterVariant: 'text' },   // normal text search filter (no sorting)
+    meta: { filterVariant: 'text' }, // normal text search filter (no sorting)
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
-  }
+  },
 ];
 
 const enrollments = [
@@ -88,8 +103,7 @@ function Filter({ column }) {
   const id = useId();
   const columnFilterValue = column.getFilterValue();
   const { filterVariant } = column.columnDef.meta || {};
-  const columnHeader =
-    typeof column.columnDef.header === 'string' ? column.columnDef.header : '';
+  const columnHeader = typeof column.columnDef.header === 'string' ? column.columnDef.header : '';
 
   const sortedUniqueValues = useMemo(() => {
     if (filterVariant === 'range') return [];
@@ -103,35 +117,29 @@ function Filter({ column }) {
 
   if (filterVariant === 'range') {
     return (
-      <div className='*:not-first:mt-2'>
-        <Label className='text-zinc-300'>{columnHeader}</Label>
-        <div className='flex'>
+      <div className="*:not-first:mt-2">
+        <Label className="text-zinc-300">{columnHeader}</Label>
+        <div className="flex">
           <Input
             id={`${id}-range-1`}
-            className='flex-1 rounded-r-none bg-zinc-800 text-zinc-200 border-zinc-700'
-            value={(columnFilterValue?.[0]) ?? ''}
+            className="flex-1 rounded-r-none bg-zinc-800 text-zinc-200 border-zinc-700"
+            value={columnFilterValue?.[0] ?? ''}
             onChange={e =>
-              column.setFilterValue(old => [
-                e.target.value ? e.target.value : undefined,
-                old?.[1]
-              ])
+              column.setFilterValue(old => [e.target.value ? e.target.value : undefined, old?.[1]])
             }
-            placeholder='Min'
-            type='text'
+            placeholder="Min"
+            type="text"
             aria-label={`${columnHeader} min`}
           />
           <Input
             id={`${id}-range-2`}
-            className='-ms-px flex-1 rounded-l-none bg-zinc-800 text-zinc-200 border-zinc-700'
-            value={(columnFilterValue?.[1]) ?? ''}
+            className="-ms-px flex-1 rounded-l-none bg-zinc-800 text-zinc-200 border-zinc-700"
+            value={columnFilterValue?.[1] ?? ''}
             onChange={e =>
-              column.setFilterValue(old => [
-                old?.[0],
-                e.target.value ? e.target.value : undefined
-              ])
+              column.setFilterValue(old => [old?.[0], e.target.value ? e.target.value : undefined])
             }
-            placeholder='Max'
-            type='text'
+            placeholder="Max"
+            type="text"
             aria-label={`${columnHeader} max`}
           />
         </div>
@@ -141,20 +149,24 @@ function Filter({ column }) {
 
   if (filterVariant === 'select') {
     return (
-      <div className='*:not-first:mt-2'>
-        <Label htmlFor={`${id}-select`} className='text-zinc-300'>
+      <div className="*:not-first:mt-2">
+        <Label htmlFor={`${id}-select`} className="text-zinc-300">
           {columnHeader}
         </Label>
         <Select
           value={columnFilterValue?.toString() ?? 'all'}
           onValueChange={value => {
             column.setFilterValue(value === 'all' ? undefined : value);
-          }}>
-          <SelectTrigger id={`${id}-select`} className='w-full bg-zinc-800 text-zinc-200 border-zinc-700'>
+          }}
+        >
+          <SelectTrigger
+            id={`${id}-select`}
+            className="w-full bg-zinc-800 text-zinc-200 border-zinc-700"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='all'>All</SelectItem>
+            <SelectItem value="all">All</SelectItem>
             {sortedUniqueValues.map(value => (
               <SelectItem key={String(value)} value={String(value)}>
                 {String(value)}
@@ -167,20 +179,20 @@ function Filter({ column }) {
   }
 
   return (
-    <div className='*:not-first:mt-2'>
-      <Label htmlFor={`${id}-input`} className='text-zinc-300'>
+    <div className="*:not-first:mt-2">
+      <Label htmlFor={`${id}-input`} className="text-zinc-300">
         {columnHeader}
       </Label>
-      <div className='relative'>
+      <div className="relative">
         <Input
           id={`${id}-input`}
-          className='peer pl-9 bg-zinc-800 text-zinc-200 border-zinc-700'
+          className="peer pl-9 bg-zinc-800 text-zinc-200 border-zinc-700"
           value={columnFilterValue ?? ''}
           onChange={e => column.setFilterValue(e.target.value)}
           placeholder={`Search ${columnHeader.toLowerCase()}`}
-          type='text'
+          type="text"
         />
-        <div className='text-zinc-400 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 peer-disabled:opacity-50'>
+        <div className="text-zinc-400 pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 peer-disabled:opacity-50">
           <SearchIcon size={16} />
         </div>
       </div>
@@ -195,7 +207,7 @@ const EnrollmentsTable = () => {
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: defaultPageSize
+    pageSize: defaultPageSize,
   });
 
   const table = useReactTable({
@@ -240,7 +252,9 @@ const EnrollmentsTable = () => {
             <TableRow key={headerGroup.id} className="bg-zinc-800 border-zinc-700">
               {headerGroup.headers.map(header => (
                 <TableHead key={header.id} className="text-zinc-300 border-zinc-700 select-none">
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>

@@ -8,8 +8,19 @@ import * as z from 'zod';
 import { ChevronLeft, Upload, X } from 'lucide-react';
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/common/components/ui/field';
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from '@/common/components/ui/input-group';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/common/components/ui/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from '@/common/components/ui/input-group';
 import {
   Select,
   SelectContent,
@@ -22,7 +33,10 @@ const formSchema = z.object({
   courseTitle: z.string().min(5, 'Course title must be at least 5 characters'),
   courseId: z.string().min(3, 'Course ID is required'),
   category: z.string().min(1, 'Please select a category'),
-  description: z.string().min(20, 'Description must be at least 20 characters').max(500, 'Description must be at most 500 characters'),
+  description: z
+    .string()
+    .min(20, 'Description must be at least 20 characters')
+    .max(500, 'Description must be at most 500 characters'),
   instructor: z.string().min(1, 'Please select an instructor'),
   price: z.string().min(1, 'Price is required'),
 });
@@ -85,7 +99,9 @@ const ManageCourse = ({ course, onBack }) => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Manage Courses</h1>
-          <p className="text-zinc-400">Add, update, and manage course details from this central dashboard.</p>
+          <p className="text-zinc-400">
+            Add, update, and manage course details from this central dashboard.
+          </p>
         </div>
 
         {/* Form */}
@@ -126,7 +142,9 @@ const ManageCourse = ({ course, onBack }) => {
                       className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
                       disabled
                     />
-                    <FieldDescription className="text-zinc-500">Course ID cannot be changed</FieldDescription>
+                    <FieldDescription className="text-zinc-500">
+                      Course ID cannot be changed
+                    </FieldDescription>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
@@ -147,16 +165,25 @@ const ManageCourse = ({ course, onBack }) => {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent className="bg-zinc-800 border-zinc-700">
-                        <SelectItem value="Web Development" className="text-zinc-200 hover:bg-zinc-700">
+                        <SelectItem
+                          value="Web Development"
+                          className="text-zinc-200 hover:bg-zinc-700"
+                        >
                           Web Development
                         </SelectItem>
-                        <SelectItem value="Data Science" className="text-zinc-200 hover:bg-zinc-700">
+                        <SelectItem
+                          value="Data Science"
+                          className="text-zinc-200 hover:bg-zinc-700"
+                        >
                           Data Science
                         </SelectItem>
                         <SelectItem value="Design" className="text-zinc-200 hover:bg-zinc-700">
                           Design
                         </SelectItem>
-                        <SelectItem value="Backend Development" className="text-zinc-200 hover:bg-zinc-700">
+                        <SelectItem
+                          value="Backend Development"
+                          className="text-zinc-200 hover:bg-zinc-700"
+                        >
                           Backend Development
                         </SelectItem>
                       </SelectContent>
@@ -214,10 +241,16 @@ const ManageCourse = ({ course, onBack }) => {
                         <SelectValue placeholder="Select instructor" />
                       </SelectTrigger>
                       <SelectContent className="bg-zinc-800 border-zinc-700">
-                        <SelectItem value="Dr. Ada Lovelace" className="text-zinc-200 hover:bg-zinc-700">
+                        <SelectItem
+                          value="Dr. Ada Lovelace"
+                          className="text-zinc-200 hover:bg-zinc-700"
+                        >
                           Dr. Ada Lovelace
                         </SelectItem>
-                        <SelectItem value="Prof. Alan Turing" className="text-zinc-200 hover:bg-zinc-700">
+                        <SelectItem
+                          value="Prof. Alan Turing"
+                          className="text-zinc-200 hover:bg-zinc-700"
+                        >
                           Prof. Alan Turing
                         </SelectItem>
                         <SelectItem value="Sarah Chen" className="text-zinc-200 hover:bg-zinc-700">
@@ -270,7 +303,11 @@ const ManageCourse = ({ course, onBack }) => {
                   </label>
                 ) : (
                   <div className="relative">
-                    <img src={thumbnail} alt="Thumbnail preview" className="max-h-48 mx-auto rounded-lg" />
+                    <img
+                      src={thumbnail}
+                      alt="Thumbnail preview"
+                      className="max-h-48 mx-auto rounded-lg"
+                    />
                     <Button
                       type="button"
                       onClick={removeThumbnail}
@@ -296,7 +333,11 @@ const ManageCourse = ({ course, onBack }) => {
             >
               Cancel
             </Button>
-            <Button type="submit" form="manage-course-form" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button
+              type="submit"
+              form="manage-course-form"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
               Update Course
             </Button>
           </Field>

@@ -47,7 +47,7 @@ export default function ColumnChart({ data, height = 400 }) {
         panY: false,
         wheelX: 'none',
         wheelY: 'none',
-      })
+      }),
     );
 
     const chartData =
@@ -86,7 +86,7 @@ export default function ColumnChart({ data, height = 400 }) {
         maxDeviation: 0.3,
         categoryField: 'category',
         renderer: xRenderer,
-      })
+      }),
     );
 
     xAxis.data.setAll(chartData);
@@ -107,7 +107,7 @@ export default function ColumnChart({ data, height = 400 }) {
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: yRenderer,
-      })
+      }),
     );
 
     // Create column series
@@ -119,7 +119,7 @@ export default function ColumnChart({ data, height = 400 }) {
         valueYField: 'value',
         categoryXField: 'category',
         sequencedInterpolation: true,
-      })
+      }),
     );
 
     // Column styling
@@ -142,7 +142,7 @@ export default function ColumnChart({ data, height = 400 }) {
           strokeWidth: 1,
           stroke: am5.color(0x52525b), // zinc-600
         }),
-      })
+      }),
     );
 
     series.get('tooltip').label.setAll({

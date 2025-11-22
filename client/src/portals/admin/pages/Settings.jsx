@@ -9,11 +9,7 @@ import { Eye, EyeOff, CircleCheckBig, Circle } from 'lucide-react';
 
 import { Input } from '@/common/components/ui/input';
 import { Button } from '@/common/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/common/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/common/components/ui/popover';
 
 // Password validation schema
 const formSchema = z
@@ -37,17 +33,44 @@ const formSchema = z
 const getPasswordStrength = password => {
   if (!password) return { level: 0, text: '', color: '', percentage: 0 };
   let strength = 0;
-  
+
   if (password.length >= 8) strength++;
   if (password.length >= 12) strength++;
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
   if (/\d/.test(password)) strength++;
   if (/[^a-zA-Z0-9]/.test(password)) strength++;
 
-  if (strength <= 2) return { level: 1, text: 'Weak', color: 'bg-red-500', textColor: 'text-red-400', percentage: 25 };
-  if (strength <= 3) return { level: 2, text: 'Fair', color: 'bg-yellow-500', textColor: 'text-yellow-400', percentage: 50 };
-  if (strength <= 4) return { level: 3, text: 'Good', color: 'bg-blue-500', textColor: 'text-blue-400', percentage: 75 };
-  return { level: 4, text: 'Strong', color: 'bg-green-500', textColor: 'text-green-400', percentage: 100 };
+  if (strength <= 2)
+    return {
+      level: 1,
+      text: 'Weak',
+      color: 'bg-red-500',
+      textColor: 'text-red-400',
+      percentage: 25,
+    };
+  if (strength <= 3)
+    return {
+      level: 2,
+      text: 'Fair',
+      color: 'bg-yellow-500',
+      textColor: 'text-yellow-400',
+      percentage: 50,
+    };
+  if (strength <= 4)
+    return {
+      level: 3,
+      text: 'Good',
+      color: 'bg-blue-500',
+      textColor: 'text-blue-400',
+      percentage: 75,
+    };
+  return {
+    level: 4,
+    text: 'Strong',
+    color: 'bg-green-500',
+    textColor: 'text-green-400',
+    percentage: 100,
+  };
 };
 
 export default function Settings() {
@@ -180,14 +203,20 @@ export default function Settings() {
                             side="top"
                             align="start"
                             className="w-80 p-0 bg-gradient-to-br from-zinc-800 to-zinc-900 border-zinc-700"
-                            onOpenAutoFocus={(e) => e.preventDefault()}
+                            onOpenAutoFocus={e => e.preventDefault()}
                           >
                             <div className="p-5">
                               {/* Header */}
                               <div className="flex items-center justify-between mb-4">
-                                <span className="text-xs font-medium text-zinc-400">Password Strength</span>
-                                <span className={`text-sm font-bold ${passwordStrength.textColor} flex items-center gap-1.5`}>
-                                  <span className={`w-2 h-2 rounded-full ${passwordStrength.color}`} />
+                                <span className="text-xs font-medium text-zinc-400">
+                                  Password Strength
+                                </span>
+                                <span
+                                  className={`text-sm font-bold ${passwordStrength.textColor} flex items-center gap-1.5`}
+                                >
+                                  <span
+                                    className={`w-2 h-2 rounded-full ${passwordStrength.color}`}
+                                  />
                                   {passwordStrength.text}
                                 </span>
                               </div>
@@ -204,44 +233,64 @@ export default function Settings() {
                               <div className="space-y-2.5">
                                 <div className="flex items-center gap-2.5">
                                   {newPassword.length >= 8 ? (
-                                    <CircleCheckBig size={16} className="text-green-500 flex-shrink-0" />
+                                    <CircleCheckBig
+                                      size={16}
+                                      className="text-green-500 flex-shrink-0"
+                                    />
                                   ) : (
                                     <Circle size={16} className="text-zinc-600 flex-shrink-0" />
                                   )}
-                                  <span className={`text-xs ${newPassword.length >= 8 ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}>
+                                  <span
+                                    className={`text-xs ${newPassword.length >= 8 ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}
+                                  >
                                     At least 8 characters
                                   </span>
                                 </div>
 
                                 <div className="flex items-center gap-2.5">
                                   {/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword) ? (
-                                    <CircleCheckBig size={16} className="text-green-500 flex-shrink-0" />
+                                    <CircleCheckBig
+                                      size={16}
+                                      className="text-green-500 flex-shrink-0"
+                                    />
                                   ) : (
                                     <Circle size={16} className="text-zinc-600 flex-shrink-0" />
                                   )}
-                                  <span className={`text-xs ${/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}>
+                                  <span
+                                    className={`text-xs ${/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}
+                                  >
                                     Uppercase & lowercase letters
                                   </span>
                                 </div>
 
                                 <div className="flex items-center gap-2.5">
                                   {/\d/.test(newPassword) ? (
-                                    <CircleCheckBig size={16} className="text-green-500 flex-shrink-0" />
+                                    <CircleCheckBig
+                                      size={16}
+                                      className="text-green-500 flex-shrink-0"
+                                    />
                                   ) : (
                                     <Circle size={16} className="text-zinc-600 flex-shrink-0" />
                                   )}
-                                  <span className={`text-xs ${/\d/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}>
+                                  <span
+                                    className={`text-xs ${/\d/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}
+                                  >
                                     At least one number
                                   </span>
                                 </div>
 
                                 <div className="flex items-center gap-2.5">
                                   {/[^a-zA-Z0-9]/.test(newPassword) ? (
-                                    <CircleCheckBig size={16} className="text-green-500 flex-shrink-0" />
+                                    <CircleCheckBig
+                                      size={16}
+                                      className="text-green-500 flex-shrink-0"
+                                    />
                                   ) : (
                                     <Circle size={16} className="text-zinc-600 flex-shrink-0" />
                                   )}
-                                  <span className={`text-xs ${/[^a-zA-Z0-9]/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}>
+                                  <span
+                                    className={`text-xs ${/[^a-zA-Z0-9]/.test(newPassword) ? 'text-zinc-200 font-medium' : 'text-zinc-500'}`}
+                                  >
                                     Special character (!@#$%^&*)
                                   </span>
                                 </div>

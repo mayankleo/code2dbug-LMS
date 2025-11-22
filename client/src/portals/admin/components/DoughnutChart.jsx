@@ -37,11 +37,11 @@ export default function DoughnutChart({
     rootRef.current = root;
 
     root.setThemes([am5themes_Animated.new(root)]);
-    
+
     // Set interface colors for dark theme
-    root.interfaceColors.set("grid", am5.color(0x3f3f46)); // zinc-700
-    root.interfaceColors.set("text", am5.color(0xe5e7eb)); // zinc-200
-    
+    root.interfaceColors.set('grid', am5.color(0x3f3f46)); // zinc-700
+    root.interfaceColors.set('text', am5.color(0xe5e7eb)); // zinc-200
+
     if (root._logo) {
       try {
         root._logo.dispose();
@@ -85,11 +85,11 @@ export default function DoughnutChart({
           strokeWidth: 1,
           stroke: am5.color(0x52525b), // zinc-600
         }),
-      })
+      }),
     );
 
     // Tooltip label styling
-    series.slices.template.get("tooltip").label.setAll({
+    series.slices.template.get('tooltip').label.setAll({
       fill: am5.color(0xe5e7eb), // zinc-200
       fontSize: 13,
     });
@@ -143,27 +143,27 @@ export default function DoughnutChart({
           marginTop: 15,
         }),
       );
-      
+
       // Legend labels - light text
       legend.labels.template.setAll({
         fill: am5.color(0xe5e7eb), // zinc-200
         fontSize: 13,
         fontWeight: '400',
       });
-      
+
       // Legend value labels - light text
       legend.valueLabels.template.setAll({
         fill: am5.color(0xe5e7eb), // zinc-200
         fontSize: 13,
         fontWeight: '500',
       });
-      
+
       // Legend markers (colored squares)
       legend.markers.template.setAll({
         width: 12,
         height: 12,
       });
-      
+
       legend.data.setAll(series.dataItems);
     }
 
@@ -188,13 +188,15 @@ export default function DoughnutChart({
   }, [data, innerRadiusPercent, showLegend, height]);
 
   return (
-    <div style={{
-      width: '100%',
-      height,
-      background: '#18181b', // bg-zinc-900
-      borderRadius: 12,
-      padding: 16,
-    }}>
+    <div
+      style={{
+        width: '100%',
+        height,
+        background: '#18181b', // bg-zinc-900
+        borderRadius: 12,
+        padding: 16,
+      }}
+    >
       <div ref={chartDivRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );

@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Badge } from '../../../common/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../common/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../common/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +35,8 @@ const Support = () => {
       college: 'IIT Bombay',
       year: 'Third Year',
       queryTopic: 'Issue with accessing course materials',
-      queryText: "Hello, I'm unable to access the video lectures for the 'Advanced Web Development' course. When I click on the link, it shows a 404 error page. Could you please look into this? Thank you.",
+      queryText:
+        "Hello, I'm unable to access the video lectures for the 'Advanced Web Development' course. When I click on the link, it shows a 404 error page. Could you please look into this? Thank you.",
       coursesInvolved: ['Advanced Web Development', 'Data Structures & Algorithms'],
       status: 'Open',
       priority: 'High',
@@ -44,7 +52,8 @@ const Support = () => {
       college: 'NIT Trichy',
       year: 'Final Year',
       queryTopic: 'Payment verification delay',
-      queryText: "I made the payment for the Data Science course 3 days ago, but my account still shows payment pending. Transaction ID: TXN123456789. Please help.",
+      queryText:
+        'I made the payment for the Data Science course 3 days ago, but my account still shows payment pending. Transaction ID: TXN123456789. Please help.',
       coursesInvolved: ['Data Science Fundamentals'],
       status: 'In Progress',
       priority: 'Medium',
@@ -60,7 +69,8 @@ const Support = () => {
       college: 'BITS Pilani',
       year: 'Second Year',
       queryTopic: 'Certificate not generated',
-      queryText: "I completed the Machine Learning course last week, but I haven't received my certificate yet. When will it be available?",
+      queryText:
+        "I completed the Machine Learning course last week, but I haven't received my certificate yet. When will it be available?",
       coursesInvolved: ['Machine Learning Basics', 'Python Programming'],
       status: 'Open',
       priority: 'Low',
@@ -76,7 +86,8 @@ const Support = () => {
       college: 'IIT Delhi',
       year: 'Third Year',
       queryTopic: 'Assignment submission failed',
-      queryText: "I tried to submit my assignment for the Cybersecurity module, but it keeps showing an error. The deadline is tomorrow. Please help urgently!",
+      queryText:
+        'I tried to submit my assignment for the Cybersecurity module, but it keeps showing an error. The deadline is tomorrow. Please help urgently!',
       coursesInvolved: ['Cybersecurity Essentials'],
       status: 'Open',
       priority: 'High',
@@ -92,7 +103,8 @@ const Support = () => {
       college: 'VIT Vellore',
       year: 'Final Year',
       queryTopic: 'Course content clarification',
-      queryText: "I have some doubts regarding the AWS deployment section in the Cloud Computing course. Can I get a mentor session scheduled?",
+      queryText:
+        'I have some doubts regarding the AWS deployment section in the Cloud Computing course. Can I get a mentor session scheduled?',
       coursesInvolved: ['Cloud Computing with AWS', 'DevOps Fundamentals'],
       status: 'Resolved',
       priority: 'Low',
@@ -124,7 +136,7 @@ const Support = () => {
 
   const paginatedData = queriesData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const renderPaginationButtons = () => {
@@ -187,22 +199,37 @@ const Support = () => {
           <div className="flex items-center gap-4 flex-wrap">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by Status
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, status: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Status
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'Open' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, status: 'Open' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Open
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'In Progress' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, status: 'In Progress' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   In Progress
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'Resolved' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, status: 'Resolved' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Resolved
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -210,22 +237,37 @@ const Support = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by Priority
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, priority: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, priority: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Priorities
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, priority: 'High' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, priority: 'High' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   High
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, priority: 'Medium' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, priority: 'Medium' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Medium
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, priority: 'Low' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, priority: 'Low' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Low
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -233,25 +275,43 @@ const Support = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by Category
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, category: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, category: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Categories
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, category: 'Technical' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, category: 'Technical' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Technical
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, category: 'Payment' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, category: 'Payment' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Payment
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, category: 'Certificate' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, category: 'Certificate' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Certificate
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, category: 'General' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, category: 'General' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   General
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -288,7 +348,9 @@ const Support = () => {
                 <TableRow key={query.id} className="hover:bg-zinc-800 border-zinc-800">
                   <TableCell className="font-medium text-zinc-100">{query.name}</TableCell>
                   <TableCell className="text-blue-400">{query.email}</TableCell>
-                  <TableCell className="text-zinc-200 max-w-xs truncate">{query.queryTopic}</TableCell>
+                  <TableCell className="text-zinc-200 max-w-xs truncate">
+                    {query.queryTopic}
+                  </TableCell>
                   <TableCell className="text-zinc-200">{query.category}</TableCell>
                   <TableCell>
                     <Badge className={getPriorityColor(query.priority)}>{query.priority}</Badge>
@@ -345,7 +407,7 @@ const Support = () => {
                   >
                     {page}
                   </Button>
-                )
+                ),
               )}
 
               <span className="text-sm text-zinc-400 px-2">Next</span>

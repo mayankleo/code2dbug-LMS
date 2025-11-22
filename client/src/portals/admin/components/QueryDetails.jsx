@@ -65,9 +65,7 @@ const QueryDetails = ({ query, onBack }) => {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-zinc-100">{query.name}</h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Joined: {query.submittedDate}
-                </p>
+                <p className="text-sm text-zinc-400 mt-1">Joined: {query.submittedDate}</p>
               </div>
             </div>
             <div className="flex gap-2">

@@ -33,7 +33,7 @@ export default function StackedBarChart({ data, height = 400 }) {
         wheelX: 'none',
         wheelY: 'none',
         layout: root.verticalLayout,
-      })
+      }),
     );
 
     const chartData =
@@ -61,7 +61,7 @@ export default function StackedBarChart({ data, height = 400 }) {
       am5xy.CategoryAxis.new(root, {
         categoryField: 'category',
         renderer: xRenderer,
-      })
+      }),
     );
 
     xAxis.data.setAll(chartData);
@@ -81,7 +81,7 @@ export default function StackedBarChart({ data, height = 400 }) {
       am5xy.ValueAxis.new(root, {
         min: 0,
         renderer: yRenderer,
-      })
+      }),
     );
 
     // Create series
@@ -94,7 +94,7 @@ export default function StackedBarChart({ data, height = 400 }) {
           yAxis: yAxis,
           valueYField: fieldName,
           categoryXField: 'category',
-        })
+        }),
       );
 
       series.columns.template.setAll({
@@ -123,7 +123,7 @@ export default function StackedBarChart({ data, height = 400 }) {
         centerX: am5.p50,
         x: am5.p50,
         marginTop: 15,
-      })
+      }),
     );
 
     legend.labels.template.setAll({

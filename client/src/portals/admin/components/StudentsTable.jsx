@@ -1,5 +1,12 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../common/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../common/components/ui/table';
 import { Badge } from '../../../common/components/ui/badge';
 import {
   DropdownMenu,
@@ -48,31 +55,51 @@ const StudentsTable = ({ data = [] }) => {
         <div className="flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 Filter by College
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">All Colleges</DropdownMenuItem>
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">Stanford University</DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                All Colleges
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                Stanford University
+              </DropdownMenuItem>
               <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">MIT</DropdownMenuItem>
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">Harvard</DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                Harvard
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 Filter by Status
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">All Status</DropdownMenuItem>
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">Graded</DropdownMenuItem>
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">Submitted</DropdownMenuItem>
-              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">In Progress</DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                Graded
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                Submitted
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-zinc-200 hover:bg-zinc-700">
+                In Progress
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
