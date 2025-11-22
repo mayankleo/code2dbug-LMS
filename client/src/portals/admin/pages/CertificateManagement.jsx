@@ -56,13 +56,13 @@ const CertificateManagement = () => {
   const filteredReadyStudents = studentsReadyToIssue.filter(
     student =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.course.toLowerCase().includes(searchQuery.toLowerCase())
+      student.course.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const filteredIssuedStudents = studentsIssued.filter(
     student =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.course.toLowerCase().includes(searchQuery.toLowerCase())
+      student.course.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (

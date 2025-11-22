@@ -112,9 +112,10 @@ const Courses = () => {
     setSelectedCourse(null);
   };
 
-  const filteredCourses = coursesData.filter(course =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.id.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCourses = coursesData.filter(
+    course =>
+      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.id.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // If creating a new course
@@ -131,8 +132,6 @@ const Courses = () => {
   return (
     <div className="flex-1 overflow-y-auto p-8">
       <div className="max-w-full mx-auto">
-        
-
         {/* Search, Filters, and Create Button */}
         <div className="mb-6 flex items-center gap-4 flex-wrap">
           {/* Search Bar */}
@@ -150,19 +149,31 @@ const Courses = () => {
           {/* Filters */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 Sort by: Date
                 <Filter className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: 'date' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, sortBy: 'date' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Date
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: 'title' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, sortBy: 'title' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Title
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, sortBy: 'students' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, sortBy: 'students' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Students
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -170,19 +181,31 @@ const Courses = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+              >
                 Status: All
                 <Filter className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'all' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, status: 'all' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 All
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'published' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, status: 'published' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Published
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilters({ ...filters, status: 'draft' })} className="text-zinc-200 hover:bg-zinc-700">
+              <DropdownMenuItem
+                onClick={() => setFilters({ ...filters, status: 'draft' })}
+                className="text-zinc-200 hover:bg-zinc-700"
+              >
                 Draft
               </DropdownMenuItem>
             </DropdownMenuContent>

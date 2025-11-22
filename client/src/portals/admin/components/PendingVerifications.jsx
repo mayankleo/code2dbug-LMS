@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Badge } from '../../../common/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../common/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../common/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -109,28 +116,42 @@ const PendingVerifications = () => {
   return (
     <div className="p-8 min-h-screen">
       <div className="max-w-7xl mx-auto">
-
         {/* Filters */}
         <div className="bg-zinc-800 rounded-lg p-4 mb-6 shadow-sm border border-zinc-700">
           <div className="flex items-center gap-4 flex-wrap">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by College
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, college: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, college: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Colleges
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, college: 'IIT Bombay' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, college: 'IIT Bombay' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   IIT Bombay
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, college: 'NIT Trichy' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, college: 'NIT Trichy' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   NIT Trichy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, college: 'BITS Pilani' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, college: 'BITS Pilani' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   BITS Pilani
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -138,22 +159,37 @@ const PendingVerifications = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by Year
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, year: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, year: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Years
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, year: 'Second Year' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, year: 'Second Year' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Second Year
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, year: 'Third Year' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, year: 'Third Year' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Third Year
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, year: 'Final Year' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, year: 'Final Year' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Final Year
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -161,22 +197,37 @@ const PendingVerifications = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                >
                   Filter by Domain
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, domain: 'All' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, domain: 'All' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   All Domains
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, domain: 'Data Science' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, domain: 'Data Science' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Data Science
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, domain: 'Web Development' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, domain: 'Web Development' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Web Development
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilters({ ...filters, domain: 'Machine Learning' })} className="text-zinc-200 hover:bg-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => setFilters({ ...filters, domain: 'Machine Learning' })}
+                  className="text-zinc-200 hover:bg-zinc-700"
+                >
                   Machine Learning
                 </DropdownMenuItem>
               </DropdownMenuContent>

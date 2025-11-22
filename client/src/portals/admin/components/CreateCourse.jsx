@@ -110,8 +110,8 @@ const CreateCourse = ({ onBack }) => {
                 },
               ],
             }
-          : m
-      )
+          : m,
+      ),
     );
   };
 
@@ -123,8 +123,8 @@ const CreateCourse = ({ onBack }) => {
               ...m,
               quizzes: m.quizzes.filter(q => q.id !== quizId),
             }
-          : m
-      )
+          : m,
+      ),
     );
   };
 
@@ -136,8 +136,8 @@ const CreateCourse = ({ onBack }) => {
               ...m,
               quizzes: m.quizzes.map(q => (q.id === quizId ? { ...q, [field]: value } : q)),
             }
-          : m
-      )
+          : m,
+      ),
     );
   };
 
@@ -148,11 +148,11 @@ const CreateCourse = ({ onBack }) => {
           ? {
               ...m,
               quizzes: m.quizzes.map(q =>
-                q.id === quizId ? { ...q, options: [...q.options, ''] } : q
+                q.id === quizId ? { ...q, options: [...q.options, ''] } : q,
               ),
             }
-          : m
-      )
+          : m,
+      ),
     );
   };
 
@@ -168,11 +168,11 @@ const CreateCourse = ({ onBack }) => {
                       ...q,
                       options: q.options.map((opt, idx) => (idx === optionIndex ? value : opt)),
                     }
-                  : q
+                  : q,
               ),
             }
-          : m
-      )
+          : m,
+      ),
     );
   };
 
@@ -428,7 +428,7 @@ const CreateCourse = ({ onBack }) => {
                                             module.id,
                                             quiz.id,
                                             'correctAnswer',
-                                            optionIndex
+                                            optionIndex,
                                           )
                                         }
                                         className="w-4 h-4 text-blue-600 bg-zinc-900 border-zinc-700 focus:ring-blue-500 focus:ring-2"
@@ -440,7 +440,7 @@ const CreateCourse = ({ onBack }) => {
                                             module.id,
                                             quiz.id,
                                             optionIndex,
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                         placeholder={`Option ${optionIndex + 1}`}
@@ -525,7 +525,10 @@ const CreateCourse = ({ onBack }) => {
 
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-4 pt-6">
-            <Button type="button" className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 transition-colors">
+            <Button
+              type="button"
+              className="bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 transition-colors"
+            >
               Save as Draft
             </Button>
             <Button

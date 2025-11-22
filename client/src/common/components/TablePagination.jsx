@@ -1,18 +1,22 @@
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/common/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
-import { usePagination } from '@/common/hooks/usePagination'; 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/common/components/ui/select';
+import { usePagination } from '@/common/hooks/usePagination';
 import { cn } from '../lib/utils';
 
 const pageSizes = [5, 10, 25, 50];
 
-const Ellipsis = () => (
-  <span className="mx-2 select-none text-zinc-300 font-bold">...</span>
-);
+const Ellipsis = () => <span className="mx-2 select-none text-zinc-300 font-bold">...</span>;
 
 function TablePagination({
-  className = "",
+  className = '',
   pageIndex,
   pageCount,
   pageSize,
@@ -22,16 +26,21 @@ function TablePagination({
   canNextPage,
   previousPage,
   nextPage,
-  paginationItemsToDisplay = 5
+  paginationItemsToDisplay = 5,
 }) {
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage: pageIndex + 1,
     totalPages: pageCount,
-    paginationItemsToDisplay
+    paginationItemsToDisplay,
   });
 
   return (
-    <div className={cn("flex items-center justify-between gap-3 max-sm:flex-col py-2 px-4 bg-", className)}>
+    <div
+      className={cn(
+        'flex items-center justify-between gap-3 max-sm:flex-col py-2 px-4 bg-',
+        className,
+      )}
+    >
       {/* Page info */}
       <span className="text-zinc-300 text-sm whitespace-nowrap">
         Page <span className="text-white font-semibold">{pageIndex + 1}</span> of{' '}
@@ -50,7 +59,7 @@ function TablePagination({
           <ChevronLeftIcon aria-hidden="true" />
         </Button>
         {showLeftEllipsis && <Ellipsis />}
-        {pages.map((page) => {
+        {pages.map(page => {
           const isActive = page === pageIndex + 1;
           return (
             <Button
@@ -58,13 +67,11 @@ function TablePagination({
               size="icon"
               variant={isActive ? 'outline' : 'ghost'}
               onClick={() => setPageIndex(page - 1)}
-              aria-current={isActive ? "page" : undefined}
-              className={
-                cn(
-                  "border-zinc-700 hover:bg-zinc-800 text-white",
-                  isActive ? "border-white bg-zinc-900 font-bold" : "bg-black"
-                )
-              }
+              aria-current={isActive ? 'page' : undefined}
+              className={cn(
+                'border-zinc-700 hover:bg-zinc-800 text-white',
+                isActive ? 'border-white bg-zinc-900 font-bold' : 'bg-black',
+              )}
             >
               {page}
             </Button>
@@ -84,10 +91,7 @@ function TablePagination({
       </div>
       {/* Page size selector */}
       <div>
-        <Select
-          value={pageSize.toString()}
-          onValueChange={(value) => setPageSize(Number(value))}
-        >
+        <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
           <SelectTrigger
             id="results-per-page"
             className="w-fit whitespace-nowrap border-zinc-700 bg-black text-zinc-100"
@@ -95,12 +99,8 @@ function TablePagination({
             <SelectValue placeholder="Select number of results" />
           </SelectTrigger>
           <SelectContent className="bg-black">
-            {pageSizes.map((ps) => (
-              <SelectItem
-                key={ps}
-                value={ps.toString()}
-                className="bg-black text-white"
-              >
+            {pageSizes.map(ps => (
+              <SelectItem key={ps} value={ps.toString()} className="bg-black text-white">
                 {ps} / page
               </SelectItem>
             ))}

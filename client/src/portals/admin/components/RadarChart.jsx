@@ -52,7 +52,7 @@ export default function RadarChart({ data, height = 500 }) {
         innerRadius: am5.percent(20),
         startAngle: -90,
         endAngle: 180,
-      })
+      }),
     );
 
     // Sample data
@@ -89,7 +89,7 @@ export default function RadarChart({ data, height = 500 }) {
       'cursor',
       am5radar.RadarCursor.new(root, {
         behavior: 'zoomX',
-      })
+      }),
     );
     cursor.lineY.set('visible', false);
 
@@ -120,7 +120,7 @@ export default function RadarChart({ data, height = 500 }) {
             stroke: am5.color(0x52525b), // zinc-600
           }),
         }),
-      })
+      }),
     );
 
     // Tooltip label styling
@@ -151,7 +151,7 @@ export default function RadarChart({ data, height = 500 }) {
       am5xy.CategoryAxis.new(root, {
         categoryField: 'category',
         renderer: yRenderer,
-      })
+      }),
     );
 
     yAxis.data.setAll(dataWithColors);
@@ -165,7 +165,7 @@ export default function RadarChart({ data, height = 500 }) {
         valueXField: 'full',
         categoryYField: 'category',
         fill: am5.color(0x3f3f46), // zinc-700
-      })
+      }),
     );
 
     series1.columns.template.setAll({
@@ -185,7 +185,7 @@ export default function RadarChart({ data, height = 500 }) {
         clustered: false,
         valueXField: 'value',
         categoryYField: 'category',
-      })
+      }),
     );
 
     series2.columns.template.setAll({
@@ -206,7 +206,7 @@ export default function RadarChart({ data, height = 500 }) {
           strokeWidth: 1,
           stroke: am5.color(0x52525b), // zinc-600
         }),
-      })
+      }),
     );
 
     series2.columns.template.get('tooltip').label.setAll({

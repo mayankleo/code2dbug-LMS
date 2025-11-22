@@ -32,7 +32,7 @@ export default function LineChart({ data, height = 400 }) {
         panY: false,
         wheelX: 'panX',
         wheelY: 'zoomX',
-      })
+      }),
     );
 
     const chartData =
@@ -55,7 +55,7 @@ export default function LineChart({ data, height = 400 }) {
         renderer: am5xy.AxisRendererX.new(root, {
           minGridDistance: 50,
         }),
-      })
+      }),
     );
 
     xAxis.get('renderer').labels.template.setAll({
@@ -72,7 +72,7 @@ export default function LineChart({ data, height = 400 }) {
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
-      })
+      }),
     );
 
     yAxis.get('renderer').labels.template.setAll({
@@ -95,7 +95,7 @@ export default function LineChart({ data, height = 400 }) {
         valueXField: 'date',
         stroke: am5.color('#3b82f6'),
         fill: am5.color('#3b82f6'),
-      })
+      }),
     );
 
     series.strokes.template.setAll({
@@ -130,7 +130,7 @@ export default function LineChart({ data, height = 400 }) {
           strokeWidth: 1,
           stroke: am5.color('#52525b'),
         }),
-      })
+      }),
     );
 
     series.get('tooltip').label.setAll({
@@ -144,7 +144,7 @@ export default function LineChart({ data, height = 400 }) {
       am5xy.XYCursor.new(root, {
         behavior: 'none',
         xAxis: xAxis,
-      })
+      }),
     );
 
     series.data.setAll(chartData);

@@ -10,28 +10,45 @@ import {
   Megaphone,
   FileBadge,
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-import { cn } from '../lib/utils';
+import { useSelector } from 'react-redux';
+import { useNavigateWithRedux } from '@/common/hooks/useNavigateWithRedux';
 
 const sidebarContent = [
-  { label: 'Dashboard', to: '/admin', icon: LayoutDashboard, isButton: false },
-  { label: 'Analytics', to: '/admin/analytics', icon: BarChart3, isButton: false },
-  { label: 'Students', to: '/admin/students', icon: Users, isButton: false },
-  { label: 'Courses', to: '/admin/courses', icon: BookOpen, isButton: false },
-  { label: 'Announcements', to: '/admin/announcements', icon: Megaphone, isButton: false },
-  { label: 'Manage Certificate', to: '/admin/certificate', icon: FileBadge, isButton: false },
-  { label: 'Settings', to: '/admin/settings', icon: Settings, isButton: false },
-  { label: 'Support', to: '/admin/support', icon: HelpCircle, isButton: false },
+  { label: 'Dashboard', navigation: '/admin', icon: LayoutDashboard, isButton: false },
+  { label: 'Analytics', navigation: '/admin/analytics', icon: BarChart3, isButton: false },
+  { label: 'Students', navigation: '/admin/students', icon: Users, isButton: false },
+  { label: 'Courses', navigation: '/admin/courses', icon: BookOpen, isButton: false },
+  { label: 'Announcements', navigation: '/admin/announcements', icon: Megaphone, isButton: false },
+  {
+    label: 'Manage Certificate',
+    navigation: '/admin/certificate',
+    icon: FileBadge,
+    isButton: false,
+  },
+  { label: 'Settings', navigation: '/admin/settings', icon: Settings, isButton: false },
+  { label: 'Support', navigation: '/admin/support', icon: HelpCircle, isButton: false },
   { label: 'Logout', icon: LogOut, isButton: true },
 ];
 
 const Sidebar = () => {
+  const navigateAndStore = useNavigateWithRedux();
+  const activeTab = useSelector(state => state.global.currentNavigation);
+
   const handleLogout = () => {
     // TODO: Add your logout logic here
+    console.log('Logging out...');
   };
 
-  const mainItems = sidebarContent.filter((item) => !['Support', 'Logout'].includes(item.label));
-  const bottomItems = sidebarContent.filter((item) => ['Support', 'Logout'].includes(item.label));
+  const handleClick = item => {
+    if (item.isButton) {
+      handleLogout();
+    } else {
+      navigateAndStore(item.navigation);
+    }
+  };
+
+  const mainItems = sidebarContent.filter(item => !['Support', 'Logout'].includes(item.label));
+  const bottomItems = sidebarContent.filter(item => ['Support', 'Logout'].includes(item.label));
 
   return (
     <div className="h-screen w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col text-zinc-400">
@@ -51,58 +68,48 @@ const Sidebar = () => {
       {/* Navigation Items */}
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
-          {mainItems.map(({ label, to, icon: Icon }) => (
-            <li key={label}>
-              <NavLink
-                to={to}
-                end={to === '/admin'}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all',
-                    isActive
+          {mainItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <li key={item.label}>
+                <button
+                  onClick={() => handleClick(item)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                    activeTab === item.navigation
                       ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-medium'
-                      : 'text-zinc-400 hover:bg-zinc-800 hover:text-white',
-                  )
-                }
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{label}</span>
-              </NavLink>
-            </li>
-          ))}
+                      : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.label}</span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
       {/* Bottom Section */}
       <div className="p-4 border-t border-zinc-800 space-y-2">
-        {bottomItems.map(({ label, to, icon: Icon, isButton }) =>
-          isButton ? (
+        {bottomItems.map(item => {
+          const Icon = item.icon;
+          return (
             <button
-              key={label}
-              onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-zinc-400 hover:bg-zinc-800 hover:text-white"
-            >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{label}</span>
-            </button>
-          ) : (
-            <NavLink
-              key={label}
-              to={to}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ',
-                  isActive
+              key={item.label}
+              onClick={() => handleClick(item)}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                item.isButton
+                  ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                  : activeTab === item.navigation
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-medium'
-                    : 'text-zinc-400 hover:bg-zinc-800 hover:text-white',
-                )
-              }
+                    : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+              }`}
             >
               <Icon className="w-5 h-5" />
-              <span className="font-medium">{label}</span>
-            </NavLink>
-          ),
-        )}
+              <span className="font-medium">{item.label}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
         wheelX: 'panX',
         wheelY: 'zoomX',
         layout: root.verticalLayout,
-      })
+      }),
     );
 
     // Sample data
@@ -86,7 +86,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
         renderer: am5xy.AxisRendererX.new(root, {
           minGridDistance: 50,
         }),
-      })
+      }),
     );
 
     xAxis.get('renderer').labels.template.setAll({
@@ -103,7 +103,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
-      })
+      }),
     );
 
     yAxis.get('renderer').labels.template.setAll({
@@ -117,7 +117,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
     });
 
     // Create series
-    seriesConfig.forEach((seriesItem) => {
+    seriesConfig.forEach(seriesItem => {
       const lineSeries = chart.series.push(
         am5xy.LineSeries.new(root, {
           name: seriesItem.name,
@@ -127,7 +127,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
           valueXField: 'date',
           stroke: am5.color(seriesItem.color),
           fill: am5.color(seriesItem.color),
-        })
+        }),
       );
 
       // Smooth curve
@@ -164,7 +164,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
             strokeWidth: 1,
             stroke: am5.color(0x52525b),
           }),
-        })
+        }),
       );
 
       lineSeries.get('tooltip').label.setAll({
@@ -182,7 +182,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
       am5xy.XYCursor.new(root, {
         behavior: 'none',
         xAxis: xAxis,
-      })
+      }),
     );
 
     cursor.lineY.setAll({
@@ -202,7 +202,7 @@ export default function SmoothLineChart({ data, height = 400, series = [] }) {
       am5.Legend.new(root, {
         centerX: am5.p50,
         x: am5.p50,
-      })
+      }),
     );
 
     legend.labels.template.setAll({
