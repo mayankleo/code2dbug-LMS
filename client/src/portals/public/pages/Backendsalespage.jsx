@@ -7,9 +7,6 @@ import {
   ChevronUp,
   Video,
   FileText,
-  Infinity,
-  Menu,
-  X,
   ShieldCheck,
   Share2,
   Briefcase,
@@ -18,12 +15,11 @@ import {
   Zap,
   BookOpen,
   Code,
-  ExternalLink,
 } from 'lucide-react';
+
 import { useNavigateWithRedux } from '@/common/hooks/useNavigateWithRedux';
 
 const BackEnd = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [expandedModule, setExpandedModule] = useState(null);
   const [showCouponInput, setShowCouponInput] = useState(false);
   const navigateAndStore = useNavigateWithRedux();
