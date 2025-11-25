@@ -23,6 +23,7 @@ import {
   CarouselPrevious,
 } from '@/common/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import ceoHomeImg from '@/assets/images/CEO-HOME-IMAGE.jpeg';
 
 function Home() {
   const [api, setApi] = useState(null);
@@ -225,7 +226,7 @@ function Home() {
   const testimonial = [
     {
       id: 1,
-      image: 'client\src\assets\images\CEO-HOME-IMAGE.jpeg',
+      image: ceoHomeImg,
       quote:
         'You need to understand that you will make mistakes. I made so many when I first started ... But the more mistakes you make, and the more you fail initially, the stronger you become later on.',
       name: 'Pravin R Nair',
