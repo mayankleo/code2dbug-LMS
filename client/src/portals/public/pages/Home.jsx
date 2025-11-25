@@ -27,6 +27,110 @@ import Autoplay from 'embla-carousel-autoplay';
 function Home() {
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
+  const [testimonialApi, setTestimonialApi] = React.useState();
+  const [currentTestimonial, setCurrentTestimonial] = React.useState(0);
+  const testimonialPlugin = React.useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
+
+  React.useEffect(() => {
+    if (!testimonialApi) return;
+
+    setCurrentTestimonial(testimonialApi.selectedScrollSnap());
+
+    testimonialApi.on("select", () => {
+      setCurrentTestimonial(testimonialApi.selectedScrollSnap());
+    });
+  }, [testimonialApi]);
+  const textTestimonials = [
+    {
+      id: 1,
+      quote: "The internship model helped me build a real portfolio. I got my certificate immediately after my Capstone review.",
+      name: "Deepak Agrawal",
+      cohort: "Web Dev Cohort",
+      linkedin: 'https://www.linkedin.com/in/agrawaldeepak05/',
+      initial: "D"
+    },
+    {
+      id: 2,
+      quote: "Machine Learning concepts were explained so clearly. The project-based approach really cemented my understanding.",
+      name: "Rupesh Kumar Sahu",
+      cohort: "Data Science Cohort",
+      linkedin: 'https://www.linkedin.com/in/rupesh-kumar-sahu-80bb51304/',
+      initial: "R"
+    },
+    {
+      id: 3,
+      quote: "Building a Flutter app from scratch gave me confidence to apply for jobs. Mentor feedback was crucial.",
+      name: "Mayank Kushvaha",
+      cohort: "Mobile App Dev",
+      linkedin: 'https://www.linkedin.com/in/mayankleo/',
+      initial: "M"
+    },
+    {
+      id: 4,
+      name: 'Nitish Deshmukh',
+      cohort: 'UI/UX Design',
+      quote: 'I finally mastered auto-layout. The design challenges feel exactly like real-world client tasks.',
+      color: 'from-pink-400 to-rose-500',
+      linkedin: 'https://www.linkedin.com/in/nitish-deshmukh-a9093b25a/',
+      initial: "N"
+    },
+    {
+      id: 5,
+      name: 'Tanisha Hanspal',
+      cohort: 'Backend Dev',
+      quote: 'Node.js architecture and DB optimization changed how I write code!',
+      color: 'from-purple-400 to-indigo-500',
+      linkedin: 'https://www.linkedin.com/in/agrawaldeepak05/',
+      initial: "T"
+    },
+    {
+      id: 6,
+      name: 'Nainshi Roy',
+      cohort: 'Full Stack',
+      quote: '24/7 mentor support actually helped me debug real issues. Best learning platform!',
+      color: 'from-yellow-400 to-orange-500',
+      linkedin: 'https://www.linkedin.com/in/nainshi-roy-2b8310256/',
+      initial: "N"
+    },
+    {
+      id: 7,
+      name: 'Nawazish Niyazi',
+      cohort: 'Python Cohort',
+      quote: 'The automation scripts we built saved me hours at my internship.',
+      color: 'from-teal-400 to-emerald-500',
+      linkedin: 'https://www.linkedin.com/in/nawazish-niyazi/',
+      initial: "N"
+    },
+    {
+      id: 8,
+      name: 'Antra Sharma',
+      cohort: 'Data Analytics',
+      quote: 'Tableau & PowerBI dashboards are now the strongest part of my resume.',
+      color: 'from-blue-500 to-cyan-400',
+      linkedin: 'https://www.linkedin.com/in/antra-sharma15/',
+      initial: "A"
+    },
+    {
+      id: 9,
+      name: 'Piyush Bramhankar',
+      cohort: 'Database Mgmt',
+      quote: 'Complex SQL joins now feel extremely easy.',
+      color: 'from-indigo-400 to-purple-500',
+      linkedin: 'https://www.linkedin.com/in/piyush-bramhankar-a041b638b/',
+      initial: "P"
+    },
+    {
+      id: 10,
+      name: 'Bishnu Prasad Sahu',
+      cohort: 'Frontend Dev',
+      quote: 'React Hooks finally make sense! Loved the structured curriculum.',
+      color: 'from-red-400 to-pink-500',
+      linkedin: 'https://in.linkedin.com/in/mebishnusahu05',
+      initial: "B"
+    },
+  ];
 
   const programs = [
     {
@@ -138,89 +242,7 @@ function Home() {
     },
   ];
 
-  const testimonials = [
-    {
-      id: 1,
-      name: 'Deepak Agrawal',
-      role: 'Web Dev Cohort',
-      text: 'The internship model helped me build a real portfolio. I got my certificate immediately after my Capstone review.',
-      color: 'from-blue-400 to-purple-500',
-      linkedin: 'https://www.linkedin.com/in/agrawaldeepak05/',
-    },
-    {
-      id: 2,
-      name: 'Rupesh Kumar Sahu',
-      role: 'Data Science Cohort',
-      text: 'Machine Learning concepts were explained so clearly. The project-based approach really cemented my understanding.',
-      color: 'from-green-400 to-cyan-500',
-      linkedin: 'https://www.linkedin.com/in/rupesh-kumar-sahu-80bb51304/',
-    },
-    {
-      id: 3,
-      name: 'Mayank Kushvaha',
-      role: 'Mobile App Dev',
-      text: 'Building a Flutter app from scratch gave me confidence to apply for jobs. Mentor feedback was crucial.',
-      color: 'from-orange-400 to-red-500',
-      linkedin: 'https://www.linkedin.com/in/mayankleo/',
-    },
-    {
-      id: 4,
-      name: 'Nitish Deshmukh',
-      role: 'UI/UX Design',
-      text: 'I finally mastered auto-layout. The design challenges feel exactly like real-world client tasks.',
-      color: 'from-pink-400 to-rose-500',
-      linkedin: 'https://www.linkedin.com/in/nitish-deshmukh-a9093b25a/',
-    },
-    {
-      id: 5,
-      name: 'Tanisha Hanspal',
-      role: 'Backend Dev',
-      text: 'Node.js architecture and DB optimization changed how I write code!',
-      color: 'from-purple-400 to-indigo-500',
-      linkedin: 'https://www.linkedin.com/in/agrawaldeepak05/',
-    },
-    {
-      id: 6,
-      name: 'Nainshi Roy',
-      role: 'Full Stack',
-      text: '24/7 mentor support actually helped me debug real issues. Best learning platform!',
-      color: 'from-yellow-400 to-orange-500',
-      linkedin: 'https://www.linkedin.com/in/nainshi-roy-2b8310256/',
-    },
-    {
-      id: 7,
-      name: 'Nawazish Niyazi',
-      role: 'Python Cohort',
-      text: 'The automation scripts we built saved me hours at my internship.',
-      color: 'from-teal-400 to-emerald-500',
-      linkedin: 'https://www.linkedin.com/in/nawazish-niyazi/',
-    },
-    {
-      id: 8,
-      name: 'Antra Sharma',
-      role: 'Data Analytics',
-      text: 'Tableau & PowerBI dashboards are now the strongest part of my resume.',
-      color: 'from-blue-500 to-cyan-400',
-      linkedin: 'https://www.linkedin.com/in/antra-sharma15/',
-    },
-    {
-      id: 9,
-      name: 'Piyush Bramhankar',
-      role: 'Database Mgmt',
-      text: 'Complex SQL joins now feel extremely easy.',
-      color: 'from-indigo-400 to-purple-500',
-      linkedin: 'https://www.linkedin.com/in/piyush-bramhankar-a041b638b/',
-    },
-    {
-      id: 10,
-      name: 'Bishnu Prasad Sahu',
-      role: 'Frontend Dev',
-      text: 'React Hooks finally make sense! Loved the structured curriculum.',
-      color: 'from-red-400 to-pink-500',
-      linkedin: 'https://in.linkedin.com/in/mebishnusahu05',
-    },
-  ];
-
+  
   // IBM-style testimonials
   const testimonial = [
     {
@@ -528,67 +550,97 @@ function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIAL CAROUSEL */}
-        <section className="bg-zinc-900 border border-zinc-700">
-          <div className="py-24 max-w-7xl mx-auto px-4 relative">
-            <h2 className="text-3xl font-bold text-center mb-12">Student Stories</h2>
+        {/* --- TEXT TESTIMONIALS CAROUSEL --- */}
+        <section className="py-20 bg-zinc-900 border border-zinc-700 relative overflow-hidden">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl"></div>
 
-            <div className="relative group">
-              <button
-                onClick={() => scroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-3 rounded-full bg-zinc-800 border border-zinc-700 text-white hover:bg-blue-600 hover:border-blue-500 transition opacity-0 group-hover:opacity-100 hidden md:block"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => scroll('right')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-3 rounded-full bg-zinc-800 border border-zinc-700 text-white hover:bg-blue-600 hover:border-blue-500 transition opacity-0 group-hover:opacity-100 hidden md:block"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Student Success Stories</h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Hear what our students have to say about their learning experience
+              </p>
+            </div>
 
-                <div
-                  ref={scrollRef}
-                  className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-none"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                  {testimonials.map(item => (
-                    <div
-                      key={item.id}
-                      className="min-w-[85vw] md:min-w-[calc(33%-1rem)] snap-center bg-zinc-950 p-8 rounded-2xl border border-zinc-800 flex flex-col justify-between hover:border-blue-500/50 transition"
-                    >
-                      <div>
-                        <div className="flex gap-1 mb-4">
-                          {[...Array(5)].map((_, star) => (
-                            <span key={star} className="text-yellow-500 text-sm">
-                              ★
-                            </span>
-                          ))}
+            <Carousel
+              setApi={setTestimonialApi}
+              plugins={[testimonialPlugin.current]}
+              className="w-full mx-auto"
+              onMouseEnter={testimonialPlugin.current.stop}
+              onMouseLeave={testimonialPlugin.current.reset}
+              opts={{
+                align: 'start',
+                loop: true,
+              }}
+            >
+              <CarouselContent className="-ml-4">
+                {textTestimonials.map(testimonial => (
+                  <CarouselItem key={testimonial.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <div className="h-full">
+                      <div className="relative bg-black border-2 border-zinc-800 rounded-xl overflow-hidden hover:border-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 shadow-lg h-full flex flex-col group">
+                        {/* Gradient border effect on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
+
+                        {/* Testimonial Content */}
+                        <div className="relative p-6 flex-1 flex flex-col">
+                          {/* Star Rating */}
+                          <div className="flex gap-1 mb-4">
+                            {[...Array(5)].map((_, i) => (
+                              <svg
+                                key={i}
+                                className="w-5 h-5 fill-yellow-500"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+
+                          {/* Testimonial Text */}
+                          <blockquote className="text-gray-300 text-sm leading-relaxed italic flex-1">
+                            "{testimonial.quote}"
+                          </blockquote>
                         </div>
 
-                        <p className="text-gray-400 italic mb-6">"{item.text}"</p>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <a
-                          href={item.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`w-10 h-10 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center text-white font-bold hover:scale-110 transition`}
-                        >
-                          {item.name.charAt(0)}
-                        </a>
-
-                        <div>
-                          <div className="font-bold text-sm">{item.name}</div>
-                          <div className="text-xs text-blue-400">{item.role}</div>
+                        {/* User Info */}
+                        <div className="relative p-4 bg-black border-t border-zinc-800/50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold border-2 border-zinc-700 group-hover:border-blue-500 transition-colors shadow-lg">
+                              {testimonial.initial}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-bold text-white text-sm">{testimonial.name}</h4>
+                              <p className="text-xs text-blue-400">{testimonial.cohort}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+
+              {/* Enhanced Previous Button */}
+              <CarouselPrevious className="hidden lg:flex -left-12 bg-zinc-900 border-2 border-zinc-700 hover:bg-zinc-800 hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] text-white h-12 w-12 backdrop-blur-sm transition-all duration-300 hover:scale-110" />
+
+              {/* Enhanced Next Button */}
+              <CarouselNext className="hidden lg:flex -right-12 bg-zinc-900 border-2 border-zinc-700 hover:bg-zinc-800 hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] text-white h-12 w-12 backdrop-blur-sm transition-all duration-300 hover:scale-110" />
+            </Carousel>
+
+            {/* Enhanced Carousel Indicators */}
+            <div className="flex justify-center gap-2 mt-8">
+              {textTestimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => testimonialApi?.scrollTo(index)}
+                  className={`rounded-full transition-all duration-300 ${currentTestimonial === index
+                    ? 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]'
+                    : 'w-2 h-2 bg-zinc-700 hover:bg-blue-400 hover:shadow-[0_0_8px_rgba(96,165,250,0.4)] hover:scale-125'
+                    }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -674,11 +726,10 @@ function Home() {
                 <button
                   key={index}
                   onClick={() => api?.scrollTo(index)}
-                  className={`rounded-full transition-all duration-300 ${
-                    current === index
-                      ? 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]'
-                      : 'w-2 h-2 bg-zinc-700 hover:bg-blue-400 hover:shadow-[0_0_8px_rgba(96,165,250,0.4)] hover:scale-125'
-                  }`}
+                  className={`rounded-full transition-all duration-300 ${current === index
+                    ? 'w-8 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]'
+                    : 'w-2 h-2 bg-zinc-700 hover:bg-blue-400 hover:shadow-[0_0_8px_rgba(96,165,250,0.4)] hover:scale-125'
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

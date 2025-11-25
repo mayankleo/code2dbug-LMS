@@ -347,7 +347,7 @@ const Python = () => {
                 </div>
                 <p className="mt-6 text-xs text-zinc-500 text-center">
                   Use your coupon code (which you will get from any existing paid user) to redeem
-                  the ₹20,000 worth of premium benefits on LMS.
+                  the ₹20,000 worth of premium benefits.
                 </p>
               </div>
             </div>
