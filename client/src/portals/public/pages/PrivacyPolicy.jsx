@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 pt-20">
+    <div className="min-h-screen bg-black pt-20">
       {/* Header Section */}
       <div className="bg-linear-to-r from-blue-600 to-indigo-700 text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -103,8 +103,8 @@ const PrivacyPolicy = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Introduction */}
-        <div className="bg-white rounded-lg shadow-md p-8 mb-8">
-          <p className="text-gray-700 leading-relaxed mb-4">
+        <div className="bg-zinc-900 rounded-lg shadow-md p-8 mb-8">
+          <p className="text-gray-300 leading-relaxed mb-4">
             Code2dbug, a proprietary of <span className="font-semibold">NAIR Solutions</span> ("we,"
             "our," or "us"), recognizes the importance of maintaining your privacy. We are committed
             to maintaining the confidentiality, integrity, and security of all information of our
@@ -112,7 +112,7 @@ const PrivacyPolicy = () => {
             information of yours when you visit our website or use our mobile application
             (collectively, the "Platform").
           </p>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-300 leading-relaxed">
             This Privacy Policy is published in compliance with{' '}
             <span className="font-semibold">
               Section 43A of the Information Technology Act, 2000
@@ -131,16 +131,16 @@ const PrivacyPolicy = () => {
           <div
             key={section.id}
             id={section.id}
-            className="bg-white rounded-lg shadow-md p-8 mb-8 scroll-mt-20"
+            className="bg-zinc-900 rounded-lg shadow-md p-8 mb-8 scroll-mt-20"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold">
                 {index + 1}
               </span>
               {section.title}
             </h2>
 
-            {section.text && <p className="text-gray-700 leading-relaxed">{section.text}</p>}
+            {section.text && <p className="text-gray-300 leading-relaxed">{section.text}</p>}
 
             {section.content && Array.isArray(section.content) && (
               <div className="space-y-4">
@@ -149,12 +149,12 @@ const PrivacyPolicy = () => {
                     {typeof item === 'string' ? (
                       <div className="flex items-start gap-3">
                         <span className="shrink-0 w-2 h-2 mt-2 rounded-full bg-blue-600" />
-                        <p className="text-gray-700 leading-relaxed flex-1">{item}</p>
+                        <p className="text-gray-300 leading-relaxed flex-1">{item}</p>
                       </div>
                     ) : (
                       <div className="pl-4 border-l-4 border-blue-600">
                         <h3 className="font-semibold text-gray-900 mb-2">{item.subtitle}</h3>
-                        <p className="text-gray-700 leading-relaxed">{item.text}</p>
+                        <p className="text-gray-300 leading-relaxed">{item.text}</p>
                       </div>
                     )}
                   </div>
@@ -167,20 +167,20 @@ const PrivacyPolicy = () => {
         {/* Grievance Officer Section */}
         <div
           id="grievance-officer"
-          className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-lg shadow-md p-8 mb-8 border border-blue-200 scroll-mt-20"
+          className="bg-zinc-900 rounded-lg shadow-md p-8 mb-8  scroll-mt-20"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold">
               7
             </span>
             Grievance Officer
           </h2>
-          <p className="text-gray-700 leading-relaxed mb-6">
+          <p className="text-gray-300 leading-relaxed mb-6">
             In accordance with the Information Technology Act, 2000, and Rules made thereunder, the
             name and contact details of the Grievance Officer are provided below:
           </p>
 
-          <div className="bg-white rounded-lg p-6 space-y-4">
+          <div className="bg-zinc-900 rounded-lg p-6 space-y-4">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                 <span className="text-blue-600 font-bold text-lg">
@@ -188,12 +188,12 @@ const PrivacyPolicy = () => {
                 </span>
               </div>
               <div>
-                <p className="font-semibold text-gray-900 text-lg">{grievanceOfficer.name}</p>
-                <p className="text-sm text-gray-500">Grievance Redressal Officer</p>
+                <p className="font-semibold text-gray-100 text-lg">{grievanceOfficer.name}</p>
+                <p className="text-sm text-gray-300">Grievance Redressal Officer</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-300">
               <Mail className="w-5 h-5 text-blue-600 shrink-0" />
               <a
                 href={`mailto:${grievanceOfficer.email}`}
@@ -203,7 +203,7 @@ const PrivacyPolicy = () => {
               </a>
             </div>
 
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-gray-300">
               <Phone className="w-5 h-5 text-blue-600 shrink-0" />
               <a
                 href={`tel:+91${grievanceOfficer.phone}`}
@@ -213,7 +213,7 @@ const PrivacyPolicy = () => {
               </a>
             </div>
 
-            <div className="flex items-start gap-3 text-gray-700">
+            <div className="flex items-start gap-3 text-gray-300">
               <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
               <div>
                 {grievanceOfficer.address.map((line, idx) => (
@@ -225,14 +225,14 @@ const PrivacyPolicy = () => {
         </div>
 
         {/* Changes to Policy Section */}
-        <div id="policy-changes" className="bg-white rounded-lg shadow-md p-8 scroll-mt-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+        <div id="policy-changes" className="bg-zinc-900 rounded-lg shadow-md p-8 scroll-mt-20">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold">
               8
             </span>
             Changes to This Policy
           </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-300 leading-relaxed">
             We may update our Privacy Policy from time to time. We will notify you of any changes by
             posting the new Privacy Policy on this page.
           </p>

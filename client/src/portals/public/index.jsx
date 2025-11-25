@@ -23,6 +23,7 @@ import AboutUs from './pages/AboutUSPage.jsx';
 import EnrollmentDetails from './pages/EnrollmentForm.jsx';
 import EnrollmentPayment from './components/UpdatedPaymentPage.jsx';
 import Github from './pages/VersionControlWithGit.jsx';
+import authSuccess from './pages/authSuccess.jsx';
 
 const PublicPortal = () => {
   return (
@@ -51,6 +52,7 @@ const PublicPortal = () => {
           <Route path="/github" element={<Github />} />
           <Route path="/enroll" element={<EnrollmentDetails />} />
           <Route path="/enroll/payment" element={<EnrollmentPayment />} />
+          <Route path="/auth-success" element={<authSuccess />} />
         </Route>
       </Routes>
     </>
