@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import {
   Users,
   Target,
@@ -13,7 +12,9 @@ import {
   Quote,
   ArrowRight,
 } from 'lucide-react';
+
 import Counter from '../components/Counter';
+
 import { useNavigateWithRedux } from '@/common/hooks/useNavigateWithRedux';
 import ceoImg from '@/assets/images/CEO-AU.jpeg';
 import ctoImg from '@/assets/images/CTO-AU.jpeg';
