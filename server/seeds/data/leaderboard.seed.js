@@ -25,7 +25,11 @@ export const seedLeaderboard = async () => {
     const globalEntries = students.map((student) => {
         const xpValue = student.xp || faker.number.int({ min: 100, max: 5000 });
         const streakValue = faker.number.int({ min: 0, max: 30 });
-        const hoursValue = faker.number.float({ min: 1, max: 100, fractionDigits: 1 });
+        const hoursValue = faker.number.float({
+            min: 1,
+            max: 100,
+            fractionDigits: 1,
+        });
         const quizzesValue = faker.number.int({ min: 0, max: 50 });
         const assignmentsValue = faker.number.int({ min: 0, max: 30 });
 
@@ -71,7 +75,11 @@ export const seedLeaderboard = async () => {
                 const quizBonus = quizzesValue * 10;
                 const assignmentBonus = assignmentsValue * 50;
                 const streakValue = faker.number.int({ min: 0, max: 15 });
-                const hoursValue = faker.number.float({ min: 0.5, max: 40, fractionDigits: 1 });
+                const hoursValue = faker.number.float({
+                    min: 0.5,
+                    max: 40,
+                    fractionDigits: 1,
+                });
                 const hoursBonus = Math.floor(hoursValue * 2);
                 const streakBonus = streakValue * 5;
 
@@ -170,8 +178,6 @@ export const seedLeaderboard = async () => {
 
     console.log("   🏆 Top 3 Global Leaders:");
     top3.forEach((entry, idx) => {
-        console.log(
-            `      ${idx + 1}. ${entry.student.name} - ${entry.xp} XP`
-        );
+        console.log(`      ${idx + 1}. ${entry.student.name} - ${entry.xp} XP`);
     });
 };

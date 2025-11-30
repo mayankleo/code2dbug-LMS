@@ -122,11 +122,13 @@ export const seedStudents = async () => {
                 probability: 0.7,
             }),
             linkedin: faker.helpers.maybe(
-                () => `https://linkedin.com/in/${faker.internet.username().toLowerCase()}`,
+                () =>
+                    `https://linkedin.com/in/${faker.internet.username().toLowerCase()}`,
                 { probability: 0.6 }
             ),
             github: faker.helpers.maybe(
-                () => `https://github.com/${faker.internet.username().toLowerCase()}`,
+                () =>
+                    `https://github.com/${faker.internet.username().toLowerCase()}`,
                 { probability: 0.5 }
             ),
             portfolio: faker.helpers.maybe(() => faker.internet.url(), {
@@ -141,13 +143,18 @@ export const seedStudents = async () => {
                   })
                 : undefined,
             hoursLearned: isActive ? faker.number.int({ min: 0, max: 200 }) : 0,
-            quizzesCompleted: isActive ? faker.number.int({ min: 0, max: 50 }) : 0,
-            assignmentsCompleted: isActive ? faker.number.int({ min: 0, max: 30 }) : 0,
+            quizzesCompleted: isActive
+                ? faker.number.int({ min: 0, max: 50 })
+                : 0,
+            assignmentsCompleted: isActive
+                ? faker.number.int({ min: 0, max: 30 })
+                : 0,
             accountStatus,
             lmsId: `LMS${faker.string.alphanumeric(8).toUpperCase()}`,
             lmsPassword: "Lms@123",
             referredBy: faker.helpers.maybe(
-                () => `${faker.person.firstName().substring(0, 4).toUpperCase()}-${faker.string.alphanumeric(4).toUpperCase()}`,
+                () =>
+                    `${faker.person.firstName().substring(0, 4).toUpperCase()}-${faker.string.alphanumeric(4).toUpperCase()}`,
                 { probability: 0.3 }
             ),
             referralCount: faker.number.int({ min: 0, max: 10 }),
@@ -177,11 +184,13 @@ export const seedStudents = async () => {
             courseName: faker.helpers.arrayElement(courses),
             yearOfStudy: faker.helpers.arrayElement(years),
             linkedin: faker.helpers.maybe(
-                () => `https://linkedin.com/in/${faker.internet.username().toLowerCase()}`,
+                () =>
+                    `https://linkedin.com/in/${faker.internet.username().toLowerCase()}`,
                 { probability: 0.5 }
             ),
             github: faker.helpers.maybe(
-                () => `https://github.com/${faker.internet.username().toLowerCase()}`,
+                () =>
+                    `https://github.com/${faker.internet.username().toLowerCase()}`,
                 { probability: 0.4 }
             ),
             xp: faker.number.int({ min: 100, max: 3000 }),
@@ -230,13 +239,17 @@ export const seedStudents = async () => {
         savedCount++;
     }
 
-    const verifiedCount = students.filter(s => s.accountStatus === "verified").length;
-    const oauthCount = students.filter(s => s.googleId || s.githubId).length;
+    const verifiedCount = students.filter(
+        (s) => s.accountStatus === "verified"
+    ).length;
+    const oauthCount = students.filter((s) => s.googleId || s.githubId).length;
 
     console.log(`✅ ${savedCount} students seeded`);
     console.log(`   👤 Test accounts: 3 (LMS001, LMS002, LMS003)`);
     console.log(`   👥 Random students: ${randomStudentCount}`);
-    console.log(`   🔐 OAuth students: ${oauthCount} (Google: ${googleStudentCount}, GitHub: ${githubStudentCount})`);
+    console.log(
+        `   🔐 OAuth students: ${oauthCount} (Google: ${googleStudentCount}, GitHub: ${githubStudentCount})`
+    );
     console.log(`   ✓ Verified: ${verifiedCount}`);
     console.log("\n   📋 Test Credentials:");
     console.log("      LMS ID: LMS001, LMS002, LMS003");

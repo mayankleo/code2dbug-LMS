@@ -16,7 +16,9 @@ const COURSES_FOLDER = path.join(__dirname, "courses");
  * Load all course JSON files from the courses folder
  */
 const loadCourseFiles = () => {
-    const courseFiles = fs.readdirSync(COURSES_FOLDER).filter(file => file.endsWith(".json"));
+    const courseFiles = fs
+        .readdirSync(COURSES_FOLDER)
+        .filter((file) => file.endsWith(".json"));
     const courses = [];
 
     for (const file of courseFiles) {
@@ -64,10 +66,10 @@ const transformCourseData = (jsonCourse) => {
         const moduleId = new mongoose.Types.ObjectId();
 
         // Transform quizzes - remove explanation field (not in model)
-        const quizzes = (module.quizzes || []).map(quiz => ({
+        const quizzes = (module.quizzes || []).map((quiz) => ({
             _id: new mongoose.Types.ObjectId(),
             title: quiz.title,
-            questions: (quiz.questions || []).map(q => ({
+            questions: (quiz.questions || []).map((q) => ({
                 questionText: q.questionText,
                 options: q.options,
                 correctAnswer: q.correctAnswer,
@@ -76,7 +78,7 @@ const transformCourseData = (jsonCourse) => {
         }));
 
         // Transform tasks
-        const tasks = (module.tasks || []).map(task => ({
+        const tasks = (module.tasks || []).map((task) => ({
             _id: new mongoose.Types.ObjectId(),
             title: task.title,
             description: task.description,
@@ -96,11 +98,13 @@ const transformCourseData = (jsonCourse) => {
     });
 
     // Transform capstone projects
-    const capstoneProjects = (jsonCourse.capstoneProjects || []).map(project => ({
-        _id: new mongoose.Types.ObjectId(),
-        title: project.title,
-        description: project.description,
-    }));
+    const capstoneProjects = (jsonCourse.capstoneProjects || []).map(
+        (project) => ({
+            _id: new mongoose.Types.ObjectId(),
+            title: project.title,
+            description: project.description,
+        })
+    );
 
     return {
         _id: courseId,
@@ -129,7 +133,9 @@ export const seedCourses = async () => {
     const jsonCourses = loadCourseFiles();
 
     if (jsonCourses.length === 0) {
-        console.log("⚠️  No course JSON files found in seeds/data/courses folder");
+        console.log(
+            "⚠️  No course JSON files found in seeds/data/courses folder"
+        );
         return;
     }
 
@@ -144,9 +150,9 @@ export const seedCourses = async () => {
     let totalQuizzes = 0;
     let totalTasks = 0;
 
-    courses.forEach(course => {
+    courses.forEach((course) => {
         totalModules += course.modules.length;
-        course.modules.forEach(module => {
+        course.modules.forEach((module) => {
             totalQuizzes += module.quizzes?.length || 0;
             totalTasks += module.tasks?.length || 0;
         });
@@ -157,8 +163,10 @@ export const seedCourses = async () => {
     console.log(`   📝 Total Quizzes: ${totalQuizzes}`);
     console.log(`   📋 Total Tasks: ${totalTasks}`);
     console.log("\n   📖 Courses loaded:");
-    courses.forEach(course => {
-        console.log(`      - ${course.title} (${course.modules.length} modules)`);
+    courses.forEach((course) => {
+        console.log(
+            `      - ${course.title} (${course.modules.length} modules)`
+        );
     });
 };
 

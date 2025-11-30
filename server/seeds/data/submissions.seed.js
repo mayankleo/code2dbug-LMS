@@ -30,7 +30,7 @@ const getQuizzesAndTasks = (course) => {
                     id: quiz._id,
                     title: quiz.title,
                     moduleId: module._id,
-                    questionCount: quiz.questions?.length || 5
+                    questionCount: quiz.questions?.length || 5,
                 });
             });
         }
@@ -39,7 +39,7 @@ const getQuizzesAndTasks = (course) => {
                 tasks.push({
                     id: task._id,
                     title: task.title,
-                    moduleId: module._id
+                    moduleId: module._id,
                 });
             });
         }
@@ -73,12 +73,17 @@ export const seedSubmissions = async () => {
     for (const enrollment of enrollments) {
         // Get the actual quizzes and tasks from the course
         const { quizzes, tasks } = getQuizzesAndTasks(enrollment.course);
-        
+
         if (quizzes.length === 0 && tasks.length === 0) continue;
 
         // Create submissions for some quizzes (60-100% of available)
-        const quizSubmissionCount = Math.floor(quizzes.length * faker.number.float({ min: 0.6, max: 1 }));
-        const selectedQuizzes = faker.helpers.arrayElements(quizzes, quizSubmissionCount);
+        const quizSubmissionCount = Math.floor(
+            quizzes.length * faker.number.float({ min: 0.6, max: 1 })
+        );
+        const selectedQuizzes = faker.helpers.arrayElements(
+            quizzes,
+            quizSubmissionCount
+        );
 
         for (const quiz of selectedQuizzes) {
             const status = faker.helpers.arrayElement([
@@ -106,7 +111,8 @@ export const seedSubmissions = async () => {
             };
 
             // Quiz-specific fields
-            const totalQuestions = quiz.questionCount || faker.helpers.arrayElement([5, 10, 15]);
+            const totalQuestions =
+                quiz.questionCount || faker.helpers.arrayElement([5, 10, 15]);
             const scorePercentage = faker.number.float({
                 min: 0.4,
                 max: 1,
@@ -118,7 +124,8 @@ export const seedSubmissions = async () => {
 
             // Graded submissions have grade and feedback
             if (status === "graded") {
-                const percentage = (submission.quizScore / submission.totalQuestions) * 100;
+                const percentage =
+                    (submission.quizScore / submission.totalQuestions) * 100;
                 if (percentage >= 90)
                     submission.grade = faker.helpers.arrayElement(["A+", "A"]);
                 else if (percentage >= 80)
@@ -127,8 +134,7 @@ export const seedSubmissions = async () => {
                     submission.grade = faker.helpers.arrayElement(["B", "B-"]);
                 else if (percentage >= 60)
                     submission.grade = faker.helpers.arrayElement(["C+", "C"]);
-                else
-                    submission.grade = faker.helpers.arrayElement(["D", "F"]);
+                else submission.grade = faker.helpers.arrayElement(["D", "F"]);
 
                 submission.feedback = faker.helpers.maybe(
                     () => faker.helpers.arrayElement(feedbackMessages),
@@ -140,8 +146,13 @@ export const seedSubmissions = async () => {
         }
 
         // Create submissions for some tasks (50-100% of available)
-        const taskSubmissionCount = Math.floor(tasks.length * faker.number.float({ min: 0.5, max: 1 }));
-        const selectedTasks = faker.helpers.arrayElements(tasks, taskSubmissionCount);
+        const taskSubmissionCount = Math.floor(
+            tasks.length * faker.number.float({ min: 0.5, max: 1 })
+        );
+        const selectedTasks = faker.helpers.arrayElements(
+            tasks,
+            taskSubmissionCount
+        );
 
         for (const task of selectedTasks) {
             const status = faker.helpers.arrayElement([
@@ -183,7 +194,8 @@ export const seedSubmissions = async () => {
             // Graded submissions have grade and feedback
             if (status === "graded") {
                 submission.grade = faker.helpers.arrayElement(grades);
-                submission.feedback = faker.helpers.arrayElement(feedbackMessages);
+                submission.feedback =
+                    faker.helpers.arrayElement(feedbackMessages);
             }
 
             // Rejected submissions might have feedback
@@ -202,12 +214,18 @@ export const seedSubmissions = async () => {
     }
 
     await Submission.insertMany(submissions);
-    
-    const quizSubmissions = submissions.filter(s => s.type === "quiz").length;
-    const assignmentSubmissions = submissions.filter(s => s.type === "assignment").length;
-    const gradedSubmissions = submissions.filter(s => s.status === "graded").length;
-    
+
+    const quizSubmissions = submissions.filter((s) => s.type === "quiz").length;
+    const assignmentSubmissions = submissions.filter(
+        (s) => s.type === "assignment"
+    ).length;
+    const gradedSubmissions = submissions.filter(
+        (s) => s.status === "graded"
+    ).length;
+
     console.log(`✅ ${submissions.length} submissions seeded`);
-    console.log(`   📝 Quizzes: ${quizSubmissions}, Assignments: ${assignmentSubmissions}`);
+    console.log(
+        `   📝 Quizzes: ${quizSubmissions}, Assignments: ${assignmentSubmissions}`
+    );
     console.log(`   ✅ Graded: ${gradedSubmissions}`);
 };

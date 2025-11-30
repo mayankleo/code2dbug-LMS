@@ -17,17 +17,17 @@ export const getProfile = async (req, res) => {
         // Transform to include isOAuthUser flag
         const studentObj = student.toObject();
         const isOAuthUser = !!(studentObj.googleId || studentObj.githubId);
-        
+
         // Remove OAuth IDs from response
         delete studentObj.googleId;
         delete studentObj.githubId;
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             data: {
                 ...studentObj,
                 isOAuthUser,
-            }
+            },
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
