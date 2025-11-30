@@ -1,6 +1,6 @@
-import User from "../../models/User.js";
-import Course from "../../models/Course.js";
-import Enrollment from "../../models/Enrollment.js";
+import User from "../../models/user.js";
+import Course from "../../models/course.js";
+import Enrollment from "../../models/enrollment.js";
 import { markLessonCompleteSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
 

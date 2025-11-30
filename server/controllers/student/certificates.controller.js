@@ -1,6 +1,6 @@
-import Course from "../../models/Course.js";
-import Certificate from "../../models/Certificate.js";
-import Enrollment from "../../models/Enrollment.js";
+import Course from "../../models/course.js";
+import Certificate from "../../models/certificate.js";
+import Enrollment from "../../models/enrollment.js";
 
 /**
  * GET /api/student/certificates

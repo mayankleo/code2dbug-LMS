@@ -1,4 +1,4 @@
-import SupportQuery from "../../models/SupportQuery.js";
+import SupportQuery from "../../models/supportquery.js";
 import { createSupportQuerySchema } from "../../validation/student.zod.js";
 
 /**

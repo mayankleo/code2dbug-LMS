@@ -1,5 +1,5 @@
-import Course from "../../models/Course.js";
-import Enrollment from "../../models/Enrollment.js";
+import Course from "../../models/course.js";
+import Enrollment from "../../models/enrollment.js";
 
 /**
  * GET /api/student/courses

@@ -1,4 +1,4 @@
-import Leaderboard from "../../models/Leaderboard.js";
+import Leaderboard from "../../models/leaderboard.js";
 import { leaderboardQuerySchema } from "../../validation/student.zod.js";
 
 /**

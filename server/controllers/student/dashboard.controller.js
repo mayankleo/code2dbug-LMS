@@ -1,7 +1,7 @@
-import User from "../../models/User.js";
-import Enrollment from "../../models/Enrollment.js";
-import Certificate from "../../models/Certificate.js";
-import Submission from "../../models/Submission.js";
+import User from "../../models/user.js";
+import Enrollment from "../../models/enrollment.js";
+import Certificate from "../../models/certificate.js";
+import Submission from "../../models/submission.js";
 
 /**
  * GET /api/student/dashboard
