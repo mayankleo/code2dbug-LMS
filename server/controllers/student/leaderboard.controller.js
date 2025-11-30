@@ -1,6 +1,5 @@
-import Leaderboard from "../../models/leaderboard.js";
 import { leaderboardQuerySchema } from "../../validation/student.zod.js";
-
+import {Leaderboard} from "../../models/index.js";
 /**
  * GET /api/student/leaderboard
  * Get leaderboard

@@ -1,7 +1,4 @@
-import Course from "../../models/course.js";
-import Certificate from "../../models/certificate.js";
-import Enrollment from "../../models/enrollment.js";
-
+import {Certificate, Course, Enrollment} from "../../models/index.js";
 /**
  * GET /api/student/certificates
  * Get all student certificates

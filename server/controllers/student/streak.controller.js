@@ -1,5 +1,5 @@
-import User from "../../models/user.js";
 
+import {User} from "../../models/index.js";
 /**
  * POST /api/student/streak/update
  * Update daily streak (called on login or activity)

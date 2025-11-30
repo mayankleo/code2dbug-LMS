@@ -1,8 +1,4 @@
-import User from "../../models/user.js";
-import Enrollment from "../../models/enrollment.js";
-import Certificate from "../../models/certificate.js";
-import Submission from "../../models/submission.js";
-
+import {User, Certificate, Enrollment, Submission} from "../../models/index.js";
 /**
  * GET /api/student/dashboard
  * Get student dashboard data

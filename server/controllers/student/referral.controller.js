@@ -1,7 +1,5 @@
-import User from "../../models/user.js";
-import Referral from "../../models/referral.js";
 import { applyReferralCodeSchema } from "../../validation/student.zod.js";
-
+import {User, Referral} from "../../models/index.js";
 /**
  * GET /api/student/referral
  * Get referral info

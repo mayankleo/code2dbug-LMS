@@ -1,7 +1,4 @@
-import User from "../../models/user.js";
-import Course from "../../models/course.js";
-import Enrollment from "../../models/enrollment.js";
-import Submission from "../../models/submission.js";
+import {User, Course, Enrollment, Submission} from "../../models/index.js";
 import { submitAssignmentSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
 

@@ -1,9 +1,6 @@
-import User from "../../models/user.js";
-import Course from "../../models/course.js";
-import Enrollment from "../../models/enrollment.js";
 import { markLessonCompleteSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
-
+import {User, Course, Enrollment} from "../../models/index.js";
 /**
  * POST /api/student/lessons/complete
  * Mark lesson as complete
