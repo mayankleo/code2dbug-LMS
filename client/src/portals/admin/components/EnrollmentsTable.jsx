@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useId, useMemo, useState } from 'react';
-import { SearchIcon, MoreVertical } from 'lucide-react';
+import { SearchIcon, MoreVertical, Check, ChevronDown } from 'lucide-react';
 import {
   flexRender,
   getCoreRowModel,
@@ -17,13 +17,6 @@ import {
 import { Input } from '../../../common/components/ui/input';
 import { Label } from '../../../common/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../common/components/ui/select';
-import {
   Table,
   TableBody,
   TableCell,
@@ -38,17 +31,55 @@ import {
   DropdownMenuTrigger,
 } from '../../../common/components/ui/dropdown-menu';
 import { Button } from '../../../common/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '../../../common/components/ui/popover';
+import { Calendar } from '../../../common/components/ui/calendar';
+import { CalendarIcon } from 'lucide-react';
 
 import TablePagination from '@/common/components/TablePagination';
-// Line 57 - Change from RevokeSuccess to RevokeAccess
 import RevokeAccess from './RevokeAccess.jsx';
 import StudentDetail from './StudentDetail.jsx';
-
-// Line 58 - StudentDetail.jsx exists, so this should work
-
 import PasswordModal from './PasswordModal';
+import { cn } from '@/common/lib/utils';
 
-import { Toaster } from '@/common/components/ui/sonner';
+/**
+ * Formats a date object into a readable string format
+ * @param {Date} date - The date to format
+ * @returns {string} Formatted date string or empty string if invalid
+ */
+function formatDate(date) {
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Validates if a date object is valid
+ * @param {Date} date - The date to validate
+ * @returns {boolean} True if valid, false otherwise
+ */
+function isValidDate(date) {
+  if (!date) return false;
+  return !isNaN(date.getTime());
+}
+
+/**
+ * Normalizes a date string to a comparable format
+ * @param {string} dateStr - The date string to normalize
+ * @returns {string} Normalized date string
+ */
+function normalizeDateString(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+}
 
 const columns = [
   {
@@ -68,15 +99,21 @@ const columns = [
   {
     header: 'College',
     accessorKey: 'college',
-    meta: { filterVariant: 'select' },
+    meta: { filterVariant: 'dropdown' },
     cell: ({ row }) => <div className="text-zinc-200">{row.getValue('college')}</div>,
   },
   {
     header: 'Date',
     accessorKey: 'date',
-    meta: { filterVariant: 'range' },
+    meta: { filterVariant: 'date' },
     cell: ({ row }) => <div className="text-zinc-200">{row.getValue('date')}</div>,
     enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      const rowDate = normalizeDateString(row.getValue(columnId));
+      const filterDate = filterValue;
+      return rowDate === filterDate;
+    },
   },
   {
     accessorKey: 'email',
@@ -148,14 +185,25 @@ const enrollments = [
   },
 ];
 
+/**
+ * Filter component for table columns
+ * @param {Object} props - Component props
+ * @param {Object} props.column - TanStack Table column object
+ */
 function Filter({ column }) {
   const id = useId();
   const columnFilterValue = column.getFilterValue();
   const { filterVariant } = column.columnDef.meta || {};
   const columnHeader = typeof column.columnDef.header === 'string' ? column.columnDef.header : '';
 
+  // State for date picker
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(undefined);
+  const [displayMonth, setDisplayMonth] = useState(undefined);
+  const [dateValue, setDateValue] = useState('');
+
   const sortedUniqueValues = useMemo(() => {
-    if (filterVariant === 'range') return [];
+    if (filterVariant === 'date') return [];
     const values = Array.from(column.getFacetedUniqueValues().keys());
     const flattenedValues = values.reduce((acc, curr) => {
       if (Array.isArray(curr)) return [...acc, ...curr];
@@ -164,65 +212,123 @@ function Filter({ column }) {
     return Array.from(new Set(flattenedValues)).sort();
   }, [column.getFacetedUniqueValues(), filterVariant]);
 
-  if (filterVariant === 'range') {
+  // Date picker variant
+  if (filterVariant === 'date') {
     return (
       <div className="*:not-first:mt-2">
         <Label className="text-zinc-300">{columnHeader}</Label>
-        <div className="flex">
+        <div className="relative flex gap-2">
           <Input
-            id={`${id}-range-1`}
-            className="flex-1 rounded-r-none bg-zinc-800 text-zinc-200 border-zinc-700"
-            value={columnFilterValue?.[0] ?? ''}
-            onChange={e =>
-              column.setFilterValue(old => [e.target.value ? e.target.value : undefined, old?.[1]])
-            }
-            placeholder="Min"
-            type="text"
-            aria-label={`${columnHeader} min`}
+            id={`${id}-date`}
+            value={dateValue}
+            placeholder="Select Date"
+            className="bg-zinc-800 border-zinc-700 text-zinc-200 pr-10 min-w-[180px] placeholder:text-zinc-400"
+            onChange={e => {
+              const date = new Date(e.target.value);
+              setDateValue(e.target.value);
+              if (isValidDate(date)) {
+                setSelectedDate(date);
+                setDisplayMonth(date);
+                const formattedDate = formatDate(date);
+                column.setFilterValue(formattedDate);
+              } else if (e.target.value === '') {
+                setSelectedDate(undefined);
+                column.setFilterValue(undefined);
+              }
+            }}
+            onKeyDown={e => {
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setIsOpen(true);
+              }
+              if (e.key === 'Escape') {
+                setDateValue('');
+                setSelectedDate(undefined);
+                column.setFilterValue(undefined);
+              }
+            }}
           />
-          <Input
-            id={`${id}-range-2`}
-            className="-ms-px flex-1 rounded-l-none bg-zinc-800 text-zinc-200 border-zinc-700"
-            value={columnFilterValue?.[1] ?? ''}
-            onChange={e =>
-              column.setFilterValue(old => [old?.[0], e.target.value ? e.target.value : undefined])
-            }
-            placeholder="Max"
-            type="text"
-            aria-label={`${columnHeader} max`}
-          />
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                className="absolute top-1/2 right-2 size-6 -translate-y-1/2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700"
+              >
+                <CalendarIcon className="size-3.5 text-zinc-400" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-auto overflow-hidden p-0 border-zinc-800"
+              align="end"
+              alignOffset={-8}
+              sideOffset={10}
+            >
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                captionLayout="dropdown"
+                month={displayMonth}
+                onMonthChange={setDisplayMonth}
+                onSelect={date => {
+                  setSelectedDate(date);
+                  const formattedDate = formatDate(date);
+                  setDateValue(formattedDate);
+                  setIsOpen(false);
+                  column.setFilterValue(formattedDate);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     );
   }
 
-  if (filterVariant === 'select') {
+  // Dropdown variant with Clear Filter option
+  if (filterVariant === 'dropdown') {
     return (
       <div className="*:not-first:mt-2">
-        <Label htmlFor={`${id}-select`} className="text-zinc-300">
-          {columnHeader}
-        </Label>
-        <Select
-          value={columnFilterValue?.toString() ?? 'all'}
-          onValueChange={value => {
-            column.setFilterValue(value === 'all' ? undefined : value);
-          }}
-        >
-          <SelectTrigger
-            id={`${id}-select`}
-            className="w-full bg-zinc-800 text-zinc-200 border-zinc-700"
+        <Label className="text-zinc-300">{columnHeader}</Label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100"
+            >
+              <span
+                className={cn(columnFilterValue ? 'text-zinc-200' : 'text-zinc-400', 'truncate')}
+              >
+                {columnFilterValue ? String(columnFilterValue) : `Filter by ${columnHeader}`}
+              </span>
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="w-44 bg-zinc-800 border-zinc-700 max-h-[300px] overflow-y-auto"
           >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
             {sortedUniqueValues.map(value => (
-              <SelectItem key={String(value)} value={String(value)}>
+              <DropdownMenuItem
+                key={String(value)}
+                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                onClick={() => column.setFilterValue(value)}
+              >
                 {String(value)}
-              </SelectItem>
+              </DropdownMenuItem>
             ))}
-          </SelectContent>
-        </Select>
+            {columnFilterValue && (
+              <>
+                <div className="h-px bg-zinc-700 my-1" />
+                <DropdownMenuItem
+                  className="text-zinc-400 hover:bg-zinc-700 cursor-pointer"
+                  onClick={() => column.setFilterValue(undefined)}
+                >
+                  Clear Filter
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     );
   }
@@ -235,7 +341,7 @@ function Filter({ column }) {
       <div className="relative">
         <Input
           id={`${id}-input`}
-          className="peer pl-9 bg-zinc-800 text-zinc-200 border-zinc-700"
+          className="peer pl-9 bg-zinc-800 text-zinc-200 border-zinc-700 placeholder:text-zinc-400"
           value={columnFilterValue ?? ''}
           onChange={e => column.setFilterValue(e.target.value)}
           placeholder={`Search ${columnHeader.toLowerCase()}`}
@@ -251,6 +357,9 @@ function Filter({ column }) {
 
 const defaultPageSize = 5;
 
+/**
+ * EnrollmentsTable - Displays student enrollments with filtering and actions
+ */
 const EnrollmentsTable = () => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
@@ -268,18 +377,17 @@ const EnrollmentsTable = () => {
   // Handler functions
   const handleRevoke = student => {
     setSelectedStudent(student);
-    setShowPasswordModal(true); // Show password modal first
+    setShowPasswordModal(true);
   };
 
   const handlePasswordSubmit = password => {
-    // Verify password here (replace with your actual password verification logic)
-    const correctPassword = 'admin123'; // This should come from your backend
+    const correctPassword = 'admin123';
 
     if (password === correctPassword) {
       setShowPasswordModal(false);
-      setShowRevokeModal(true); // Open revoke modal after correct password
+      setShowRevokeModal(true);
     } else {
-      alert('Incorrect password!'); // Or show error message
+      alert('Incorrect password!');
     }
   };
 
@@ -331,7 +439,7 @@ const EnrollmentsTable = () => {
           <div className="w-44">
             <Filter column={table.getColumn('college')} />
           </div>
-          <div className="w-36">
+          <div className="w-44">
             <Filter column={table.getColumn('date')} />
           </div>
           <div className="w-44">
@@ -399,7 +507,7 @@ const EnrollmentsTable = () => {
         />
       )}
 
-      {/* Revoke Modal - Only shows after password verification */}
+      {/* Revoke Modal */}
       {showRevokeModal && (
         <RevokeAccess
           student={selectedStudent}
@@ -408,6 +516,7 @@ const EnrollmentsTable = () => {
         />
       )}
 
+      {/* Student Detail Modal */}
       {showDetailsModal && (
         <StudentDetail student={selectedStudent} onClose={() => setShowDetailsModal(false)} />
       )}
