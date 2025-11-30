@@ -1,17 +1,16 @@
-// models/user.model.js
+// models/student.model.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const userSchema = new mongoose.Schema(
+const studentSchema = new mongoose.Schema(
     {
         // BASIC AUTH
         email: { type: String, unique: true, lowercase: true, trim: true },
         googleId: { type: String, select: false },
         githubId: { type: String, select: false },
-        password: { type: String, select: false },
 
         // PROFILE
         name: { type: String, required: true, trim: true },
@@ -41,14 +40,7 @@ const userSchema = new mongoose.Schema(
         quizzesCompleted: { type: Number, default: 0 },
         assignmentsCompleted: { type: Number, default: 0 },
 
-        // ROLES & ACCOUNT STATE
-        role: {
-            type: String,
-            enum: ["student", "admin"],
-            default: "student",
-            index: true,
-        },
-
+        //ACCOUNT STATE
         courses: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -81,14 +73,10 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-userSchema.plugin(aggregatePaginate);
+studentSchema.plugin(aggregatePaginate);
 
 // Password hashing middleware
-userSchema.pre("save", async function (next) {
-    if (this.isModified("password") && this.password) {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-    }
+studentSchema.pre("save", async function (next) {
     if (this.isModified("lmsPassword") && this.lmsPassword) {
         const salt = await bcrypt.genSalt(10);
         this.lmsPassword = await bcrypt.hash(this.lmsPassword, salt);
@@ -96,15 +84,11 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-userSchema.methods.matchPassword = function (enteredPassword) {
-    return bcrypt.compare(enteredPassword, this.password);
-};
-
-userSchema.methods.matchLmsPassword = function (enteredPassword) {
+studentSchema.methods.matchLmsPassword = function (enteredPassword) {
     return bcrypt.compare(enteredPassword, this.lmsPassword);
 };
 
-userSchema.methods.matchResetPasswordToken = function (plainToken) {
+studentSchema.methods.matchResetPasswordToken = function (plainToken) {
     const hashedToken = crypto
         .createHash("sha256")
         .update(plainToken)
@@ -116,7 +100,7 @@ userSchema.methods.matchResetPasswordToken = function (plainToken) {
     );
 };
 
-userSchema.methods.createResetPasswordToken = function () {
+studentSchema.methods.createResetPasswordToken = function () {
     const rawToken = crypto.randomBytes(20).toString("hex");
     this.resetPasswordToken = crypto
         .createHash("sha256")
@@ -126,12 +110,12 @@ userSchema.methods.createResetPasswordToken = function () {
     return rawToken;
 };
 
-userSchema.methods.generateAccessToken = function () {
+studentSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             id: this._id,
             email: this.email,
-            role: this.role,
+            role: "student",
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -140,10 +124,11 @@ userSchema.methods.generateAccessToken = function () {
     );
 };
 
-userSchema.methods.generateRefreshToken = function () {
+studentSchema.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
             id: this._id,
+            role: "student",
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -152,7 +137,7 @@ userSchema.methods.generateRefreshToken = function () {
     );
 };
 
-userSchema.pre("validate", function (next) {
+studentSchema.pre("validate", function (next) {
     if (!this.myReferralCode && this.name) {
         const prefix = this.name
             .replace(/[^A-Za-z]/g, "")
@@ -164,4 +149,4 @@ userSchema.pre("validate", function (next) {
     next();
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Student", studentSchema);

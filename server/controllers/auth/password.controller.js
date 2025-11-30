@@ -1,26 +1,17 @@
 import crypto from "crypto";
-import { User, RefreshToken } from "../../models/index.js";
+import { Admin, RefreshToken } from "../../models/index.js";
 
 /**
- * Initiates password reset process by generating a secure reset token.
- * Returns generic success message regardless of whether email exists to prevent email enumeration attacks.
- *
- * @async
- * @function forgotPassword
- * @param {Object} req - Express request object
- * @param {Object} req.validatedData - Validated request data from middleware
- * @param {string} req.validatedData.email - User's email address
- * @param {Object} res - Express response object
- * @returns {Promise<void>} JSON response with generic success message
+ * Initiates password reset process for admin by generating a secure reset token.
  */
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.validatedData;
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const admin = await Admin.findOne({ email: email.toLowerCase() });
 
     // Always return success to prevent email enumeration
-    if (!user) {
+    if (!admin) {
       return res.json({
         success: true,
         message: "If an account exists with this email, you will receive a password reset link",
@@ -28,12 +19,12 @@ export const forgotPassword = async (req, res) => {
     }
 
     // Generate reset token
-    const resetToken = user.createResetPasswordToken();
-    await user.save();
+    const resetToken = admin.createResetPasswordToken();
+    await admin.save();
 
     // TODO: Send email with reset link
     // const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
-    // await sendEmail({ to: user.email, subject: 'Password Reset', ... });
+    // await sendEmail({ to: admin.email, subject: 'Password Reset', ... });
 
     res.json({
       success: true,
@@ -51,17 +42,7 @@ export const forgotPassword = async (req, res) => {
 };
 
 /**
- * Resets user password using a valid reset token from forgot password flow.
- * Validates token, updates password, and revokes all existing refresh tokens for security.
- *
- * @async
- * @function resetPassword
- * @param {Object} req - Express request object
- * @param {Object} req.validatedData - Validated request data from middleware
- * @param {string} req.validatedData.token - Password reset token from email link
- * @param {string} req.validatedData.password - New password (will be hashed before saving)
- * @param {Object} res - Express response object
- * @returns {Promise<void>} JSON response confirming password reset
+ * Resets admin password using a valid reset token from forgot password flow.
  */
 export const resetPassword = async (req, res) => {
   try {
@@ -70,12 +51,12 @@ export const resetPassword = async (req, res) => {
     // Hash token to query database
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    // Find user and select reset fields
-    const user = await User.findOne({
+    // Find admin and select reset fields
+    const admin = await Admin.findOne({
       resetPasswordToken: hashedToken,
     }).select("+resetPasswordToken +resetPasswordExpire");
 
-    if (!user || !user.matchResetPasswordToken(token)) {
+    if (!admin || !admin.matchResetPasswordToken(token)) {
       return res.status(400).json({
         success: false,
         message: "Invalid or expired reset token",
@@ -83,13 +64,13 @@ export const resetPassword = async (req, res) => {
     }
 
     // Update password
-    user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save();
+    admin.password = password;
+    admin.resetPasswordToken = undefined;
+    admin.resetPasswordExpire = undefined;
+    await admin.save();
 
     // Revoke all existing refresh tokens
-    await RefreshToken.revokeAllUserTokens(user._id);
+    await RefreshToken.revokeAllUserTokens(admin._id);
 
     res.json({
       success: true,

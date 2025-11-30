@@ -1,4 +1,4 @@
-import {User} from "../../models/index.js";
+import {Student} from "../../models/index.js";
 import {
   updateProfileSchema,
   updateAvatarSchema,
@@ -10,11 +10,11 @@ import {
  */
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select(
-      "-password -lmsPassword -resetPasswordToken -resetPasswordExpire -googleId -githubId"
+    const student = await Student.findById(req.userId).select(
+      "-lmsPassword -resetPasswordToken -resetPasswordExpire -googleId -githubId"
     );
 
-    res.json({ success: true, data: user });
+    res.json({ success: true, data: student });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -34,13 +34,13 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(
+    const student = await Student.findByIdAndUpdate(
       req.userId,
       { $set: validation.data },
       { new: true, runValidators: true }
-    ).select("-password -lmsPassword -resetPasswordToken -resetPasswordExpire");
+    ).select("-lmsPassword -resetPasswordToken -resetPasswordExpire");
 
-    res.json({ success: true, data: user, message: "Profile updated successfully" });
+    res.json({ success: true, data: student, message: "Profile updated successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -60,13 +60,13 @@ export const updateAvatar = async (req, res) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(
+    const student = await Student.findByIdAndUpdate(
       req.userId,
       { avatar: validation.data.avatar },
       { new: true }
     ).select("avatar");
 
-    res.json({ success: true, data: user, message: "Avatar updated successfully" });
+    res.json({ success: true, data: student, message: "Avatar updated successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

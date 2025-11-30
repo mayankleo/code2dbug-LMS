@@ -1,6 +1,6 @@
 import { submitQuizSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
-import {User, Course, Enrollment, Submission} from "../../models/index.js";
+import {Student, Course, Enrollment, Submission} from "../../models/index.js";
 /**
  * GET /api/student/quizzes
  * Get all courses with quiz progress
@@ -256,7 +256,7 @@ export const submitQuiz = async (req, res) => {
     );
 
     // Update user stats
-    await User.findByIdAndUpdate(req.userId, {
+    await Student.findByIdAndUpdate(req.userId, {
       $inc: { xp: score * 10, quizzesCompleted: 1 },
     });
 

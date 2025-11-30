@@ -1,12 +1,12 @@
 import { applyReferralCodeSchema } from "../../validation/student.zod.js";
-import {User, Referral} from "../../models/index.js";
+import {Student, Referral} from "../../models/index.js";
 /**
  * GET /api/student/referral
  * Get referral info
  */
 export const getReferralInfo = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select(
+    const student = await Student.findById(req.userId).select(
       "myReferralCode referralCount isPremiumUnlocked"
     );
 
@@ -17,9 +17,9 @@ export const getReferralInfo = async (req, res) => {
     res.json({
       success: true,
       data: {
-        referralCode: user.myReferralCode,
-        referralCount: user.referralCount,
-        isPremiumUnlocked: user.isPremiumUnlocked,
+        referralCode: student.myReferralCode,
+        referralCount: student.referralCount,
+        isPremiumUnlocked: student.isPremiumUnlocked,
         referrals: referrals.map((r) => ({
           name: r.referee.name,
           joinedAt: r.referee.createdAt,
@@ -47,10 +47,10 @@ export const applyReferralCode = async (req, res) => {
     }
 
     const { referralCode } = validation.data;
-    const user = await User.findById(req.userId);
+    const student = await Student.findById(req.userId);
 
-    // Check if user already used a referral code
-    if (user.referredBy) {
+    // Check if student already used a referral code
+    if (student.referredBy) {
       return res.status(400).json({
         success: false,
         message: "You have already used a referral code",
@@ -58,7 +58,7 @@ export const applyReferralCode = async (req, res) => {
     }
 
     // Find referrer
-    const referrer = await User.findOne({ myReferralCode: referralCode });
+    const referrer = await Student.findOne({ myReferralCode: referralCode });
     if (!referrer) {
       return res.status(404).json({
         success: false,
@@ -81,9 +81,9 @@ export const applyReferralCode = async (req, res) => {
       referralCode,
     });
 
-    // Update user
-    user.referredBy = referralCode;
-    await user.save();
+    // Update student
+    student.referredBy = referralCode;
+    await student.save();
 
     // Update referrer's count
     referrer.referralCount += 1;
@@ -93,8 +93,8 @@ export const applyReferralCode = async (req, res) => {
     await referrer.save();
 
     // Unlock benefits for referee
-    user.isPremiumUnlocked = true;
-    await user.save();
+    student.isPremiumUnlocked = true;
+    await student.save();
 
     res.json({
       success: true,

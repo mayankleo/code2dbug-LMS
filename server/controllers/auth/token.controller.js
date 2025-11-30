@@ -112,7 +112,7 @@ export const refreshAccessToken = async (req, res) => {
     const accessToken = user.generateAccessToken();
 
     // Save new refresh token (same family for chain tracking)
-    await RefreshToken.saveRefreshToken(user._id, newRefreshToken, req, tokenDoc.family);
+    await RefreshToken.saveRefreshToken(user._id, newRefreshToken, req, tokenDoc.userModel, tokenDoc.family);
 
     // Set new tokens in httpOnly cookies
     setAuthCookies(res, accessToken, newRefreshToken);

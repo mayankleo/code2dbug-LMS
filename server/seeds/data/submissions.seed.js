@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Submission, User, Course, Enrollment } from "../../models/index.js";
+import { Submission, Student, Course, Enrollment } from "../../models/index.js";
 
 // Sample lesson IDs (you can adjust based on your actual Course structure)
 const generateLessonId = () => faker.database.mongodbObjectId();
@@ -23,8 +23,7 @@ const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "D", "F"];
 
 export const seedSubmissions = async () => {
     // Get all students, courses, and enrollments
-    const students = await User.find({
-        role: "student",
+    const students = await Student.find({
         accountStatus: "verified",
     }).limit(30);
     const courses = await Course.find();

@@ -1,4 +1,4 @@
-import {User, Certificate, Enrollment, Submission} from "../../models/index.js";
+import {Student, Certificate, Enrollment, Submission} from "../../models/index.js";
 /**
  * GET /api/student/dashboard
  * Get student dashboard data
@@ -8,14 +8,14 @@ export const getDashboard = async (req, res) => {
     const userId = req.userId;
 
     // Get user with gamification stats
-    const user = await User.findById(userId).select(
+    const student = await Student.findById(userId).select(
       "name xp streak hoursLearned quizzesCompleted assignmentsCompleted"
     );
 
-    if (!user) {
+    if (!student) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Student not found",
       });
     }
 
@@ -79,11 +79,11 @@ export const getDashboard = async (req, res) => {
       data: {
         stats: {
           enrolledCourses,
-          hoursLearned: user.hoursLearned || 0,
+          hoursLearned: student.hoursLearned || 0,
           avgQuizScore,
           certificates: certificatesCount,
         },
-        xp: user.xp || 0,
+        xp: student.xp || 0,
         activeCourse: activeEnrollment
           ? {
               id: activeEnrollment.course._id,

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Course, User } from "../../models/index.js";
+import { Course, Admin } from "../../models/index.js";
 
 // Streams and their related tags
 const streams = {
@@ -826,7 +826,7 @@ const additionalCourseTitles = {
 
 export const seedCourses = async () => {
     // Get admin users to assign as instructors
-    const admins = await User.find({ role: "admin" });
+    const admins = await Admin.find();
 
     if (admins.length === 0) {
         console.log(

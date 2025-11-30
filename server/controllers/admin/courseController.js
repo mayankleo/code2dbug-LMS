@@ -1,4 +1,4 @@
-import { Course, User } from "../../models/index.js";
+import { Course, Admin } from "../../models/index.js";
 import multer from "multer";
 import path from "path";
 
@@ -52,7 +52,7 @@ export const getAllCourses = async (req, res) => {
             // Stage 2: Lookup instructor details
             {
                 $lookup: {
-                    from: "users",
+                    from: "admins",
                     localField: "instructor",
                     foreignField: "_id",
                     as: "instructorDetails",

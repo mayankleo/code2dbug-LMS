@@ -106,7 +106,7 @@ const courseSchema = new mongoose.Schema(
         tags: [{ type: String }],
         difficultyIndex: { type: Number, default: 1, min: 0, max: 5 },
 
-        instructor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        instructor: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
     },
     { timestamps: true }
 );

@@ -1,9 +1,8 @@
 import { faker } from "@faker-js/faker";
-import { Leaderboard, User, Course, Enrollment } from "../../models/index.js";
+import { Leaderboard, Student, Course, Enrollment } from "../../models/index.js";
 
 export const seedLeaderboard = async () => {
-    const students = await User.find({
-        role: "student",
+    const students = await Student.find({
         accountStatus: "verified",
     });
     const courses = await Course.find();
@@ -16,7 +15,7 @@ export const seedLeaderboard = async () => {
     const leaderboardEntries = [];
 
     // ==================== GLOBAL LEADERBOARD ====================
-    // Use student's XP from User model as the global score
+    // Use student's XP from Student model as the global score
     const globalEntries = students.map((student) => ({
         student: student._id,
         score: student.xp || faker.number.int({ min: 0, max: 5000 }),

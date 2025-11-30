@@ -1,4 +1,4 @@
-import {User, Course, Enrollment, Submission} from "../../models/index.js";
+import {Student, Course, Enrollment, Submission} from "../../models/index.js";
 import { submitAssignmentSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
 
@@ -156,7 +156,7 @@ export const submitAssignment = async (req, res) => {
     );
 
     // Update user stats
-    await User.findByIdAndUpdate(req.userId, {
+    await Student.findByIdAndUpdate(req.userId, {
       $inc: { xp: 50, assignmentsCompleted: 1 },
     });
 

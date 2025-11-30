@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Enrollment, User, Course } from "../../models/index.js";
+import { Enrollment, Student, Course } from "../../models/index.js";
 
 // Sample colleges and courses (reuse from users seed)
 const colleges = [
@@ -45,7 +45,7 @@ const generateLessonIds = (count) => {
 };
 
 export const seedEnrollments = async () => {
-    const students = await User.find({ role: "student" }).limit(40);
+    const students = await Student.find().limit(40);
     const courses = await Course.find();
 
     if (students.length === 0 || courses.length === 0) {

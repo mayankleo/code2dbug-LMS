@@ -22,7 +22,7 @@ export const handleOAuthCallback = async (req, res) => {
     const refreshToken = user.generateRefreshToken();
 
     // Save refresh token to DB
-    await RefreshToken.saveRefreshToken(user._id, refreshToken, req);
+    await RefreshToken.saveRefreshToken(user._id, refreshToken, req, "Student");
 
     // Update last login
     user.lastLogin = new Date();

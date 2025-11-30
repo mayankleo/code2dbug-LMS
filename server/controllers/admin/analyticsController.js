@@ -1,5 +1,5 @@
 import {
-    User,
+    Student,
     Course,
     Enrollment,
     Certificate,
@@ -41,7 +41,7 @@ export const getDashboardStats = async (req, res) => {
         };
 
         // Total users count
-        const totalUsers = await User.countDocuments(dateFilter);
+        const totalUsers = await Student.countDocuments(dateFilter);
 
         // Active courses (published/active status)
         const activeCourses = await Course.countDocuments({
@@ -142,7 +142,7 @@ export const getDashboardStats = async (req, res) => {
         };
 
         // Previous period metrics
-        const prevUsers = await User.countDocuments(previousDateFilter);
+        const prevUsers = await Student.countDocuments(previousDateFilter);
         const prevCourses = await Course.countDocuments({
             status: "published",
             ...previousDateFilter,
@@ -508,7 +508,7 @@ export const getStudentGrowth = async (req, res) => {
             : new Date(new Date().getFullYear(), 0, 1);
         const end = endDate ? new Date(endDate) : new Date();
 
-        const growthData = await User.aggregate([
+        const growthData = await Student.aggregate([
             {
                 $match: {
                     createdAt: { $gte: start, $lte: end },
@@ -527,7 +527,7 @@ export const getStudentGrowth = async (req, res) => {
         ]);
 
         // Get initial count before start date
-        const initialCount = await User.countDocuments({
+        const initialCount = await Student.countDocuments({
             createdAt: { $lt: start },
         });
 
@@ -1356,7 +1356,7 @@ export const getTopLeaderboard = async (req, res) => {
             { $limit: limit },
             {
                 $lookup: {
-                    from: "users",
+                    from: "students",
                     localField: "_id",
                     foreignField: "_id",
                     as: "userInfo",
@@ -1445,7 +1445,7 @@ export const getRecentCertifications = async (req, res) => {
             { $limit: limit },
             {
                 $lookup: {
-                    from: "users",
+                    from: "students",
                     localField: "user",
                     foreignField: "_id",
                     as: "userInfo",

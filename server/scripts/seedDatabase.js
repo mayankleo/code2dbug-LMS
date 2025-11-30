@@ -5,7 +5,8 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcryptjs";
 
 // Models
-import User from "../models/User.js";
+import Student from "../models/student.js";
+import Admin from "../models/admin.js";
 import Course from "../models/Course.js";
 import Enrollment from "../models/Enrollment.js";
 import Certificate from "../models/Certificate.js";

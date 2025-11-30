@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/index.js";
+import { Student, Admin } from "../models/index.js";
 import errorHandler from "../utils/errorHandler.js";
 
 export const isAuthenticated = async (req, res, next) => {
@@ -25,11 +25,15 @@ export const isAuthenticated = async (req, res, next) => {
                 throw new errorHandler(401, "Token verification failed");
             }
 
-            const { id } = decoded;
+            const { id, role } = decoded;
 
-            const user = await User.findById(id).select(
-                "-password -refreshToken"
-            );
+            let user;
+            if (role === "admin") {
+                user = await Admin.findById(id).select("-password -refreshToken");
+            } else {
+                user = await Student.findById(id).select("-lmsPassword -refreshToken");
+            }
+
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -38,7 +42,7 @@ export const isAuthenticated = async (req, res, next) => {
                 });
             }
 
-            // Check if user is blocked
+            // Check if user is blocked (for students)
             if (user.accountStatus === "blocked") {
                 return res.status(403).json({
                     success: false,
@@ -50,7 +54,7 @@ export const isAuthenticated = async (req, res, next) => {
 
             req.user = user;
             req.userId = user._id;
-            req.userRole = user.role;
+            req.userRole = role || "student";
             next();
         });
     } catch (error) {
@@ -109,11 +113,18 @@ export const optionalAuth = async (req, res, next) => {
                 return next();
             }
 
-            const user = await User.findById(decoded.id);
+            const { role } = decoded;
+            let user;
+            if (role === "admin") {
+                user = await Admin.findById(decoded.id);
+            } else {
+                user = await Student.findById(decoded.id);
+            }
+
             if (user && user.accountStatus !== "blocked") {
                 req.user = user;
                 req.userId = user._id;
-                req.userRole = user.role;
+                req.userRole = role || "student";
             } else {
                 req.user = null;
                 req.userId = null;

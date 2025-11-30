@@ -49,17 +49,31 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
 };
 
 /**
- * Formats user data for API response
- * @param {Object} user - User document from database
- * @returns {Object} Formatted user object
+ * Formats admin data for API response
+ * @param {Object} admin - Admin document from database
+ * @returns {Object} Formatted admin object
  */
-export const formatUserResponse = (user) => ({
-  id: user._id,
-  email: user.email,
-  name: user.name,
-  lastName: user.lastName,
-  lmsId: user.lmsId,
-  role: user.role,
-  accountStatus: user.accountStatus,
-  avatar: user.avatar,
+export const formatUserResponse = (admin) => ({
+  id: admin._id,
+  email: admin.email,
+  name: admin.name,
+  lastName: admin.lastName,
+  role: "admin",
+  avatar: admin.avatar,
+});
+
+/**
+ * Formats student data for API response
+ * @param {Object} student - Student document from database
+ * @returns {Object} Formatted student object
+ */
+export const formatStudentResponse = (student) => ({
+  id: student._id,
+  email: student.email,
+  name: student.name,
+  lastName: student.lastName,
+  lmsId: student.lmsId,
+  role: "student",
+  accountStatus: student.accountStatus,
+  avatar: student.avatar,
 });

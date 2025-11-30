@@ -1,6 +1,6 @@
 import { markLessonCompleteSchema } from "../../validation/student.zod.js";
 import { updateLeaderboard } from "./leaderboard.controller.js";
-import {User, Course, Enrollment} from "../../models/index.js";
+import {Student, Course, Enrollment} from "../../models/index.js";
 /**
  * POST /api/student/lessons/complete
  * Mark lesson as complete
@@ -54,7 +54,7 @@ export const markLessonComplete = async (req, res) => {
       await enrollment.save();
 
       // Update user XP and hours
-      await User.findByIdAndUpdate(req.userId, {
+      await Student.findByIdAndUpdate(req.userId, {
         $inc: { xp: 20, hoursLearned: 0.5 },
       });
 

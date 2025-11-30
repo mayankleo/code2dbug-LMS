@@ -1,5 +1,5 @@
 
-import {User} from "../../models/index.js";
+import {Student} from "../../models/index.js";
 import {
   updatePrivacySchema,
   changePasswordSchema,
@@ -19,13 +19,13 @@ export const updatePrivacy = async (req, res) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(
+    const student = await Student.findByIdAndUpdate(
       req.userId,
       { isProfileLocked: validation.data.isProfileLocked },
       { new: true }
     ).select("isProfileLocked");
 
-    res.json({ success: true, data: user, message: "Privacy settings updated" });
+    res.json({ success: true, data: student, message: "Privacy settings updated" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -45,16 +45,16 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const user = await User.findById(req.userId).select("+password");
+    const student = await Student.findById(req.userId).select("+lmsPassword");
 
-    if (!user.password) {
+    if (!student.lmsPassword) {
       return res.status(400).json({
         success: false,
         message: "Password change not available for OAuth users",
       });
     }
 
-    const isMatch = await user.matchPassword(validation.data.currentPassword);
+    const isMatch = await student.matchLmsPassword(validation.data.currentPassword);
     if (!isMatch) {
       return res.status(400).json({
         success: false,
@@ -62,8 +62,8 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    user.password = validation.data.newPassword;
-    await user.save();
+    student.lmsPassword = validation.data.newPassword;
+    await student.save();
 
     res.json({ success: true, message: "Password changed successfully" });
   } catch (error) {

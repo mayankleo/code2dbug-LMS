@@ -4,7 +4,7 @@ const supportQuerySchema = new mongoose.Schema(
   {
     student: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Student",
       required: true,
     },
 
@@ -31,7 +31,7 @@ const supportQuerySchema = new mongoose.Schema(
     },
 
     adminResponse: { type: String },
-    respondedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    respondedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
     respondedAt: { type: Date },
 
     resolvedAt: { type: Date },

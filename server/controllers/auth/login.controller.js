@@ -1,43 +1,33 @@
-import { User, RefreshToken } from "../../models/index.js";
-import { setAuthCookies, formatUserResponse } from "./utils.js";
+import { Student, Admin, RefreshToken } from "../../models/index.js";
+import { setAuthCookies, formatUserResponse, formatStudentResponse } from "./utils.js";
 
 /**
- * Authenticates a user with email and password credentials.
- * Validates credentials, checks account status, generates JWT tokens, and sets secure HTTP-only cookies.
- *
- * @async
- * @function login
- * @param {Object} req - Express request object
- * @param {Object} req.validatedData - Validated request data from middleware
- * @param {string} req.validatedData.email - User's email address
- * @param {string} req.validatedData.password - User's password
- * @param {Object} res - Express response object
- * @returns {Promise<void>} JSON response with authentication result
+ * Authenticates an admin with email and password credentials.
  */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.validatedData;
 
-    // Find user with password field
-    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
+    // Find admin with password field
+    const admin = await Admin.findOne({ email: email.toLowerCase() }).select("+password");
 
-    if (!user) {
+    if (!admin) {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
       });
     }
 
-    // Check if user has a password (OAuth users might not)
-    if (!user.password) {
+    // Check if admin has a password
+    if (!admin.password) {
       return res.status(401).json({
         success: false,
-        message: "Please login using Google or GitHub",
+        message: "Password not set for this account",
       });
     }
 
     // Verify password
-    const isPasswordValid = await user.matchPassword(password);
+    const isPasswordValid = await admin.matchPassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -45,24 +35,16 @@ export const login = async (req, res) => {
       });
     }
 
-    // Check account status
-    if (user.accountStatus === "blocked") {
-      return res.status(403).json({
-        success: false,
-        message: "Your account has been blocked. Please contact support.",
-      });
-    }
-
     // Generate tokens
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const accessToken = admin.generateAccessToken();
+    const refreshToken = admin.generateRefreshToken();
 
     // Save refresh token to DB
-    await RefreshToken.saveRefreshToken(user._id, refreshToken, req);
+    await RefreshToken.saveRefreshToken(admin._id, refreshToken, req, "Admin");
 
     // Update last login
-    user.lastLogin = new Date();
-    await user.save();
+    admin.lastLogin = new Date();
+    await admin.save();
 
     // Set tokens in httpOnly cookies
     setAuthCookies(res, accessToken, refreshToken);
@@ -71,7 +53,7 @@ export const login = async (req, res) => {
       success: true,
       message: "Login successful",
       data: {
-        user: formatUserResponse(user),
+        user: formatUserResponse(admin),
       },
     });
   } catch (error) {
@@ -86,24 +68,14 @@ export const login = async (req, res) => {
 
 /**
  * Authenticates students using Learning Management System (LMS) issued credentials.
- * Validates LMS ID and password, checks account status, generates tokens, and sets secure cookies.
- *
- * @async
- * @function lmsLogin
- * @param {Object} req - Express request object
- * @param {Object} req.validatedData - Validated request data from middleware
- * @param {string} req.validatedData.lmsId - Student's LMS ID
- * @param {string} req.validatedData.lmsPassword - Student's LMS password
- * @param {Object} res - Express response object
- * @returns {Promise<void>} JSON response with authentication result and tokens
  */
 export const lmsLogin = async (req, res) => {
   try {
     const { lmsId, lmsPassword } = req.validatedData;
 
-    // Find user by LMS ID
-    const user = await User.findOne({ lmsId }).select("+lmsPassword");
-    if (!user) {
+    // Find student by LMS ID
+    const student = await Student.findOne({ lmsId }).select("+lmsPassword");
+    if (!student) {
       return res.status(401).json({
         success: false,
         message: "Invalid LMS ID or password",
@@ -111,7 +83,7 @@ export const lmsLogin = async (req, res) => {
     }
 
     // Verify LMS password
-    const isPasswordValid = await user.matchLmsPassword(lmsPassword);
+    const isPasswordValid = await student.matchLmsPassword(lmsPassword);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -120,7 +92,7 @@ export const lmsLogin = async (req, res) => {
     }
 
     // Check account status
-    if (user.accountStatus === "blocked") {
+    if (student.accountStatus === "blocked") {
       return res.status(403).json({
         success: false,
         message: "Your account has been blocked. Please contact support.",
@@ -128,15 +100,15 @@ export const lmsLogin = async (req, res) => {
     }
 
     // Generate tokens
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const accessToken = student.generateAccessToken();
+    const refreshToken = student.generateRefreshToken();
 
     // Save refresh token to DB
-    await RefreshToken.saveRefreshToken(user._id, refreshToken, req);
+    await RefreshToken.saveRefreshToken(student._id, refreshToken, req, "Student");
 
     // Update last login
-    user.lastLogin = new Date();
-    await user.save();
+    student.lastLogin = new Date();
+    await student.save();
 
     // Set tokens in httpOnly cookies
     setAuthCookies(res, accessToken, refreshToken);
@@ -145,7 +117,7 @@ export const lmsLogin = async (req, res) => {
       success: true,
       message: "LMS Login successful",
       data: {
-        user: formatUserResponse(user),
+        user: formatStudentResponse(student),
         accessToken,
         refreshToken,
         expiresIn: 15 * 60,
