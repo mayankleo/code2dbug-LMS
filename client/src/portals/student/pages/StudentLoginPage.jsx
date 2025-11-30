@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Github, GraduationCap, Loader2, Eye, EyeOff, BookOpen } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { Loader2, Eye, EyeOff, BookOpen } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import authService from '@/services/global/authService';
-
 import { useNavigateWithRedux } from '@/common/hooks/useNavigateWithRedux';
-import { login } from '@/redux/slices';
+import { login, selectIsAuthenticated } from '@/redux/slices';
 
 const StudentLoginPage = () => {
   const navigate = useNavigateWithRedux();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/student/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
