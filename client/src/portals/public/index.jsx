@@ -25,6 +25,7 @@ import EnrollmentPayment from './components/UpdatedPaymentPage.jsx';
 import Github from './pages/VersionControlWithGit.jsx';
 
 import PageNotFound from '@/common/pages/PageNotFound.jsx';
+import AuthSuccess from './pages/AuthSuccess.jsx';
 
 const PublicPortal = () => {
   return (
@@ -53,7 +54,7 @@ const PublicPortal = () => {
           <Route path="/github" element={<Github />} />
           <Route path="/enroll" element={<EnrollmentDetails />} />
           <Route path="/enroll/payment" element={<EnrollmentPayment />} />
-          <Route path="/auth-success" element={<authSuccess />} />
+          <Route path="/auth-success" element={<AuthSuccess />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
