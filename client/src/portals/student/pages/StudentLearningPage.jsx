@@ -15,6 +15,7 @@ import {
   ExternalLink,
   BookOpen,
   Video,
+  Lock,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -256,23 +257,34 @@ const StudentLearningPage = () => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {course.modules?.map((module, moduleIndex) => {
             const moduleId = module._id || module.id;
-            const moduleProgress = progress?.moduleProgress?.find(
-              mp => mp.moduleId?.toString() === moduleId?.toString(),
-            );
-            const isModuleCompleted = moduleProgress?.progressPercentage === 100;
+            const isLocked = module.isLocked;
+            const isModuleCompleted = module.isCompleted;
 
             return (
               <div
                 key={moduleId}
-                className="border rounded-xl overflow-hidden transition-all border-zinc-700 bg-black/20"
+                className={`border rounded-xl overflow-hidden transition-all ${
+                  isLocked
+                    ? 'border-zinc-800 bg-zinc-900/30 opacity-60'
+                    : isModuleCompleted
+                      ? 'border-green-500/30 bg-green-900/10'
+                      : 'border-zinc-700 bg-black/20'
+                }`}
               >
                 {/* Module Header */}
                 <button
-                  onClick={() => setActiveModule(activeModule === moduleId ? null : moduleId)}
-                  className="w-full p-4 flex items-center justify-between text-left hover:bg-zinc-800/50 transition-colors"
+                  onClick={() =>
+                    !isLocked && setActiveModule(activeModule === moduleId ? null : moduleId)
+                  }
+                  disabled={isLocked}
+                  className={`w-full p-4 flex items-center justify-between text-left transition-colors ${
+                    isLocked ? 'cursor-not-allowed' : 'hover:bg-zinc-800/50'
+                  }`}
                 >
                   <div className="flex items-center gap-3">
-                    {isModuleCompleted ? (
+                    {isLocked ? (
+                      <Lock size={16} className="text-zinc-500" />
+                    ) : isModuleCompleted ? (
                       <CheckCircle size={16} className="text-green-500" />
                     ) : (
                       <div className="w-4 h-4 rounded-full border-2 border-blue-500 flex items-center justify-center text-xs">
@@ -280,19 +292,38 @@ const StudentLearningPage = () => {
                       </div>
                     )}
                     <div>
-                      <span className="font-bold text-sm text-white block">{module.title}</span>
-                      {module.maxTimelineInDays && (
-                        <span className="text-xs text-zinc-500">
-                          {module.maxTimelineInDays} days
-                        </span>
-                      )}
+                      <span
+                        className={`font-bold text-sm block ${isLocked ? 'text-zinc-500' : 'text-white'}`}
+                      >
+                        {module.title}
+                      </span>
+                      <div className="flex items-center gap-2 text-xs text-zinc-500">
+                        {module.maxTimelineInDays && <span>{module.maxTimelineInDays} days</span>}
+                        {isLocked && (
+                          <span className="text-yellow-500">
+                            • Complete previous module to unlock
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {activeModule === moduleId ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  {!isLocked &&
+                    (activeModule === moduleId ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    ))}
+                  {isLocked && (
+                    <div className="flex items-center gap-2 text-xs text-zinc-500">
+                      <span>{module.quizzesCount || 0} quizzes</span>
+                      <span>•</span>
+                      <span>{module.tasksCount || 0} tasks</span>
+                    </div>
+                  )}
                 </button>
 
-                {/* Module Content */}
-                {activeModule === moduleId && (
+                {/* Module Content - Only show for unlocked modules */}
+                {!isLocked && activeModule === moduleId && (
                   <div className="bg-zinc-900/50 border-t border-zinc-800">
                     {/* Text Links */}
                     {module.textLinks?.length > 0 && (
@@ -419,27 +450,73 @@ const StudentLearningPage = () => {
                         })}
                       </div>
                     )}
+
+                    {/* Module Completion Status */}
+                    {isModuleCompleted && (
+                      <div className="px-3 pb-3">
+                        <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-3 flex items-center gap-2">
+                          <CheckCircle size={16} className="text-green-500" />
+                          <span className="text-sm text-green-400">Module Completed!</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             );
           })}
 
-          {/* Capstone Projects */}
-          {course.capstoneProjects?.length > 0 && (
-            <div className="border rounded-xl border-yellow-500/30 bg-yellow-900/10 p-4">
+          {/* Capstone Project */}
+          {course.capstone && (
+            <div
+              className={`border rounded-xl p-4 ${
+                course.capstone.isLocked
+                  ? 'border-zinc-800 bg-zinc-900/30 opacity-60'
+                  : course.capstone.isCompleted
+                    ? 'border-green-500/30 bg-green-900/10'
+                    : 'border-yellow-500/30 bg-yellow-900/10'
+              }`}
+            >
               <div className="flex items-center gap-3 mb-3">
-                <Award size={20} className="text-yellow-500" />
-                <span className="font-bold text-sm">Capstone Projects</span>
+                {course.capstone.isLocked ? (
+                  <Lock size={20} className="text-zinc-500" />
+                ) : course.capstone.isCompleted ? (
+                  <CheckCircle size={20} className="text-green-500" />
+                ) : (
+                  <Award size={20} className="text-yellow-500" />
+                )}
+                <span
+                  className={`font-bold text-sm ${
+                    course.capstone.isLocked ? 'text-zinc-500' : 'text-white'
+                  }`}
+                >
+                  Capstone Project
+                </span>
               </div>
-              {course.capstoneProjects.map((project, idx) => (
-                <div key={idx} className="mt-2 p-3 bg-black/20 rounded-lg">
-                  <h4 className="font-medium text-sm">{project.title}</h4>
-                  {project.description && (
-                    <p className="text-xs text-zinc-500 mt-1">{project.description}</p>
-                  )}
-                </div>
-              ))}
+              <div className="p-3 bg-black/20 rounded-lg">
+                <h4
+                  className={`font-medium text-sm ${
+                    course.capstone.isLocked ? 'text-zinc-500' : 'text-white'
+                  }`}
+                >
+                  {course.capstone.title}
+                </h4>
+                {course.capstone.description && (
+                  <p className="text-xs text-zinc-500 mt-1">{course.capstone.description}</p>
+                )}
+                {course.capstone.isLocked && (
+                  <p className="text-xs text-yellow-500 mt-2 flex items-center gap-1">
+                    <Lock size={12} />
+                    Complete all modules to unlock
+                  </p>
+                )}
+                {course.capstone.isCompleted && (
+                  <p className="text-xs text-green-400 mt-2 flex items-center gap-1">
+                    <CheckCircle size={12} />
+                    Capstone Completed!
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

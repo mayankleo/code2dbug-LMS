@@ -6,8 +6,16 @@ import { ERROR_CODES } from "../../middlewares/globalErrorHandler.js";
  * A module is complete when all its quizzes and tasks are done
  */
 const isModuleCompleted = (module, completedQuizzes, completedTasks) => {
-    const moduleQuizIds = module.quizzes.map((q) => q._id.toString());
-    const moduleTaskIds = module.tasks.map((t) => t._id.toString());
+    const moduleQuizzes = module.quizzes || [];
+    const moduleTasks = module.tasks || [];
+
+    const moduleQuizIds = moduleQuizzes.map((q) => q._id.toString());
+    const moduleTaskIds = moduleTasks.map((t) => t._id.toString());
+
+    // If module has no quizzes and no tasks, it's considered complete (reading-only module)
+    if (moduleQuizIds.length === 0 && moduleTaskIds.length === 0) {
+        return true;
+    }
 
     const allQuizzesCompleted = moduleQuizIds.every((id) =>
         completedQuizzes.includes(id)
@@ -15,11 +23,6 @@ const isModuleCompleted = (module, completedQuizzes, completedTasks) => {
     const allTasksCompleted = moduleTaskIds.every((id) =>
         completedTasks.includes(id)
     );
-
-    // If module has no quizzes and no tasks, it's considered complete (reading module)
-    if (moduleQuizIds.length === 0 && moduleTaskIds.length === 0) {
-        return true;
-    }
 
     return allQuizzesCompleted && allTasksCompleted;
 };
@@ -51,9 +54,14 @@ const calculateProgress = (course, completedQuizzes, completedTasks) => {
  */
 export const getMyCourses = async (req, res) => {
     try {
+        console.log("Fetching courses for user:", req.userId);
+        
+        // Find all enrollments for this student that have some payment
         const enrollments = await Enrollment.find({
             student: req.userId,
-            paymentStatus: { $in: ["PARTIAL_PAID", "FULLY_PAYMENT_VERIFICATION_PENDING", "FULLY_PAID"] },
+            paymentStatus: {
+                $nin: ["UNPAID"], // Show all except UNPAID
+            },
         })
             .populate(
                 "course",
@@ -61,37 +69,43 @@ export const getMyCourses = async (req, res) => {
             )
             .sort({ updatedAt: -1 });
 
-        const courses = enrollments.map((enrollment) => {
-            const course = enrollment.course;
-            const totalModules = course.modules.length;
+        console.log("Found enrollments:", enrollments.length);
+        console.log("Enrollment statuses:", enrollments.map(e => e.paymentStatus));
 
-            const completedQuizzes = enrollment.completedQuizzes.map((id) =>
-                id.toString()
-            );
-            const completedTasks = enrollment.completedTasks.map((id) =>
-                id.toString()
-            );
+        const courses = enrollments
+            .filter((enrollment) => enrollment.course) // Filter out enrollments with no course
+            .map((enrollment) => {
+                const course = enrollment.course;
+                const modules = course.modules || [];
+                const totalModules = modules.length;
 
-            const completedModulesCount = course.modules.filter((module) =>
-                isModuleCompleted(module, completedQuizzes, completedTasks)
-            ).length;
+                const completedQuizzes = (
+                    enrollment.completedQuizzes || []
+                ).map((id) => id.toString());
+                const completedTasks = (enrollment.completedTasks || []).map(
+                    (id) => id.toString()
+                );
 
-            return {
-                id: course._id,
-                title: course.title,
-                slug: course.slug,
-                thumbnail: course.thumbnail,
-                level: course.level,
-                stream: course.stream,
-                tags: course.tags,
-                totalDuration: course.totalDuration,
-                progress: enrollment.progressPercentage,
-                totalModules,
-                completedModules: completedModulesCount,
-                lastAccessed: enrollment.updatedAt,
-                isCompleted: enrollment.isCompleted,
-            };
-        });
+                const completedModulesCount = modules.filter((module) =>
+                    isModuleCompleted(module, completedQuizzes, completedTasks)
+                ).length;
+
+                return {
+                    id: course._id,
+                    title: course.title,
+                    slug: course.slug,
+                    thumbnail: course.thumbnail,
+                    level: course.level,
+                    stream: course.stream,
+                    tags: course.tags,
+                    totalDuration: course.totalDuration,
+                    progress: enrollment.progressPercentage || 0,
+                    totalModules,
+                    completedModules: completedModulesCount,
+                    lastAccessed: enrollment.updatedAt,
+                    isCompleted: enrollment.isCompleted || false,
+                };
+            });
 
         res.json({ success: true, data: courses });
     } catch (error) {
@@ -124,8 +138,16 @@ export const getCourseDetails = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: course._id,
-            paymentStatus: { $in: ["PARTIAL_PAID", "FULLY_PAYMENT_VERIFICATION_PENDING", "FULLY_PAID"] },
+            paymentStatus: {
+                $nin: ["UNPAID"], // Allow access for any payment status except UNPAID
+            },
         });
+
+        console.log("Course details - User:", req.userId, "Course:", course._id);
+        console.log("Enrollment found:", enrollment ? "Yes" : "No");
+        if (enrollment) {
+            console.log("Enrollment status:", enrollment.paymentStatus);
+        }
 
         if (!enrollment) {
             return res.status(403).json({
@@ -135,55 +157,75 @@ export const getCourseDetails = async (req, res) => {
             });
         }
 
-        const completedQuizzes = enrollment.completedQuizzes.map((id) =>
+        const completedQuizzes = (enrollment.completedQuizzes || []).map((id) =>
             id.toString()
         );
-        const completedTasks = enrollment.completedTasks.map((id) =>
+        const completedTasks = (enrollment.completedTasks || []).map((id) =>
             id.toString()
         );
 
         // Sort modules by order
-        const sortedModules = [...course.modules].sort(
+        const sortedModules = [...(course.modules || [])].sort(
             (a, b) => (a.order || 0) - (b.order || 0)
         );
 
-        // Calculate module completion status
-        const modules = sortedModules.map((module, index) => {
-            const moduleCompleted = isModuleCompleted(
-                module,
-                completedQuizzes,
-                completedTasks
-            );
+        // First, calculate completion status for all modules
+        const moduleCompletionStatus = sortedModules.map((module) =>
+            isModuleCompleted(module, completedQuizzes, completedTasks)
+        );
 
-            // Check if module is locked (previous module not completed)
-            let isLocked = false;
-            if (index > 0) {
-                const prevModule = sortedModules[index - 1];
-                const prevCompleted = isModuleCompleted(
-                    prevModule,
-                    completedQuizzes,
-                    completedTasks
-                );
-                isLocked = !prevCompleted;
+        // Determine which modules are locked
+        // A module is locked if ANY previous module is not completed
+        const moduleLockStatus = sortedModules.map((_, index) => {
+            if (index === 0) return false; // First module is never locked
+            // Check if all previous modules are completed
+            for (let i = 0; i < index; i++) {
+                if (!moduleCompletionStatus[i]) {
+                    return true; // Lock if any previous module is not completed
+                }
             }
+            return false;
+        });
 
-            return {
+        // Build module response data
+        const modules = sortedModules.map((module, index) => {
+            const isLocked = moduleLockStatus[index];
+            const moduleCompleted = moduleCompletionStatus[index];
+
+            // Base module info (always sent)
+            const baseInfo = {
                 id: module._id,
                 title: module.title,
                 maxTimelineInDays: module.maxTimelineInDays,
                 description: module.description,
-                textLinks: module.textLinks || [],
-                videoLinks: module.videoLinks || [],
+                order: module.order,
                 isLocked,
                 isCompleted: moduleCompleted,
-                order: module.order,
-                quizzes: module.quizzes.map((quiz) => ({
+            };
+
+            // For locked modules, only send basic info with counts
+            if (isLocked) {
+                return {
+                    ...baseInfo,
+                    quizzesCount: module.quizzes?.length || 0,
+                    tasksCount: module.tasks?.length || 0,
+                    textLinksCount: (module.textLinks || []).length,
+                    videoLinksCount: (module.videoLinks || []).length,
+                };
+            }
+
+            // For unlocked modules, send full details
+            return {
+                ...baseInfo,
+                textLinks: module.textLinks || [],
+                videoLinks: module.videoLinks || [],
+                quizzes: (module.quizzes || []).map((quiz) => ({
                     id: quiz._id,
                     title: quiz.title,
-                    questionsCount: quiz.questions.length,
+                    questionsCount: quiz.questions?.length || 0,
                     isCompleted: completedQuizzes.includes(quiz._id.toString()),
                 })),
-                tasks: module.tasks.map((task) => ({
+                tasks: (module.tasks || []).map((task) => ({
                     id: task._id,
                     title: task.title,
                     description: task.description,
@@ -196,12 +238,14 @@ export const getCourseDetails = async (req, res) => {
         const allModulesCompleted = modules.every((m) => m.isCompleted);
 
         // Get capstone project (single object, not array)
-        const capstone = course.capstoneProject ? {
-            title: course.capstoneProject.title,
-            description: course.capstoneProject.description,
-            isLocked: !allModulesCompleted,
-            isCompleted: course.capstoneProject.isCapstoneCompleted,
-        } : null;
+        const capstone = course.capstoneProject
+            ? {
+                  title: course.capstoneProject.title,
+                  description: course.capstoneProject.description,
+                  isLocked: !allModulesCompleted,
+                  isCompleted: course.capstoneProject.isCapstoneCompleted,
+              }
+            : null;
 
         res.json({
             success: true,
@@ -253,7 +297,9 @@ export const getCourseModules = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: course._id,
-            paymentStatus: { $in: ["PARTIAL_PAID", "FULLY_PAYMENT_VERIFICATION_PENDING", "FULLY_PAID"] },
+            paymentStatus: {
+                $nin: ["UNPAID"], // Allow access for any payment status except UNPAID
+            },
         });
 
         if (!enrollment) {
@@ -264,15 +310,15 @@ export const getCourseModules = async (req, res) => {
             });
         }
 
-        const completedQuizzes = enrollment.completedQuizzes.map((id) =>
+        const completedQuizzes = (enrollment.completedQuizzes || []).map((id) =>
             id.toString()
         );
-        const completedTasks = enrollment.completedTasks.map((id) =>
+        const completedTasks = (enrollment.completedTasks || []).map((id) =>
             id.toString()
         );
 
         // Sort modules by order
-        const sortedModules = [...course.modules].sort(
+        const sortedModules = [...(course.modules || [])].sort(
             (a, b) => (a.order || 0) - (b.order || 0)
         );
 
