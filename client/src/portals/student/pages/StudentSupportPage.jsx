@@ -17,6 +17,7 @@ import { useSupportQueries, useCreateSupportQuery, useProfile } from '../hooks';
 
 const StudentSupportPage = () => {
   const { profile } = useProfile();
+  // eslint-disable-next-line no-unused-vars
   const { queries, loading: queriesLoading, refetch } = useSupportQueries();
   const { create: createQuery, loading: creating } = useCreateSupportQuery();
 
@@ -45,6 +46,10 @@ const StudentSupportPage = () => {
   const handleSend = async e => {
     e.preventDefault();
     if (category === 'Select a topic' || !message || !email) return;
+    if (message.length < 10) {
+      alert('Message must be at least 10 characters long');
+      return;
+    }
 
     try {
       await createQuery({
