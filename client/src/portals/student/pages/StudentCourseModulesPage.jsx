@@ -61,7 +61,7 @@ const StudentCourseModulesPage = () => {
       <h1 className="text-2xl font-bold mb-6">{courseTitle} - Modules</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {modules.map((module, index) => (
-          <ModuleCard
+          <CourseModuleCard
             key={module._id || module.id || index}
             module={module}
             progress={progress}
@@ -74,7 +74,7 @@ const StudentCourseModulesPage = () => {
   );
 };
 
-const ModuleCard = ({ module, progress, coursename, onStartModule }) => {
+const CourseModuleCard = ({ module, progress, coursename, onStartModule }) => {
   // Find module progress data
   const moduleProgress = progress?.moduleProgress?.find(
     mp => mp.moduleId?.toString() === (module._id || module.id)?.toString(),
@@ -180,3 +180,4 @@ const ModuleCard = ({ module, progress, coursename, onStartModule }) => {
 };
 
 export default StudentCourseModulesPage;
+
