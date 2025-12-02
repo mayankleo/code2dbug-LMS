@@ -17,6 +17,11 @@ const quizSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
         questions: [questionSchema],
+        status: {
+            type: String,
+            enum: ["Locked", "Open", "Submitted"],
+            default: "Locked",
+        }
     },
     { _id: true }
 );
@@ -26,6 +31,11 @@ const taskSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
         description: { type: String },
+        status: {
+            type: String,
+            enum: ["Locked", "Open", "Submitted"],
+            default: "Locked",
+        }
     },
     { _id: true }
 );
@@ -43,15 +53,11 @@ const moduleSchema = new mongoose.Schema(
         tasks: [taskSchema],
 
         order: { type: Number, default: 0 },
-    },
-    { _id: true }
-);
-
-// Capstone projects
-const capstoneSchema = new mongoose.Schema(
-    {
-        title: { type: String, required: true },
-        description: { type: String },
+        status: {
+            type: String,
+            enum: ["Locked", "Open", "Completed"],
+            default: "Locked",
+        }
     },
     { _id: true }
 );
@@ -73,7 +79,11 @@ const courseSchema = new mongoose.Schema(
         isPublished: { type: Boolean, default: false, index: true },
         tags: [{ type: String }],
         modules: [moduleSchema],
-        capstoneProjects: [capstoneSchema],
+        capstoneProject: {
+            title: { type: String },
+            description: { type: String },
+            isCapstoneCompleted: { type: Boolean, default: false },
+        },
     },
     { timestamps: true }
 );

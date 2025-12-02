@@ -29,10 +29,11 @@ const submissionSchema = new mongoose.Schema(
         // For task/assignment submissions
         taskId: { type: mongoose.Schema.Types.ObjectId },
 
-        type: { type: String, enum: ["assignment", "quiz"], required: true },
+        type: { type: String, enum: ["assignment", "quiz", "capstone"], required: true },
 
         fileUrl: { type: String },
         githubLink: { type: String },
+        liveLink: { type: String },
 
         quizScore: { type: Number },
         totalQuestions: { type: Number },

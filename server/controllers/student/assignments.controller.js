@@ -25,6 +25,31 @@ const calculateProgress = (course, completedQuizzes, completedTasks) => {
 };
 
 /**
+ * Helper function to check if a module is completed
+ */
+const isModuleCompleted = (module, completedQuizzes, completedTasks) => {
+    const moduleQuizzes = module.quizzes || [];
+    const moduleTasks = module.tasks || [];
+
+    const moduleQuizIds = moduleQuizzes.map((q) => q._id.toString());
+    const moduleTaskIds = moduleTasks.map((t) => t._id.toString());
+
+    // If module has no quizzes and no tasks, it's considered complete
+    if (moduleQuizIds.length === 0 && moduleTaskIds.length === 0) {
+        return true;
+    }
+
+    const allQuizzesCompleted = moduleQuizIds.every((id) =>
+        completedQuizzes.includes(id)
+    );
+    const allTasksCompleted = moduleTaskIds.every((id) =>
+        completedTasks.includes(id)
+    );
+
+    return allQuizzesCompleted && allTasksCompleted;
+};
+
+/**
  * GET /api/student/assignments
  * Get all courses with assignment progress
  */
@@ -32,7 +57,7 @@ export const getAssignmentsByCourse = async (req, res) => {
     try {
         const enrollments = await Enrollment.find({
             student: req.userId,
-            paymentStatus: "paid",
+            paymentStatus: { $nin: ["UNPAID"] },
         }).populate("course", "title slug thumbnail modules");
 
         const coursesWithAssignments = enrollments.map((enrollment) => {
@@ -98,7 +123,7 @@ export const getCourseAssignments = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: course._id,
-            paymentStatus: "paid",
+            paymentStatus: { $nin: ["UNPAID"] },
         });
 
         if (!enrollment) {
@@ -116,16 +141,43 @@ export const getCourseAssignments = async (req, res) => {
             type: "assignment",
         });
 
+        const completedQuizIds = enrollment.completedQuizzes.map((id) =>
+            id.toString()
+        );
         const completedTaskIds = enrollment.completedTasks.map((id) =>
             id.toString()
         );
 
+        // Sort modules by order
+        const sortedModules = [...(course.modules || [])].sort(
+            (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        // Calculate module completion status for lock logic
+        const moduleCompletionStatus = sortedModules.map((module) =>
+            isModuleCompleted(module, completedQuizIds, completedTaskIds)
+        );
+
         const assignments = [];
-        course.modules.forEach((module) => {
+        sortedModules.forEach((module, moduleIndex) => {
+            // First module is always open, others depend on previous module completion
+            const isModuleLocked = moduleIndex > 0 && !moduleCompletionStatus[moduleIndex - 1];
+
             module.tasks.forEach((task) => {
                 const submission = submissions.find(
                     (s) => s.taskId?.toString() === task._id.toString()
                 );
+                const isSubmitted = !!submission;
+
+                // Determine task status: Locked, Open, or Submitted
+                let status;
+                if (isModuleLocked) {
+                    status = "Locked";
+                } else if (isSubmitted) {
+                    status = "Submitted";
+                } else {
+                    status = "Open";
+                }
 
                 assignments.push({
                     id: task._id,
@@ -133,9 +185,11 @@ export const getCourseAssignments = async (req, res) => {
                     moduleTitle: module.title,
                     title: task.title,
                     description: task.description,
-                    isSubmitted: !!submission,
+                    status,
+                    isModuleLocked,
+                    isSubmitted,
                     isCompleted: completedTaskIds.includes(task._id.toString()),
-                    status: submission?.status || "pending",
+                    submissionStatus: submission?.status || "pending",
                     grade: submission?.grade,
                     feedback: submission?.feedback,
                     githubLink: submission?.githubLink,
@@ -163,7 +217,7 @@ export const getCourseAssignments = async (req, res) => {
 
 /**
  * POST /api/student/assignments/submit
- * Submit assignment
+ * Submit assignment or capstone
  */
 export const submitAssignment = async (req, res) => {
     try {
@@ -177,7 +231,7 @@ export const submitAssignment = async (req, res) => {
             });
         }
 
-        const { courseId, moduleId, taskId, githubLink, additionalNotes } =
+        const { courseId, moduleId, taskId, githubLink, liveLink, additionalNotes, isCapstone } =
             validation.data;
 
         const course = await Course.findById(courseId);
@@ -192,7 +246,7 @@ export const submitAssignment = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: courseId,
-            paymentStatus: "paid",
+            paymentStatus: { $nin: ["UNPAID"] },
         });
 
         if (!enrollment) {
@@ -203,70 +257,191 @@ export const submitAssignment = async (req, res) => {
             });
         }
 
-        // Create or update submission
-        const submission = await Submission.findOneAndUpdate(
-            {
+        // Handle Capstone Submission
+        if (isCapstone) {
+            // Check if all modules are completed
+            const completedQuizIds = enrollment.completedQuizzes.map((id) =>
+                id.toString()
+            );
+            const completedTaskIds = enrollment.completedTasks.map((id) =>
+                id.toString()
+            );
+
+            const sortedModules = [...(course.modules || [])].sort(
+                (a, b) => (a.order || 0) - (b.order || 0)
+            );
+
+            const allModulesCompleted = sortedModules.every((module) =>
+                isModuleCompleted(module, completedQuizIds, completedTaskIds)
+            );
+
+            if (!allModulesCompleted) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Complete all modules before submitting the capstone project",
+                    code: ERROR_CODES.MODULE_LOCKED,
+                });
+            }
+
+            // Check if capstone is already submitted
+            const existingCapstone = await Submission.findOne({
                 student: req.userId,
                 course: courseId,
-                taskId: taskId,
-                type: "assignment",
-            },
-            {
+                type: "capstone",
+            });
+
+            if (existingCapstone) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You have already submitted the capstone project",
+                    code: ERROR_CODES.ALREADY_SUBMITTED,
+                });
+            }
+
+            // Create capstone submission
+            const submission = await Submission.create({
                 enrollment: enrollment._id,
                 student: req.userId,
                 course: courseId,
-                moduleId: moduleId,
-                taskId: taskId,
-                type: "assignment",
+                type: "capstone",
                 githubLink,
+                liveLink: liveLink || null,
                 status: "submitted",
-            },
-            { upsert: true, new: true }
-        );
-
-        // Mark task as completed if not already and award XP
-        const isFirstSubmission = !enrollment.completedTasks.includes(taskId);
-        if (isFirstSubmission) {
-            enrollment.completedTasks.push(taskId);
-
-            // Recalculate progress
-            const completedQuizzes = enrollment.completedQuizzes.map((id) =>
-                id.toString()
-            );
-            const completedTasks = enrollment.completedTasks.map((id) =>
-                id.toString()
-            );
-            enrollment.progressPercentage = calculateProgress(
-                course,
-                completedQuizzes,
-                completedTasks
-            );
-
-            // Check if course is completed
-            if (enrollment.progressPercentage === 100) {
-                enrollment.isCompleted = true;
-                enrollment.completionDate = new Date();
-            }
-
-            await enrollment.save();
-
-            // Update user stats - only on first submission
-            await Student.findByIdAndUpdate(req.userId, {
-                $inc: { xp: 50, assignmentsCompleted: 1 },
             });
 
-            // Update leaderboard with XP and assignment completion - only on first submission
-            await updateLeaderboard(req.userId, courseId, 50, {
+            // Mark capstone as completed in course (for this student's enrollment tracking)
+            // Update user stats
+            await Student.findByIdAndUpdate(req.userId, {
+                $inc: { xp: 100, assignmentsCompleted: 1 },
+            });
+
+            // Update leaderboard with XP
+            await updateLeaderboard(req.userId, courseId, 100, {
                 assignmentsCompleted: 1,
             });
+
+            return res.status(200).json({
+                success: true,
+                data: submission,
+                message: "Capstone project submitted successfully! You earned 100 XP!",
+            });
         }
+
+        // Handle Regular Assignment Submission
+        const completedQuizIds = enrollment.completedQuizzes.map((id) =>
+            id.toString()
+        );
+        const completedTaskIds = enrollment.completedTasks.map((id) =>
+            id.toString()
+        );
+
+        // Sort modules by order
+        const sortedModules = [...(course.modules || [])].sort(
+            (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        // Find the task's module index
+        let moduleIndex = -1;
+        let foundTask = null;
+        for (let i = 0; i < sortedModules.length; i++) {
+            const module = sortedModules[i];
+            const task = module.tasks.find(
+                (t) => t._id.toString() === taskId
+            );
+            if (task) {
+                moduleIndex = i;
+                foundTask = task;
+                break;
+            }
+        }
+
+        if (!foundTask) {
+            return res.status(404).json({
+                success: false,
+                message: "Task not found",
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+            });
+        }
+
+        // Check if module is locked (first module is always open)
+        if (moduleIndex > 0) {
+            const prevModule = sortedModules[moduleIndex - 1];
+            const isModuleLocked = !isModuleCompleted(prevModule, completedQuizIds, completedTaskIds);
+            if (isModuleLocked) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Cannot submit assignment. The module is locked. Complete the previous module first.",
+                    code: ERROR_CODES.MODULE_LOCKED,
+                });
+            }
+        }
+
+        // Check if assignment is already submitted (no resubmission allowed)
+        const existingSubmission = await Submission.findOne({
+            student: req.userId,
+            course: courseId,
+            taskId: taskId,
+            type: "assignment",
+        });
+
+        if (existingSubmission) {
+            return res.status(403).json({
+                success: false,
+                message: "You have already submitted this assignment. Resubmission is not allowed.",
+                code: ERROR_CODES.ALREADY_SUBMITTED,
+            });
+        }
+
+        // Create submission
+        const submission = await Submission.create({
+            enrollment: enrollment._id,
+            student: req.userId,
+            course: courseId,
+            moduleId: moduleId,
+            taskId: taskId,
+            type: "assignment",
+            githubLink,
+            status: "submitted",
+        });
+
+        // Mark task as completed and award XP
+        enrollment.completedTasks.push(taskId);
+
+        // Recalculate progress
+        const completedQuizzes = enrollment.completedQuizzes.map((id) =>
+            id.toString()
+        );
+        const completedTasks = enrollment.completedTasks.map((id) =>
+            id.toString()
+        );
+        enrollment.progressPercentage = calculateProgress(
+            course,
+            completedQuizzes,
+            completedTasks
+        );
+
+        // Check if course is completed
+        if (enrollment.progressPercentage === 100) {
+            enrollment.isCompleted = true;
+            enrollment.completionDate = new Date();
+        }
+
+        await enrollment.save();
+
+        // Update user stats
+        await Student.findByIdAndUpdate(req.userId, {
+            $inc: { xp: 50, assignmentsCompleted: 1 },
+        });
+
+        // Update leaderboard with XP and assignment completion
+        await updateLeaderboard(req.userId, courseId, 50, {
+            assignmentsCompleted: 1,
+        });
 
         res.status(200).json({
             success: true,
             data: submission,
-            message: isFirstSubmission
-                ? "Assignment submitted successfully! You earned 50 XP!"
-                : "Assignment updated successfully",
+            message: "Assignment submitted successfully! You earned 50 XP!",
         });
     } catch (error) {
         console.error("Submit assignment error:", error);

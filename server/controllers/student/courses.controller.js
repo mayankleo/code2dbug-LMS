@@ -1,4 +1,4 @@
-import { Course, Enrollment } from "../../models/index.js";
+import { Course, Enrollment, Submission } from "../../models/index.js";
 import { ERROR_CODES } from "../../middlewares/globalErrorHandler.js";
 
 /**
@@ -6,8 +6,16 @@ import { ERROR_CODES } from "../../middlewares/globalErrorHandler.js";
  * A module is complete when all its quizzes and tasks are done
  */
 const isModuleCompleted = (module, completedQuizzes, completedTasks) => {
-    const moduleQuizIds = module.quizzes.map((q) => q._id.toString());
-    const moduleTaskIds = module.tasks.map((t) => t._id.toString());
+    const moduleQuizzes = module.quizzes || [];
+    const moduleTasks = module.tasks || [];
+
+    const moduleQuizIds = moduleQuizzes.map((q) => q._id.toString());
+    const moduleTaskIds = moduleTasks.map((t) => t._id.toString());
+
+    // If module has no quizzes and no tasks, it's considered complete (reading-only module)
+    if (moduleQuizIds.length === 0 && moduleTaskIds.length === 0) {
+        return true;
+    }
 
     const allQuizzesCompleted = moduleQuizIds.every((id) =>
         completedQuizzes.includes(id)
@@ -15,11 +23,6 @@ const isModuleCompleted = (module, completedQuizzes, completedTasks) => {
     const allTasksCompleted = moduleTaskIds.every((id) =>
         completedTasks.includes(id)
     );
-
-    // If module has no quizzes and no tasks, it's considered complete (reading module)
-    if (moduleQuizIds.length === 0 && moduleTaskIds.length === 0) {
-        return true;
-    }
 
     return allQuizzesCompleted && allTasksCompleted;
 };
@@ -51,9 +54,13 @@ const calculateProgress = (course, completedQuizzes, completedTasks) => {
  */
 export const getMyCourses = async (req, res) => {
     try {
+        
+        // Find all enrollments for this student that have some payment
         const enrollments = await Enrollment.find({
             student: req.userId,
-            paymentStatus: "paid",
+            paymentStatus: {
+                $nin: ["UNPAID"], // Show all except UNPAID
+            },
         })
             .populate(
                 "course",
@@ -61,37 +68,40 @@ export const getMyCourses = async (req, res) => {
             )
             .sort({ updatedAt: -1 });
 
-        const courses = enrollments.map((enrollment) => {
-            const course = enrollment.course;
-            const totalModules = course.modules.length;
+        const courses = enrollments
+            .filter((enrollment) => enrollment.course) // Filter out enrollments with no course
+            .map((enrollment) => {
+                const course = enrollment.course;
+                const modules = course.modules || [];
+                const totalModules = modules.length;
 
-            const completedQuizzes = enrollment.completedQuizzes.map((id) =>
-                id.toString()
-            );
-            const completedTasks = enrollment.completedTasks.map((id) =>
-                id.toString()
-            );
+                const completedQuizzes = (
+                    enrollment.completedQuizzes || []
+                ).map((id) => id.toString());
+                const completedTasks = (enrollment.completedTasks || []).map(
+                    (id) => id.toString()
+                );
 
-            const completedModulesCount = course.modules.filter((module) =>
-                isModuleCompleted(module, completedQuizzes, completedTasks)
-            ).length;
+                const completedModulesCount = modules.filter((module) =>
+                    isModuleCompleted(module, completedQuizzes, completedTasks)
+                ).length;
 
-            return {
-                id: course._id,
-                title: course.title,
-                slug: course.slug,
-                thumbnail: course.thumbnail,
-                level: course.level,
-                stream: course.stream,
-                tags: course.tags,
-                totalDuration: course.totalDuration,
-                progress: enrollment.progressPercentage,
-                totalModules,
-                completedModules: completedModulesCount,
-                lastAccessed: enrollment.updatedAt,
-                isCompleted: enrollment.isCompleted,
-            };
-        });
+                return {
+                    id: course._id,
+                    title: course.title,
+                    slug: course.slug,
+                    thumbnail: course.thumbnail,
+                    level: course.level,
+                    stream: course.stream,
+                    tags: course.tags,
+                    totalDuration: course.totalDuration,
+                    progress: enrollment.progressPercentage || 0,
+                    totalModules,
+                    completedModules: completedModulesCount,
+                    lastAccessed: enrollment.updatedAt,
+                    isCompleted: enrollment.isCompleted || false,
+                };
+            });
 
         res.json({ success: true, data: courses });
     } catch (error) {
@@ -124,7 +134,9 @@ export const getCourseDetails = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: course._id,
-            paymentStatus: "paid",
+            paymentStatus: {
+                $nin: ["UNPAID"], // Allow access for any payment status except UNPAID
+            },
         });
 
         if (!enrollment) {
@@ -135,73 +147,127 @@ export const getCourseDetails = async (req, res) => {
             });
         }
 
-        const completedQuizzes = enrollment.completedQuizzes.map((id) =>
+        // Get assignment submissions for this course
+        const submissions = await Submission.find({
+            student: req.userId,
+            course: course._id,
+            type: "assignment",
+        });
+
+        // Get capstone submission if exists
+        const capstoneSubmission = await Submission.findOne({
+            student: req.userId,
+            course: course._id,
+            type: "capstone",
+        });
+
+        const completedQuizzes = (enrollment.completedQuizzes || []).map((id) =>
             id.toString()
         );
-        const completedTasks = enrollment.completedTasks.map((id) =>
+        const completedTasks = (enrollment.completedTasks || []).map((id) =>
             id.toString()
         );
 
         // Sort modules by order
-        const sortedModules = [...course.modules].sort(
+        const sortedModules = [...(course.modules || [])].sort(
             (a, b) => (a.order || 0) - (b.order || 0)
         );
 
-        // Calculate module completion status
-        const modules = sortedModules.map((module, index) => {
-            const moduleCompleted = isModuleCompleted(
-                module,
-                completedQuizzes,
-                completedTasks
-            );
+        // First, calculate completion status for all modules
+        const moduleCompletionStatus = sortedModules.map((module) =>
+            isModuleCompleted(module, completedQuizzes, completedTasks)
+        );
 
-            // Check if module is locked (previous module not completed)
-            let isLocked = false;
-            if (index > 0) {
-                const prevModule = sortedModules[index - 1];
-                const prevCompleted = isModuleCompleted(
-                    prevModule,
-                    completedQuizzes,
-                    completedTasks
-                );
-                isLocked = !prevCompleted;
+        // Determine which modules are locked
+        // A module is locked if ANY previous module is not completed
+        const moduleLockStatus = sortedModules.map((_, index) => {
+            if (index === 0) return false; // First module is never locked
+            // Check if all previous modules are completed
+            for (let i = 0; i < index; i++) {
+                if (!moduleCompletionStatus[i]) {
+                    return true; // Lock if any previous module is not completed
+                }
             }
+            return false;
+        });
 
-            return {
+        // Build module response data
+        const modules = sortedModules.map((module, index) => {
+            const isLocked = moduleLockStatus[index];
+            const moduleCompleted = moduleCompletionStatus[index];
+
+            // Base module info (always sent)
+            const baseInfo = {
                 id: module._id,
                 title: module.title,
                 maxTimelineInDays: module.maxTimelineInDays,
                 description: module.description,
-                textLinks: module.textLinks || [],
-                videoLinks: module.videoLinks || [],
+                order: module.order,
                 isLocked,
                 isCompleted: moduleCompleted,
-                order: module.order,
-                quizzes: module.quizzes.map((quiz) => ({
+            };
+
+            // For locked modules, only send basic info with counts
+            if (isLocked) {
+                return {
+                    ...baseInfo,
+                    quizzesCount: module.quizzes?.length || 0,
+                    tasksCount: module.tasks?.length || 0,
+                    textLinksCount: (module.textLinks || []).length,
+                    videoLinksCount: (module.videoLinks || []).length,
+                };
+            }
+
+            // For unlocked modules, send full details
+            return {
+                ...baseInfo,
+                textLinks: module.textLinks || [],
+                videoLinks: module.videoLinks || [],
+                quizzes: (module.quizzes || []).map((quiz) => ({
                     id: quiz._id,
                     title: quiz.title,
-                    questionsCount: quiz.questions.length,
+                    questionsCount: quiz.questions?.length || 0,
                     isCompleted: completedQuizzes.includes(quiz._id.toString()),
                 })),
-                tasks: module.tasks.map((task) => ({
-                    id: task._id,
-                    title: task.title,
-                    description: task.description,
-                    isCompleted: completedTasks.includes(task._id.toString()),
-                })),
+                tasks: (module.tasks || []).map((task) => {
+                    const submission = submissions.find(
+                        (s) => s.taskId?.toString() === task._id.toString()
+                    );
+                    const isSubmitted = !!submission;
+                    return {
+                        id: task._id,
+                        title: task.title,
+                        description: task.description,
+                        isCompleted: completedTasks.includes(task._id.toString()),
+                        isSubmitted,
+                        status: isSubmitted ? "Submitted" : "Open",
+                        githubLink: submission?.githubLink,
+                        submissionStatus: submission?.status || "pending",
+                        grade: submission?.grade,
+                        feedback: submission?.feedback,
+                    };
+                }),
             };
         });
 
         // Check capstone status
         const allModulesCompleted = modules.every((m) => m.isCompleted);
 
-        // Get capstone projects
-        const capstoneProjects = course.capstoneProjects?.map((cp) => ({
-            id: cp._id,
-            title: cp.title,
-            description: cp.description,
-            isLocked: !allModulesCompleted,
-        }));
+        // Get capstone project (single object, not array)
+        const capstone = course.capstoneProject
+            ? {
+                  title: course.capstoneProject.title,
+                  description: course.capstoneProject.description,
+                  isLocked: !allModulesCompleted,
+                  isCompleted: course.capstoneProject.isCapstoneCompleted,
+                  isSubmitted: !!capstoneSubmission,
+                  githubLink: capstoneSubmission?.githubLink || null,
+                  liveLink: capstoneSubmission?.liveLink || null,
+                  submissionStatus: capstoneSubmission?.status || null,
+                  grade: capstoneSubmission?.grade || null,
+                  feedback: capstoneSubmission?.feedback || null,
+              }
+            : null;
 
         res.json({
             success: true,
@@ -217,8 +283,7 @@ export const getCourseDetails = async (req, res) => {
                 tags: course.tags,
                 progress: enrollment.progressPercentage,
                 modules,
-                capstone: capstoneProjects?.[0] || null,
-                capstoneProjects,
+                capstone,
                 isCompleted: enrollment.isCompleted,
             },
         });
@@ -254,7 +319,9 @@ export const getCourseModules = async (req, res) => {
         const enrollment = await Enrollment.findOne({
             student: req.userId,
             course: course._id,
-            paymentStatus: "paid",
+            paymentStatus: {
+                $nin: ["UNPAID"], // Allow access for any payment status except UNPAID
+            },
         });
 
         if (!enrollment) {
@@ -265,15 +332,15 @@ export const getCourseModules = async (req, res) => {
             });
         }
 
-        const completedQuizzes = enrollment.completedQuizzes.map((id) =>
+        const completedQuizzes = (enrollment.completedQuizzes || []).map((id) =>
             id.toString()
         );
-        const completedTasks = enrollment.completedTasks.map((id) =>
+        const completedTasks = (enrollment.completedTasks || []).map((id) =>
             id.toString()
         );
 
         // Sort modules by order
-        const sortedModules = [...course.modules].sort(
+        const sortedModules = [...(course.modules || [])].sort(
             (a, b) => (a.order || 0) - (b.order || 0)
         );
 
