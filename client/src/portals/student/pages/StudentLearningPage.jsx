@@ -564,7 +564,7 @@ const StudentLearningPage = () => {
                       )}
                       <div className="flex-1 min-w-0">
                         <span
-                          className={`font-semibold text-sm block truncate ${
+                          className={`font-semibold text-sm block wrap-anywhere ${
                             isLocked ? 'text-zinc-500' : 'text-white'
                           }`}
                         >
@@ -833,7 +833,6 @@ const StudentLearningPage = () => {
                       </p>
                     )}
                   </div>
-                  {allModulesCompleted && <ChevronRight size={16} className="text-zinc-400" />}
                 </div>
               </button>
             )}

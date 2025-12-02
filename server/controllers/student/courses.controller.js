@@ -154,6 +154,13 @@ export const getCourseDetails = async (req, res) => {
             type: "assignment",
         });
 
+        // Get capstone submission if exists
+        const capstoneSubmission = await Submission.findOne({
+            student: req.userId,
+            course: course._id,
+            type: "capstone",
+        });
+
         const completedQuizzes = (enrollment.completedQuizzes || []).map((id) =>
             id.toString()
         );
@@ -253,6 +260,12 @@ export const getCourseDetails = async (req, res) => {
                   description: course.capstoneProject.description,
                   isLocked: !allModulesCompleted,
                   isCompleted: course.capstoneProject.isCapstoneCompleted,
+                  isSubmitted: !!capstoneSubmission,
+                  githubLink: capstoneSubmission?.githubLink || null,
+                  liveLink: capstoneSubmission?.liveLink || null,
+                  submissionStatus: capstoneSubmission?.status || null,
+                  grade: capstoneSubmission?.grade || null,
+                  feedback: capstoneSubmission?.feedback || null,
               }
             : null;
 

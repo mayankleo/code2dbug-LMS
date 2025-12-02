@@ -217,7 +217,7 @@ export const getCourseAssignments = async (req, res) => {
 
 /**
  * POST /api/student/assignments/submit
- * Submit assignment
+ * Submit assignment or capstone
  */
 export const submitAssignment = async (req, res) => {
     try {
@@ -231,7 +231,7 @@ export const submitAssignment = async (req, res) => {
             });
         }
 
-        const { courseId, moduleId, taskId, githubLink, additionalNotes } =
+        const { courseId, moduleId, taskId, githubLink, liveLink, additionalNotes, isCapstone } =
             validation.data;
 
         const course = await Course.findById(courseId);
@@ -257,6 +257,77 @@ export const submitAssignment = async (req, res) => {
             });
         }
 
+        // Handle Capstone Submission
+        if (isCapstone) {
+            // Check if all modules are completed
+            const completedQuizIds = enrollment.completedQuizzes.map((id) =>
+                id.toString()
+            );
+            const completedTaskIds = enrollment.completedTasks.map((id) =>
+                id.toString()
+            );
+
+            const sortedModules = [...(course.modules || [])].sort(
+                (a, b) => (a.order || 0) - (b.order || 0)
+            );
+
+            const allModulesCompleted = sortedModules.every((module) =>
+                isModuleCompleted(module, completedQuizIds, completedTaskIds)
+            );
+
+            if (!allModulesCompleted) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Complete all modules before submitting the capstone project",
+                    code: ERROR_CODES.MODULE_LOCKED,
+                });
+            }
+
+            // Check if capstone is already submitted
+            const existingCapstone = await Submission.findOne({
+                student: req.userId,
+                course: courseId,
+                type: "capstone",
+            });
+
+            if (existingCapstone) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You have already submitted the capstone project",
+                    code: ERROR_CODES.ALREADY_SUBMITTED,
+                });
+            }
+
+            // Create capstone submission
+            const submission = await Submission.create({
+                enrollment: enrollment._id,
+                student: req.userId,
+                course: courseId,
+                type: "capstone",
+                githubLink,
+                liveLink: liveLink || null,
+                status: "submitted",
+            });
+
+            // Mark capstone as completed in course (for this student's enrollment tracking)
+            // Update user stats
+            await Student.findByIdAndUpdate(req.userId, {
+                $inc: { xp: 100, assignmentsCompleted: 1 },
+            });
+
+            // Update leaderboard with XP
+            await updateLeaderboard(req.userId, courseId, 100, {
+                assignmentsCompleted: 1,
+            });
+
+            return res.status(200).json({
+                success: true,
+                data: submission,
+                message: "Capstone project submitted successfully! You earned 100 XP!",
+            });
+        }
+
+        // Handle Regular Assignment Submission
         const completedQuizIds = enrollment.completedQuizzes.map((id) =>
             id.toString()
         );

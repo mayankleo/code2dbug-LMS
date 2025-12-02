@@ -8,24 +8,26 @@ import {
   ExternalLink,
   Lock,
   Trophy,
+  Globe,
 } from 'lucide-react';
 
 import { useSubmitAssignment } from '../hooks';
 
 const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) => {
   const [githubLink, setGithubLink] = useState(capstone?.githubLink || '');
+  const [liveLink, setLiveLink] = useState(capstone?.liveLink || '');
   const [isSubmitted, setIsSubmitted] = useState(
     capstone?.isSubmitted || capstone?.isCompleted || false,
   );
   const [submissionStatus, setSubmissionStatus] = useState(
-    capstone?.submissionStatus || (capstone?.isCompleted ? 'submitted' : 'pending'),
+    capstone?.submissionStatus || (capstone?.isSubmitted ? 'submitted' : 'pending'),
   );
 
   const { submit, loading: submitting, error: submitError } = useSubmitAssignment();
 
   const isLocked = !allModulesCompleted;
 
-  const isValidUrl = url => {
+  const isValidGithubUrl = url => {
     try {
       new URL(url);
       return url.includes('github.com');
@@ -34,8 +36,18 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
     }
   };
 
+  const isValidUrl = url => {
+    if (!url) return true; // Optional field
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!isValidUrl(githubLink)) {
+    if (!isValidGithubUrl(githubLink)) {
       return;
     }
 
@@ -44,6 +56,7 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
         courseId,
         isCapstone: true,
         githubLink,
+        liveLink: liveLink || '',
       });
 
       if (response.success) {
@@ -79,7 +92,7 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
   }
 
   // Already submitted state
-  if (isSubmitted && submissionStatus !== 'pending') {
+  if (isSubmitted) {
     return (
       <div className="max-w-2xl mx-auto bg-zinc-900 border border-zinc-700 rounded-2xl p-8">
         <div className="text-center">
@@ -96,20 +109,39 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
           </p>
 
           {/* Submission Details */}
-          <div className="bg-zinc-800 rounded-lg p-4 mb-6 text-left">
-            <div className="flex items-center gap-2 mb-2">
-              <Github size={16} className="text-zinc-400" />
-              <span className="text-sm text-zinc-400">Submitted Repository:</span>
+          <div className="bg-zinc-800 rounded-lg p-4 mb-6 text-left space-y-3">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Github size={16} className="text-zinc-400" />
+                <span className="text-sm text-zinc-400">GitHub Repository:</span>
+              </div>
+              <a
+                href={githubLink || capstone?.githubLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm break-all"
+              >
+                {githubLink || capstone?.githubLink}
+                <ExternalLink size={14} className="shrink-0" />
+              </a>
             </div>
-            <a
-              href={githubLink || capstone?.githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm break-all"
-            >
-              {githubLink || capstone?.githubLink}
-              <ExternalLink size={14} className="shrink-0" />
-            </a>
+            {(liveLink || capstone?.liveLink) && (
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Globe size={16} className="text-zinc-400" />
+                  <span className="text-sm text-zinc-400">Live Demo:</span>
+                </div>
+                <a
+                  href={liveLink || capstone?.liveLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-400 hover:text-green-300 flex items-center gap-2 text-sm break-all"
+                >
+                  {liveLink || capstone?.liveLink}
+                  <ExternalLink size={14} className="shrink-0" />
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Grade & Feedback (if graded) */}
@@ -187,12 +219,14 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
           <p className="text-yellow-200 text-sm">
             <strong>Note:</strong> Submit your GitHub repository link containing your complete
             capstone project code, along with a demo video and screenshots in the repository README.
+            You can also provide a live demo link (optional).
           </p>
         </div>
 
-        <div className="w-full mb-6">
+        {/* GitHub Link Input */}
+        <div className="w-full mb-4">
           <label className="block text-sm font-medium text-zinc-200 mb-2 text-left">
-            GitHub Repository Link
+            GitHub Repository Link <span className="text-red-400">*</span>
           </label>
           <div className="relative">
             <Github
@@ -207,10 +241,36 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
               className="w-full pl-12 pr-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
             />
           </div>
-          {githubLink && !isValidUrl(githubLink) && (
+          {githubLink && !isValidGithubUrl(githubLink) && (
             <p className="text-red-400 text-sm mt-2 text-left flex items-center gap-1">
               <AlertCircle size={14} />
               Please enter a valid GitHub repository link
+            </p>
+          )}
+        </div>
+
+        {/* Live Link Input (Optional) */}
+        <div className="w-full mb-6">
+          <label className="block text-sm font-medium text-zinc-200 mb-2 text-left">
+            Live Demo Link <span className="text-zinc-500">(Optional)</span>
+          </label>
+          <div className="relative">
+            <Globe
+              size={18}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400"
+            />
+            <input
+              type="url"
+              value={liveLink}
+              onChange={e => setLiveLink(e.target.value)}
+              placeholder="https://your-project.vercel.app"
+              className="w-full pl-12 pr-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+            />
+          </div>
+          {liveLink && !isValidUrl(liveLink) && (
+            <p className="text-red-400 text-sm mt-2 text-left flex items-center gap-1">
+              <AlertCircle size={14} />
+              Please enter a valid URL
             </p>
           )}
         </div>
@@ -224,11 +284,11 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
 
         <button
           onClick={handleSubmit}
-          disabled={!githubLink || !isValidUrl(githubLink) || submitting}
+          disabled={!githubLink || !isValidGithubUrl(githubLink) || (liveLink && !isValidUrl(liveLink)) || submitting}
           className={`w-full py-3 rounded-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
             submitting
               ? 'bg-zinc-600 cursor-wait'
-              : githubLink && isValidUrl(githubLink)
+              : githubLink && isValidGithubUrl(githubLink) && (!liveLink || isValidUrl(liveLink))
                 ? 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500'
                 : 'bg-zinc-600 cursor-not-allowed'
           }`}
