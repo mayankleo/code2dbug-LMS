@@ -16,6 +16,7 @@ import {
   BookOpen,
   Video,
   Lock,
+  Download,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -23,7 +24,8 @@ import { toast } from 'sonner';
 import QuizCard from '../components/QuizCard';
 import AssignmentCard from '../components/AssignmentCard';
 import CapstoneCard from '../components/CapstoneCard';
-import { useCourseDetails, useMarkModuleAccessed, useCourseProgress } from '../hooks';
+import { useCourseDetails, useMarkModuleAccessed, useCourseProgress, useProfile } from '../hooks';
+import { downloadModuleCertificate } from '../utils/downloadModuleCertificate';
 
 const StudentLearningPage = () => {
   const { coursename } = useParams();
@@ -31,11 +33,13 @@ const StudentLearningPage = () => {
   const [activeContent, setActiveContent] = useState(null);
   const [bar, setbar] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [downloadingCertificate, setDownloadingCertificate] = useState(null);
 
   // Fetch course details and progress
   const { course, loading, error, refetch } = useCourseDetails(coursename);
   const { progress, refetch: refetchProgress } = useCourseProgress(coursename);
   const { markAccessed } = useMarkModuleAccessed();
+  const { profile } = useProfile();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -734,13 +738,43 @@ const StudentLearningPage = () => {
 
                             {/* Module Completion Status */}
                             {isModuleCompleted && (
-                              <div className="px-3 pb-3">
+                              <div className="px-3 pb-3 space-y-2">
                                 <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2.5 flex items-center justify-center gap-2">
                                   <CheckCircle size={14} className="text-green-500" />
                                   <span className="text-xs text-green-400 font-medium">
                                     Module Completed!
                                   </span>
                                 </div>
+                                <button
+                                  onClick={async e => {
+                                    e.stopPropagation();
+                                    const moduleId = module._id || module.id;
+                                    setDownloadingCertificate(moduleId);
+                                    try {
+                                      await downloadModuleCertificate({
+                                        studentName: profile?.name || 'Student',
+                                        courseName: course?.title || 'Course',
+                                        moduleTitle: module.title,
+                                      });
+                                      toast.success('Certificate downloaded!');
+                                    } catch {
+                                      toast.error('Failed to download certificate');
+                                    } finally {
+                                      setDownloadingCertificate(null);
+                                    }
+                                  }}
+                                  disabled={downloadingCertificate === (module._id || module.id)}
+                                  className="w-full flex items-center justify-center gap-2 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 disabled:opacity-50 rounded-lg p-2.5 transition-colors"
+                                >
+                                  {downloadingCertificate === (module._id || module.id) ? (
+                                    <Loader2 size={14} className="text-amber-400 animate-spin" />
+                                  ) : (
+                                    <Download size={14} className="text-amber-400" />
+                                  )}
+                                  <span className="text-xs text-amber-400 font-medium">
+                                    Download Certificate
+                                  </span>
+                                </button>
                               </div>
                             )}
                           </>
