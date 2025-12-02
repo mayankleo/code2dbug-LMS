@@ -799,7 +799,7 @@ const StudentLearningPage = () => {
                 className={`w-full text-left border rounded-xl p-4 transition-all duration-200 ${
                   !allModulesCompleted
                     ? 'border-zinc-800 bg-zinc-900/50 opacity-60 cursor-not-allowed'
-                    : course.capstone.isCompleted
+                    : course.capstone.isCompleted || course.capstone.isSubmitted
                       ? 'border-green-500/30 bg-green-950/30 hover:bg-green-950/40'
                       : 'border-yellow-500/30 bg-yellow-950/20 hover:bg-yellow-950/30'
                 }`}
@@ -809,7 +809,7 @@ const StudentLearningPage = () => {
                     <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
                       <Lock size={14} className="text-zinc-500" />
                     </div>
-                  ) : course.capstone.isCompleted ? (
+                  ) : course.capstone.isCompleted || course.capstone.isSubmitted ? (
                     <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
                       <CheckCircle size={16} className="text-green-500" />
                     </div>
@@ -849,9 +849,9 @@ const StudentLearningPage = () => {
                 Complete all modules and capstone to earn your certificate.
               </p>
               <button
-                disabled={!allModulesCompleted || !course.capstone?.isCompleted}
+                disabled={!allModulesCompleted || (!course.capstone?.isCompleted && !course.capstone?.isSubmitted)}
                 onClick={() => {
-                  if (allModulesCompleted && course.capstone?.isCompleted) {
+                  if (allModulesCompleted && (course.capstone?.isCompleted || course.capstone?.isSubmitted)) {
                     window.open(`/student/certificates/${coursename}`, '_blank');
                   }
                 }}
@@ -859,7 +859,7 @@ const StudentLearningPage = () => {
               >
                 {!allModulesCompleted
                   ? `${overallProgress}% Complete`
-                  : !course.capstone?.isCompleted
+                  : !course.capstone?.isCompleted && !course.capstone?.isSubmitted
                     ? 'Complete Capstone First'
                     : 'Get Certificate'}
               </button>
