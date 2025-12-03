@@ -15,7 +15,6 @@ const configurePassport = () => {
                 try {
                     let student = await Student.findOneAndUpdate(
                         { googleId: profile.id },
-                        { isLoggedIn: true },
                         { new: true }
                     );
 
@@ -48,7 +47,6 @@ const configurePassport = () => {
                 try {
                     let student = await Student.findOneAndUpdate(
                         { githubId: profile.id },
-                        { isLoggedIn: true },
                         { new: true }
                     );
 
