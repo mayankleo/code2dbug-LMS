@@ -2,11 +2,6 @@ import { z } from "zod";
 
 // Profile Update Schema
 export const updateProfileSchema = z.object({
-    name: z.string().min(1, "First name is required"),
-    middleName: z.string().optional(),
-    lastName: z.string().optional(),
-    collegeName: z.string().min(1, "College name is required"),
-    courseName: z.string().min(1, "Course name is required"),
     yearOfStudy: z.enum(["1st Year", "2nd Year", "3rd Year", "4th Year"], {
         errorMap: () => ({ message: "Please select a valid year" }),
     }),
@@ -70,6 +65,7 @@ export const submitQuizSchema = z.object({
     moduleId: z.string().min(1, "Module ID is required"),
     quizId: z.string().min(1, "Quiz ID is required"),
     answers: z.record(z.string(), z.number()), // { questionId: selectedOptionIndex }
+    answerTimes: z.record(z.string(), z.number()).optional(), // { questionId: timeInSeconds } - for XP calculation
 });
 
 // Assignment Submission Schema
