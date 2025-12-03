@@ -2,11 +2,6 @@ import { z } from "zod";
 
 // Profile Update Schema
 export const updateProfileSchema = z.object({
-    name: z.string().min(1, "First name is required"),
-    middleName: z.string().optional(),
-    lastName: z.string().optional(),
-    collegeName: z.string().min(1, "College name is required"),
-    courseName: z.string().min(1, "Course name is required"),
     yearOfStudy: z.enum(["1st Year", "2nd Year", "3rd Year", "4th Year"], {
         errorMap: () => ({ message: "Please select a valid year" }),
     }),
@@ -23,9 +18,22 @@ export const updateProfileSchema = z.object({
         .or(z.literal("")),
 });
 
-// Avatar Update Schema
+// Avatar Update Schema - accepts both URLs and base64 data URLs
 export const updateAvatarSchema = z.object({
-    avatar: z.string().url("Invalid avatar URL"),
+    avatar: z.string().refine(
+        (val) => {
+            // Accept regular URLs
+            if (val.startsWith('http://') || val.startsWith('https://')) {
+                return true;
+            }
+            // Accept base64 data URLs for image uploads
+            if (val.startsWith('data:image/')) {
+                return true;
+            }
+            return false;
+        },
+        { message: "Invalid avatar format. Must be a URL or base64 image" }
+    ),
 });
 
 // Privacy Settings Schema
@@ -70,37 +78,41 @@ export const submitQuizSchema = z.object({
     moduleId: z.string().min(1, "Module ID is required"),
     quizId: z.string().min(1, "Quiz ID is required"),
     answers: z.record(z.string(), z.number()), // { questionId: selectedOptionIndex }
+    answerTimes: z.record(z.string(), z.number()).optional(), // { questionId: timeInSeconds } - for XP calculation
 });
 
 // Assignment Submission Schema
-export const submitAssignmentSchema = z.object({
-    courseId: z.string().min(1, "Course ID is required"),
-    moduleId: z.string().optional(),
-    taskId: z.string().optional(),
-    isCapstone: z.boolean().optional(),
-    githubLink: z
-        .string()
-        .url("Invalid GitHub URL")
-        .refine((url) => url.includes("github.com"), {
-            message: "Must be a valid GitHub repository URL",
-        }),
-    liveLink: z
-        .string()
-        .url("Invalid Live Link URL")
-        .optional()
-        .or(z.literal("")),
-    additionalNotes: z.string().optional(),
-}).refine(
-    (data) => {
-        // Either isCapstone is true OR both moduleId and taskId are provided
-        if (data.isCapstone) return true;
-        return data.moduleId && data.taskId;
-    },
-    {
-        message: "Module ID and Task ID are required for non-capstone assignments",
-        path: ["moduleId"],
-    }
-);
+export const submitAssignmentSchema = z
+    .object({
+        courseId: z.string().min(1, "Course ID is required"),
+        moduleId: z.string().optional(),
+        taskId: z.string().optional(),
+        isCapstone: z.boolean().optional(),
+        githubLink: z
+            .string()
+            .url("Invalid GitHub URL")
+            .refine((url) => url.includes("github.com"), {
+                message: "Must be a valid GitHub repository URL",
+            }),
+        liveLink: z
+            .string()
+            .url("Invalid Live Link URL")
+            .optional()
+            .or(z.literal("")),
+        additionalNotes: z.string().optional(),
+    })
+    .refine(
+        (data) => {
+            // Either isCapstone is true OR both moduleId and taskId are provided
+            if (data.isCapstone) return true;
+            return data.moduleId && data.taskId;
+        },
+        {
+            message:
+                "Module ID and Task ID are required for non-capstone assignments",
+            path: ["moduleId"],
+        }
+    );
 
 // Module Access Schema (replaces Lesson Completion)
 export const markModuleAccessedSchema = z.object({

@@ -7,7 +7,6 @@ import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import apiRoutes from "./routes/api/index.js";
 import configurePassport from "./config/passport.js";
-import connectCloudinary from "./config/cloudinary.js";
 import {
     globalErrorHandler,
     notFoundHandler,
@@ -22,7 +21,6 @@ const PORT = process.env.PORT || 5001;
 // --- Database Connection ---
 connectDB();
 configurePassport();
-connectCloudinary();
 
 // --- Middlewares ---
 app.use(
@@ -32,8 +30,8 @@ app.use(
     })
 ); // Enable CORS with credentials
 app.use(cookieParser()); // Parse cookies
-app.use(express.json()); // Body parser for JSON
-app.use(express.urlencoded({ extended: false })); // Body parser for forms
+app.use(express.json({ limit: "10mb" })); // Body parser for JSON with increased limit for base64 images
+app.use(express.urlencoded({ extended: false, limit: "10mb" })); // Body parser for forms
 
 // --- Static Folders ---
 // This serves the 'uploads' folder publicly

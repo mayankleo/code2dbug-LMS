@@ -1,4 +1,4 @@
-import { Course, Enrollment, Submission } from "../../models/index.js";
+import { Course, Enrollment, Submission, Payment } from "../../models/index.js";
 import { ERROR_CODES } from "../../middlewares/globalErrorHandler.js";
 
 /**
@@ -54,7 +54,6 @@ const calculateProgress = (course, completedQuizzes, completedTasks) => {
  */
 export const getMyCourses = async (req, res) => {
     try {
-        
         // Find all enrollments for this student that have some payment
         const enrollments = await Enrollment.find({
             student: req.userId,
@@ -137,7 +136,7 @@ export const getCourseDetails = async (req, res) => {
             paymentStatus: {
                 $nin: ["UNPAID"], // Allow access for any payment status except UNPAID
             },
-        });
+        }).populate("partialPaymentDetails");
 
         if (!enrollment) {
             return res.status(403).json({
@@ -238,7 +237,9 @@ export const getCourseDetails = async (req, res) => {
                         id: task._id,
                         title: task.title,
                         description: task.description,
-                        isCompleted: completedTasks.includes(task._id.toString()),
+                        isCompleted: completedTasks.includes(
+                            task._id.toString()
+                        ),
                         isSubmitted,
                         status: isSubmitted ? "Submitted" : "Open",
                         githubLink: submission?.githubLink,
@@ -269,6 +270,16 @@ export const getCourseDetails = async (req, res) => {
               }
             : null;
 
+        // Build payment info from partial payment details (for prefilling form)
+        const bankDetails = enrollment.partialPaymentDetails
+            ? {
+                  accountHolderName: enrollment.partialPaymentDetails.accountHolderName,
+                  bankName: enrollment.partialPaymentDetails.bankName,
+                  ifscCode: enrollment.partialPaymentDetails.ifscCode,
+                  accountNumber: enrollment.partialPaymentDetails.accountNumber,
+              }
+            : null;
+
         res.json({
             success: true,
             data: {
@@ -285,6 +296,13 @@ export const getCourseDetails = async (req, res) => {
                 modules,
                 capstone,
                 isCompleted: enrollment.isCompleted,
+                // Payment related fields
+                enrollmentId: enrollment._id,
+                paymentStatus: enrollment.paymentStatus,
+                courseAmount: enrollment.courseAmount || course.price || 500,
+                amountPaid: enrollment.amountPaid || 0,
+                amountRemaining: enrollment.amountRemaining || (enrollment.courseAmount || course.price || 500),
+                bankDetails,
             },
         });
     } catch (error) {

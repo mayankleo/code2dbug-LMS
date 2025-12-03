@@ -185,35 +185,33 @@ const StudentProfilePage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                        First Name <span className="text-red-500">*</span>
+                        First Name
                       </label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                        disabled
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-400 cursor-not-allowed"
                         placeholder="John"
-                        required
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                        Last Name <span className="text-red-500">*</span>
+                        Last Name
                       </label>
                       <input
                         type="text"
                         name="lastName"
                         value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                        disabled
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-400 cursor-not-allowed"
                         placeholder="Doe"
-                        required
                       />
                     </div>
                     <div className="space-y-2 sm:col-span-2">
                       <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                        College / University <span className="text-red-500">*</span>
+                        College / University
                       </label>
                       <div className="relative">
                         <Building
@@ -224,16 +222,15 @@ const StudentProfilePage = () => {
                           type="text"
                           name="collegeName"
                           value={formData.collegeName}
-                          onChange={handleInputChange}
-                          className="w-full bg-black border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                          disabled
+                          className="w-full bg-zinc-800 border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-zinc-400 cursor-not-allowed"
                           placeholder="Institute Name"
-                          required
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                        Course Name <span className="text-red-500">*</span>
+                        Course Name
                       </label>
                       <div className="relative">
                         <BookOpen
@@ -244,10 +241,9 @@ const StudentProfilePage = () => {
                           type="text"
                           name="courseName"
                           value={formData.courseName}
-                          onChange={handleInputChange}
-                          className="w-full bg-black border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                          disabled
+                          className="w-full bg-zinc-800 border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-zinc-400 cursor-not-allowed"
                           placeholder="B.Tech CS"
-                          required
                         />
                       </div>
                     </div>

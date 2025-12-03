@@ -161,7 +161,8 @@ export const getCourseAssignments = async (req, res) => {
         const assignments = [];
         sortedModules.forEach((module, moduleIndex) => {
             // First module is always open, others depend on previous module completion
-            const isModuleLocked = moduleIndex > 0 && !moduleCompletionStatus[moduleIndex - 1];
+            const isModuleLocked =
+                moduleIndex > 0 && !moduleCompletionStatus[moduleIndex - 1];
 
             module.tasks.forEach((task) => {
                 const submission = submissions.find(
@@ -231,8 +232,15 @@ export const submitAssignment = async (req, res) => {
             });
         }
 
-        const { courseId, moduleId, taskId, githubLink, liveLink, additionalNotes, isCapstone } =
-            validation.data;
+        const {
+            courseId,
+            moduleId,
+            taskId,
+            githubLink,
+            liveLink,
+            additionalNotes,
+            isCapstone,
+        } = validation.data;
 
         const course = await Course.findById(courseId);
         if (!course) {
@@ -278,7 +286,8 @@ export const submitAssignment = async (req, res) => {
             if (!allModulesCompleted) {
                 return res.status(403).json({
                     success: false,
-                    message: "Complete all modules before submitting the capstone project",
+                    message:
+                        "Complete all modules before submitting the capstone project",
                     code: ERROR_CODES.MODULE_LOCKED,
                 });
             }
@@ -310,20 +319,20 @@ export const submitAssignment = async (req, res) => {
             });
 
             // Mark capstone as completed in course (for this student's enrollment tracking)
-            // Update user stats
+            // Update user stats (no XP for assignments)
             await Student.findByIdAndUpdate(req.userId, {
-                $inc: { xp: 100, assignmentsCompleted: 1 },
+                $inc: { assignmentsCompleted: 1 },
             });
 
-            // Update leaderboard with XP
-            await updateLeaderboard(req.userId, courseId, 100, {
+            // Update leaderboard with assignment completion (no XP)
+            await updateLeaderboard(req.userId, courseId, 0, {
                 assignmentsCompleted: 1,
             });
 
             return res.status(200).json({
                 success: true,
                 data: submission,
-                message: "Capstone project submitted successfully! You earned 100 XP!",
+                message: "Capstone project submitted successfully!",
             });
         }
 
@@ -345,9 +354,7 @@ export const submitAssignment = async (req, res) => {
         let foundTask = null;
         for (let i = 0; i < sortedModules.length; i++) {
             const module = sortedModules[i];
-            const task = module.tasks.find(
-                (t) => t._id.toString() === taskId
-            );
+            const task = module.tasks.find((t) => t._id.toString() === taskId);
             if (task) {
                 moduleIndex = i;
                 foundTask = task;
@@ -366,11 +373,16 @@ export const submitAssignment = async (req, res) => {
         // Check if module is locked (first module is always open)
         if (moduleIndex > 0) {
             const prevModule = sortedModules[moduleIndex - 1];
-            const isModuleLocked = !isModuleCompleted(prevModule, completedQuizIds, completedTaskIds);
+            const isModuleLocked = !isModuleCompleted(
+                prevModule,
+                completedQuizIds,
+                completedTaskIds
+            );
             if (isModuleLocked) {
                 return res.status(403).json({
                     success: false,
-                    message: "Cannot submit assignment. The module is locked. Complete the previous module first.",
+                    message:
+                        "Cannot submit assignment. The module is locked. Complete the previous module first.",
                     code: ERROR_CODES.MODULE_LOCKED,
                 });
             }
@@ -387,7 +399,8 @@ export const submitAssignment = async (req, res) => {
         if (existingSubmission) {
             return res.status(403).json({
                 success: false,
-                message: "You have already submitted this assignment. Resubmission is not allowed.",
+                message:
+                    "You have already submitted this assignment. Resubmission is not allowed.",
                 code: ERROR_CODES.ALREADY_SUBMITTED,
             });
         }
@@ -428,20 +441,20 @@ export const submitAssignment = async (req, res) => {
 
         await enrollment.save();
 
-        // Update user stats
+        // Update user stats (no XP for assignments)
         await Student.findByIdAndUpdate(req.userId, {
-            $inc: { xp: 50, assignmentsCompleted: 1 },
+            $inc: { assignmentsCompleted: 1 },
         });
 
-        // Update leaderboard with XP and assignment completion
-        await updateLeaderboard(req.userId, courseId, 50, {
+        // Update leaderboard with assignment completion (no XP)
+        await updateLeaderboard(req.userId, courseId, 0, {
             assignmentsCompleted: 1,
         });
 
         res.status(200).json({
             success: true,
             data: submission,
-            message: "Assignment submitted successfully! You earned 50 XP!",
+            message: "Assignment submitted successfully!",
         });
     } catch (error) {
         console.error("Submit assignment error:", error);
