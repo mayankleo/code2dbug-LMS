@@ -1,45 +1,35 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchCertificates, selectCertificates } from '@/redux/slices';
+import { fetchCertificates, selectCertificates, selectNavigationTimestamp } from '@/redux/slices';
 import { getCourseCertificate } from '@/services/student/studentService';
-
-// Cache duration: 10 minutes for certificates (rarely updated)
-const CACHE_DURATION = 10 * 60 * 1000;
-
-/**
- * Check if cache is still valid
- */
-const isCacheValid = lastFetched => {
-  if (!lastFetched) return false;
-  return Date.now() - lastFetched < CACHE_DURATION;
-};
 
 /**
  * Hook for fetching certificates (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useCertificates = () => {
   const dispatch = useDispatch();
-  const { list: certificates, loading, error, lastFetched } = useSelector(selectCertificates);
+  const { list: certificates, loading, error } = useSelector(selectCertificates);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchCertificatesData = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchCertificates());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchCertificatesData = useCallback(() => {
+    dispatch(fetchCertificates());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchCertificatesData();
-  }, [fetchCertificatesData]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchCertificatesData();
+    }
+  }, [navigationTimestamp, fetchCertificatesData]);
 
   return {
     certificates,
     loading,
     error,
-    refetch: () => fetchCertificatesData(true),
+    refetch: fetchCertificatesData,
   };
 };
 

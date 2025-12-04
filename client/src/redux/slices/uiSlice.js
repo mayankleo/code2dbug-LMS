@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   currentNavigation: '/',
+  navigationTimestamp: Date.now(),
   studentSidebarOpen: false,
   adminSidebarOpen: false,
   globalLoading: false,
@@ -16,6 +17,7 @@ const uiSlice = createSlice({
   reducers: {
     setNavigation: (state, action) => {
       state.currentNavigation = action.payload;
+      state.navigationTimestamp = Date.now();
     },
 
     setStudentSidebarOpen: (state, action) => {
@@ -76,6 +78,7 @@ export const {
 // Selectors
 export const selectUI = state => state.ui;
 export const selectCurrentNavigation = state => state.ui.currentNavigation;
+export const selectNavigationTimestamp = state => state.ui.navigationTimestamp;
 export const selectStudentSidebarOpen = state => state.ui.studentSidebarOpen;
 export const selectAdminSidebarOpen = state => state.ui.adminSidebarOpen;
 export const selectGlobalLoading = state => state.ui.globalLoading;

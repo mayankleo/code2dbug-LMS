@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -18,6 +18,7 @@ import {
   selectAssignments,
   selectCourseAssignments,
   selectLeaderboard,
+  selectNavigationTimestamp,
 } from '@/redux/slices';
 import {
   markModuleAccessed,
@@ -27,103 +28,99 @@ import {
   submitAssignment,
 } from '@/services/student/studentService';
 
-// Cache duration: 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
-
-/**
- * Check if cache is still valid
- */
-const isCacheValid = lastFetched => {
-  if (!lastFetched) return false;
-  return Date.now() - lastFetched < CACHE_DURATION;
-};
-
 /**
  * Hook for fetching enrolled courses (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useMyCourses = () => {
   const dispatch = useDispatch();
-  const { list: courses, loading, error, lastFetched } = useSelector(selectCourses);
+  const { list: courses, loading, error } = useSelector(selectCourses);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchCourses = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchMyCourses());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchCourses = useCallback(() => {
+    dispatch(fetchMyCourses());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchCourses();
+    }
+  }, [navigationTimestamp, fetchCourses]);
 
   return {
     courses,
     loading,
     error,
-    refetch: () => fetchCourses(true),
+    refetch: fetchCourses,
   };
 };
 
 /**
  * Hook for fetching course details (Redux-powered with caching)
+ * Refetches on every tab/navigation change
  */
 export const useCourseDetails = slug => {
   const dispatch = useDispatch();
   const courseData = useSelector(selectCourseDetails(slug));
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const { data: course, loading, error, lastFetched } = courseData || {};
+  const { data: course, loading, error } = courseData || {};
 
-  const fetchDetails = useCallback(
-    (force = false) => {
-      if (slug && (force || !isCacheValid(lastFetched))) {
-        dispatch(fetchCourseDetails(slug));
-      }
-    },
-    [dispatch, slug, lastFetched],
-  );
+  const fetchDetails = useCallback(() => {
+    if (slug) {
+      dispatch(fetchCourseDetails(slug));
+    }
+  }, [dispatch, slug]);
 
   useEffect(() => {
-    fetchDetails();
-  }, [fetchDetails]);
+    if (slug && lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchDetails();
+    }
+  }, [slug, navigationTimestamp, fetchDetails]);
 
   return {
     course,
     loading: loading ?? true,
     error,
-    refetch: () => fetchDetails(true),
+    refetch: fetchDetails,
   };
 };
 
 /**
  * Hook for fetching course modules (Redux-powered with caching)
+ * Refetches on every tab/navigation change
  */
 export const useCourseModules = slug => {
   const dispatch = useDispatch();
   const moduleData = useSelector(selectCourseModules(slug));
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const { modules, courseTitle, loading, error, lastFetched } = moduleData || {};
+  const { modules, courseTitle, loading, error } = moduleData || {};
 
-  const fetchModules = useCallback(
-    (force = false) => {
-      if (slug && (force || !isCacheValid(lastFetched))) {
-        dispatch(fetchCourseModules(slug));
-      }
-    },
-    [dispatch, slug, lastFetched],
-  );
+  const fetchModules = useCallback(() => {
+    if (slug) {
+      dispatch(fetchCourseModules(slug));
+    }
+  }, [dispatch, slug]);
 
   useEffect(() => {
-    fetchModules();
-  }, [fetchModules]);
+    if (slug && lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchModules();
+    }
+  }, [slug, navigationTimestamp, fetchModules]);
 
   return {
     modules: modules || [],
     courseTitle: courseTitle || '',
     loading: loading ?? true,
     error,
-    refetch: () => fetchModules(true),
+    refetch: fetchModules,
   };
 };
 
@@ -249,25 +246,28 @@ export const useSubmitQuiz = () => {
 
 /**
  * Hook for fetching course quizzes (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useCourseQuizzes = slug => {
   const dispatch = useDispatch();
   const quizData = useSelector(selectCourseQuizzes(slug));
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const { quizzes, courseId, courseTitle, loading, error, lastFetched } = quizData || {};
+  const { quizzes, courseId, courseTitle, loading, error } = quizData || {};
 
-  const fetchQuizzes = useCallback(
-    (force = false) => {
-      if (slug && (force || !isCacheValid(lastFetched))) {
-        dispatch(fetchCourseQuizzes(slug));
-      }
-    },
-    [dispatch, slug, lastFetched],
-  );
+  const fetchQuizzes = useCallback(() => {
+    if (slug) {
+      dispatch(fetchCourseQuizzes(slug));
+    }
+  }, [dispatch, slug]);
 
   useEffect(() => {
-    fetchQuizzes();
-  }, [fetchQuizzes]);
+    if (slug && lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchQuizzes();
+    }
+  }, [slug, navigationTimestamp, fetchQuizzes]);
 
   return {
     quizzes: quizzes || [],
@@ -275,31 +275,34 @@ export const useCourseQuizzes = slug => {
     courseTitle: courseTitle || '',
     loading: loading ?? true,
     error,
-    refetch: () => fetchQuizzes(true),
+    refetch: fetchQuizzes,
   };
 };
 
 /**
  * Hook for fetching course assignments (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useCourseAssignments = slug => {
   const dispatch = useDispatch();
   const assignmentData = useSelector(selectCourseAssignments(slug));
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const { assignments, courseId, courseTitle, loading, error, lastFetched } = assignmentData || {};
+  const { assignments, courseId, courseTitle, loading, error } = assignmentData || {};
 
-  const fetchAssignments = useCallback(
-    (force = false) => {
-      if (slug && (force || !isCacheValid(lastFetched))) {
-        dispatch(fetchCourseAssignments(slug));
-      }
-    },
-    [dispatch, slug, lastFetched],
-  );
+  const fetchAssignments = useCallback(() => {
+    if (slug) {
+      dispatch(fetchCourseAssignments(slug));
+    }
+  }, [dispatch, slug]);
 
   useEffect(() => {
-    fetchAssignments();
-  }, [fetchAssignments]);
+    if (slug && lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchAssignments();
+    }
+  }, [slug, navigationTimestamp, fetchAssignments]);
 
   return {
     assignments: assignments || [],
@@ -307,7 +310,7 @@ export const useCourseAssignments = slug => {
     courseTitle: courseTitle || '',
     loading: loading ?? true,
     error,
-    refetch: () => fetchAssignments(true),
+    refetch: fetchAssignments,
   };
 };
 
@@ -338,62 +341,65 @@ export const useSubmitAssignment = () => {
 
 /**
  * Hook for fetching all courses with quiz progress (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useQuizzesByCourse = () => {
   const dispatch = useDispatch();
-  const { byCourse: courses, loading, error, lastFetched } = useSelector(selectQuizzes);
+  const { byCourse: courses, loading, error } = useSelector(selectQuizzes);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchCourses = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchQuizzesByCourse());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchCourses = useCallback(() => {
+    dispatch(fetchQuizzesByCourse());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchCourses();
+    }
+  }, [navigationTimestamp, fetchCourses]);
 
   return {
     courses,
     loading,
     error,
-    refetch: () => fetchCourses(true),
+    refetch: fetchCourses,
   };
 };
 
 /**
  * Hook for fetching all courses with assignment progress (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useAssignmentsByCourse = () => {
   const dispatch = useDispatch();
-  const { byCourse: courses, loading, error, lastFetched } = useSelector(selectAssignments);
+  const { byCourse: courses, loading, error } = useSelector(selectAssignments);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchCourses = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchAssignmentsByCourse());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchCourses = useCallback(() => {
+    dispatch(fetchAssignmentsByCourse());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchCourses();
+    }
+  }, [navigationTimestamp, fetchCourses]);
 
   return {
     courses,
     loading,
     error,
-    refetch: () => fetchCourses(true),
+    refetch: fetchCourses,
   };
 };
 
 /**
  * Hook for fetching leaderboard data (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useLeaderboard = (type = 'global', courseId = null) => {
   const dispatch = useDispatch();
@@ -405,6 +411,8 @@ export const useLeaderboard = (type = 'global', courseId = null) => {
     loading,
     error,
   } = useSelector(selectLeaderboard);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
   const fetchLeaderboardData = useCallback(
     (page = 1) => {
@@ -418,8 +426,11 @@ export const useLeaderboard = (type = 'global', courseId = null) => {
   );
 
   useEffect(() => {
-    fetchLeaderboardData();
-  }, [fetchLeaderboardData]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchLeaderboardData();
+    }
+  }, [navigationTimestamp, fetchLeaderboardData]);
 
   return {
     leaderboard,

@@ -28,6 +28,7 @@ export {
   toggleLoginPopup,
   selectUI,
   selectCurrentNavigation,
+  selectNavigationTimestamp,
   selectStudentSidebarOpen,
   selectAdminSidebarOpen,
   selectGlobalLoading,

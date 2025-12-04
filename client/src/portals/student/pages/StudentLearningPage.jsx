@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import {
   ChevronDown,
   ChevronUp,
@@ -28,6 +28,38 @@ import CapstoneCard from '../components/CapstoneCard';
 import PaymentModal from '../components/PaymentModal';
 import { useCourseDetails, useMarkModuleAccessed, useCourseProgress, useProfile } from '../hooks';
 import { downloadModuleCertificate } from '../utils/downloadModuleCertificate';
+
+// Loading component
+const LoadingState = memo(() => (
+  <div className="flex items-center justify-center h-full bg-black">
+    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+  </div>
+));
+LoadingState.displayName = 'LoadingState';
+
+// Error component
+const ErrorState = memo(({ error, onRetry }) => (
+  <div className="flex flex-col items-center justify-center h-full gap-4 bg-black text-white">
+    <AlertCircle size={48} className="text-red-400" />
+    <p className="text-red-400">{error}</p>
+    <button
+      onClick={onRetry}
+      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    >
+      Retry
+    </button>
+  </div>
+));
+ErrorState.displayName = 'ErrorState';
+
+// Not found component
+const NotFoundState = memo(() => (
+  <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+    <BookOpen size={64} className="text-zinc-600 mb-4" />
+    <p className="text-zinc-400">Course not found</p>
+  </div>
+));
+NotFoundState.displayName = 'NotFoundState';
 
 const StudentLearningPage = () => {
   const { coursename } = useParams();
@@ -63,28 +95,75 @@ const StudentLearningPage = () => {
     }
   }, [course, activeModule]);
 
-  // Track module access
-  const handleModuleAccess = async moduleId => {
-    if (!course) return;
-    try {
-      await markAccessed(course._id || course.id, moduleId);
-    } catch (err) {
-      // Silently fail - this is just for tracking
-      console.error('Failed to track module access:', err);
-    }
-  };
+  // Update activeContent when course data changes (after refetch)
+  useEffect(() => {
+    if (!course || !activeContent) return;
 
-  const handleQuizComplete = () => {
+    // Update task content with fresh data
+    if (activeContent.type === 'task' && activeContent.moduleId) {
+      const module = course.modules?.find(m => (m._id || m.id) === activeContent.moduleId);
+      if (module) {
+        const taskId = activeContent.data._id || activeContent.data.id;
+        const updatedTask = module.tasks?.find(t => (t._id || t.id) === taskId);
+        if (updatedTask) {
+          setActiveContent(prev => ({
+            ...prev,
+            data: updatedTask,
+          }));
+        }
+      }
+    }
+
+    // Update quiz content with fresh data
+    if (activeContent.type === 'quiz' && activeContent.moduleId) {
+      const module = course.modules?.find(m => (m._id || m.id) === activeContent.moduleId);
+      if (module) {
+        const quizId = activeContent.data._id || activeContent.data.id;
+        const updatedQuiz = module.quizzes?.find(q => (q._id || q.id) === quizId);
+        if (updatedQuiz) {
+          setActiveContent(prev => ({
+            ...prev,
+            data: updatedQuiz,
+          }));
+        }
+      }
+    }
+
+    // Update capstone content with fresh data
+    if (activeContent.type === 'capstone' && course.capstone) {
+      setActiveContent(prev => ({
+        ...prev,
+        data: course.capstone,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course]);
+
+  // Track module access
+  const handleModuleAccess = useCallback(
+    async moduleId => {
+      if (!course) return;
+      try {
+        await markAccessed(course._id || course.id, moduleId);
+      } catch (err) {
+        // Silently fail - this is just for tracking
+        console.error('Failed to track module access:', err);
+      }
+    },
+    [course, markAccessed],
+  );
+
+  const handleQuizComplete = useCallback(() => {
     refetch();
     refetchProgress();
     toast.success('Quiz completed!');
-  };
+  }, [refetch, refetchProgress]);
 
-  const handleTaskComplete = () => {
+  const handleTaskComplete = useCallback(() => {
     refetch();
     refetchProgress();
     toast.success('Assignment submitted!');
-  };
+  }, [refetch, refetchProgress]);
 
   if (loading) {
     return (
@@ -312,6 +391,7 @@ const StudentLearningPage = () => {
         {/* Quiz Content */}
         {activeContent?.type === 'quiz' && (
           <QuizCard
+            key={`quiz-${activeContent.data._id || activeContent.data.id}-${activeContent.data.isCompleted}`}
             courseSlug={coursename}
             quizId={activeContent.data._id || activeContent.data.id}
             courseId={course._id || course.id}
@@ -380,6 +460,7 @@ const StudentLearningPage = () => {
         {/* Task/Assignment Content */}
         {activeContent?.type === 'task' && (
           <AssignmentCard
+            key={`task-${activeContent.data._id || activeContent.data.id}-${activeContent.data.isSubmitted}-${activeContent.data.status}`}
             task={activeContent.data}
             courseId={course._id || course.id}
             moduleId={activeContent.moduleId}
@@ -473,6 +554,7 @@ const StudentLearningPage = () => {
         {/* Capstone Project Content */}
         {activeContent?.type === 'capstone' && (
           <CapstoneCard
+            key={`capstone-${course.capstone?.isSubmitted}-${course.capstone?.isCompleted}`}
             capstone={activeContent.data}
             courseId={course._id || course.id}
             allModulesCompleted={allModulesCompleted}
@@ -748,8 +830,8 @@ const StudentLearningPage = () => {
                                 <button
                                   onClick={async e => {
                                     e.stopPropagation();
-                                    const moduleId = module._id || module.id;
-                                    setDownloadingCertificate(moduleId);
+                                    const currentModuleId = module._id || module.id;
+                                    setDownloadingCertificate(currentModuleId);
                                     try {
                                       await downloadModuleCertificate({
                                         studentName: profile?.name || 'Student',
@@ -848,12 +930,14 @@ const StudentLearningPage = () => {
                 </div>
                 <span className="font-bold text-sm text-white">Final Certification</span>
               </div>
-              
+
               {/* Different states based on course completion and payment */}
               {(() => {
-                const capstoneComplete = course.capstone?.isCompleted || course.capstone?.isSubmitted;
+                const capstoneComplete =
+                  course.capstone?.isCompleted || course.capstone?.isSubmitted;
                 const isFullyPaid = course.paymentStatus === 'FULLY_PAID';
-                const isPaymentPending = course.paymentStatus === 'FULLY_PAYMENT_VERIFICATION_PENDING';
+                const isPaymentPending =
+                  course.paymentStatus === 'FULLY_PAYMENT_VERIFICATION_PENDING';
                 const courseComplete = allModulesCompleted && capstoneComplete;
 
                 // State 1: Course not complete
@@ -884,7 +968,9 @@ const StudentLearningPage = () => {
                       </p>
                       <div className="flex items-center justify-between text-xs mb-4 bg-zinc-800/50 rounded-lg p-2">
                         <span className="text-zinc-500">Amount Remaining:</span>
-                        <span className="text-blue-400 font-bold">₹{course.amountRemaining || 0}</span>
+                        <span className="text-blue-400 font-bold">
+                          ₹{course.amountRemaining || 0}
+                        </span>
                       </div>
                       <button
                         onClick={() => setShowPaymentModal(true)}
