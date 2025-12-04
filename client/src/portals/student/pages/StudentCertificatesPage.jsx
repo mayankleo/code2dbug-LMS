@@ -14,6 +14,153 @@ import { toast } from 'sonner';
 
 import { useCertificates, useMyCourses, useCourseDetails, useProfile } from '../hooks';
 import { downloadModuleCertificate } from '../utils/downloadModuleCertificate';
+import { downloadFinalCertificate } from '../utils/downloadFinalCertificate';
+
+// Course Certificate Card with Download functionality (from Certificate model)
+const CourseCertificateCard = ({ certificate, studentName }) => {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async e => {
+    e.preventDefault(); // Prevent navigation when clicking download
+    e.stopPropagation();
+    setDownloading(true);
+    try {
+      await downloadFinalCertificate({
+        studentName: certificate.studentNameSnapshot || studentName,
+        courseName: certificate.course?.title || certificate.courseNameSnapshot,
+        certificateId: certificate.certificateId || null,
+        issueDate: certificate.issueDate ? new Date(certificate.issueDate) : new Date(),
+        skills: certificate.course?.skills || [],
+      });
+      toast.success('Certificate downloaded successfully!');
+    } catch (err) {
+      console.error('Failed to download certificate:', err);
+      toast.error('Failed to download certificate');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const formattedDate = certificate.issueDate
+    ? new Date(certificate.issueDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : 'Completed';
+
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-yellow-500/30 transition-colors group">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center shrink-0">
+          <Award size={24} className="text-yellow-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">
+              Course
+            </span>
+            <CheckCircle size={14} className="text-green-500" />
+          </div>
+          <h3 className="font-semibold text-white truncate group-hover:text-yellow-400 transition-colors">
+            {certificate.course?.title || certificate.courseNameSnapshot}
+          </h3>
+          <p className="text-sm text-zinc-500">{formattedDate}</p>
+        </div>
+      </div>
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+        >
+          {downloading ? (
+            <Loader2 size={16} className="text-yellow-400 animate-spin" />
+          ) : (
+            <Download size={16} className="text-yellow-400" />
+          )}
+          <span className="text-sm text-yellow-400 font-medium">
+            {downloading ? 'Downloading...' : 'Download PDF'}
+          </span>
+        </button>
+        <Link
+          to={`/student/certificates/${certificate.course?.slug}`}
+          className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors text-sm text-zinc-300"
+        >
+          View
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+// Completed Course Certificate Card (from courses list - for completed courses without Certificate document)
+const CompletedCourseCertificateCard = ({ course, studentName }) => {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      await downloadFinalCertificate({
+        studentName: studentName,
+        courseName: course.title,
+        certificateId: null,
+        issueDate: new Date(),
+        skills: course.tags || [],
+      });
+      toast.success('Certificate downloaded successfully!');
+    } catch (err) {
+      console.error('Failed to download certificate:', err);
+      toast.error('Failed to download certificate');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-yellow-500/30 transition-colors group">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center shrink-0">
+          <Award size={24} className="text-yellow-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">
+              Course
+            </span>
+            <CheckCircle size={14} className="text-green-500" />
+          </div>
+          <h3 className="font-semibold text-white truncate group-hover:text-yellow-400 transition-colors">
+            {course.title}
+          </h3>
+          <p className="text-sm text-zinc-500">Completed</p>
+        </div>
+      </div>
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 hover:bg-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+        >
+          {downloading ? (
+            <Loader2 size={16} className="text-yellow-400 animate-spin" />
+          ) : (
+            <Download size={16} className="text-yellow-400" />
+          )}
+          <span className="text-sm text-yellow-400 font-medium">
+            {downloading ? 'Downloading...' : 'Download PDF'}
+          </span>
+        </button>
+        <Link
+          to={`/student/my-courses/${course.slug}`}
+          className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors text-sm text-zinc-300"
+        >
+          View Course
+        </Link>
+      </div>
+    </div>
+  );
+};
 
 // Component to show module certificates when a course is expanded
 const ModuleCertificatesList = ({ course, studentName }) => {
@@ -156,10 +303,15 @@ const StudentCertificatesPage = () => {
 
   // Filter enrolled courses (those with progress)
   const enrolledCourses = courses?.filter(c => c.progress > 0) || [];
+
+  // Completed and fully paid courses (eligible for final certificate)
+  const completedPaidCourses = courses?.filter(c => c.isCompleted) || [];
+
   const hasCourseCertificates = certificates && certificates.length > 0;
+  const hasCompletedPaidCourses = completedPaidCourses.length > 0;
   const hasEnrolledCourses = enrolledCourses.length > 0;
 
-  if (!hasCourseCertificates && !hasEnrolledCourses) {
+  if (!hasCourseCertificates && !hasCompletedPaidCourses && !hasEnrolledCourses) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-black text-white">
         <BookOpen size={64} className="text-zinc-600 mb-4" />
@@ -178,7 +330,7 @@ const StudentCertificatesPage = () => {
         <p className="text-zinc-400">Your earned achievements and certifications</p>
       </div>
 
-      {/* Course Completion Certificates */}
+      {/* Course Completion Certificates from Certificate model */}
       {hasCourseCertificates && (
         <div className="mb-10">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -187,37 +339,30 @@ const StudentCertificatesPage = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {certificates.map(cert => (
-              <Link
+              <CourseCertificateCard
                 key={cert._id || cert.id}
-                to={`/student/certificates/${cert.course?.slug}`}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-yellow-500/30 transition-colors group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center shrink-0">
-                    <Award size={24} className="text-yellow-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">
-                        Course
-                      </span>
-                      <CheckCircle size={14} className="text-green-500" />
-                    </div>
-                    <h3 className="font-semibold text-white truncate group-hover:text-yellow-400 transition-colors">
-                      {cert.course?.title || cert.courseNameSnapshot}
-                    </h3>
-                    <p className="text-sm text-zinc-500">
-                      {cert.issueDate
-                        ? new Date(cert.issueDate).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        : 'Completed'}
-                    </p>
-                  </div>
-                </div>
-              </Link>
+                certificate={cert}
+                studentName={profile?.name || 'Student'}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Completed Courses - Final Certificate Download (if not in Certificate model yet) */}
+      {hasCompletedPaidCourses && !hasCourseCertificates && (
+        <div className="mb-10">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Award size={20} className="text-yellow-400" />
+            Course Completion Certificates
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {completedPaidCourses.map(course => (
+              <CompletedCourseCertificateCard
+                key={course.id || course._id}
+                course={course}
+                studentName={profile?.name || 'Student'}
+              />
             ))}
           </div>
         </div>

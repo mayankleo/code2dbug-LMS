@@ -172,11 +172,11 @@ export const createCourse = async (req, res) => {
             tags: Array.isArray(tags)
                 ? tags
                 : tags
-                ? tags
-                      .split(",")
-                      .map((t) => t.trim())
-                      .filter(Boolean)
-                : [],
+                  ? tags
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean)
+                  : [],
             isPublished: isPublished || false,
             modules: modules || [],
             capstoneProject: capstoneProject || null,
@@ -335,8 +335,7 @@ export const toggleCourseStatus = async (req, res) => {
     console.log(req.body);
     console.log(req.params);
     console.log("________----->");
-    
-    
+
     try {
         const { courseId } = req.params;
         const { isPublished } = req.body;

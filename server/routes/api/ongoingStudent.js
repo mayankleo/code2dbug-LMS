@@ -10,8 +10,9 @@ router.get("/", ongoingStudentController.getOngoingUsers);
 router.get("/:enrollmentId", ongoingStudentController.getEnrollmentDetails);
 
 // PATCH /api/admin/pending-users/:userId/approve - Approve single user
-router.patch("/:enrollmentId/update-payment-status", ongoingStudentController.updatePaymentStatus);
-
-
+router.patch(
+    "/:enrollmentId/update-payment-status",
+    ongoingStudentController.updatePaymentStatus
+);
 
 export default router;

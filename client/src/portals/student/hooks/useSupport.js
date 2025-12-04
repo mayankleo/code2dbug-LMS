@@ -1,45 +1,35 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchSupportQueries, selectSupport } from '@/redux/slices';
+import { fetchSupportQueries, selectSupport, selectNavigationTimestamp } from '@/redux/slices';
 import { createSupportQuery } from '@/services/student/studentService';
-
-// Cache duration: 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
-
-/**
- * Check if cache is still valid
- */
-const isCacheValid = lastFetched => {
-  if (!lastFetched) return false;
-  return Date.now() - lastFetched < CACHE_DURATION;
-};
 
 /**
  * Hook for fetching support queries (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useSupportQueries = () => {
   const dispatch = useDispatch();
-  const { queries, loading, error, lastFetched } = useSelector(selectSupport);
+  const { queries, loading, error } = useSelector(selectSupport);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchQueries = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchSupportQueries());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchQueries = useCallback(() => {
+    dispatch(fetchSupportQueries());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchQueries();
-  }, [fetchQueries]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchQueries();
+    }
+  }, [navigationTimestamp, fetchQueries]);
 
   return {
     queries,
     loading,
     error,
-    refetch: () => fetchQueries(true),
+    refetch: fetchQueries,
   };
 };
 

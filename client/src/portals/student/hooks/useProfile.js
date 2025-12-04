@@ -1,7 +1,13 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchProfile, selectProfile, updateProfileLocal, invalidateProfile } from '@/redux/slices';
+import {
+  fetchProfile,
+  selectProfile,
+  updateProfileLocal,
+  invalidateProfile,
+  selectNavigationTimestamp,
+} from '@/redux/slices';
 import {
   updateProfile,
   updateAvatar,
@@ -9,42 +15,32 @@ import {
   changePassword,
 } from '@/services/student/studentService';
 
-// Cache duration: 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
-
-/**
- * Check if cache is still valid
- */
-const isCacheValid = lastFetched => {
-  if (!lastFetched) return false;
-  return Date.now() - lastFetched < CACHE_DURATION;
-};
-
 /**
  * Hook for fetching and managing student profile (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useProfile = () => {
   const dispatch = useDispatch();
-  const { data: profile, loading, error, lastFetched } = useSelector(selectProfile);
+  const { data: profile, loading, error } = useSelector(selectProfile);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchProfileData = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchProfile());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchProfileData = useCallback(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchProfileData();
-  }, [fetchProfileData]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchProfileData();
+    }
+  }, [navigationTimestamp, fetchProfileData]);
 
   return {
     profile,
     loading,
     error,
-    refetch: () => fetchProfileData(true),
+    refetch: fetchProfileData,
   };
 };
 

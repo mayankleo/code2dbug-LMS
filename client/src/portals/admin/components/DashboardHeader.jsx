@@ -103,9 +103,7 @@ const DashboardHeader = ({
                 <DropdownMenuItem
                   key={option}
                   className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-                  onClick={() =>
-                    setSelectedCollege(option === 'All Colleges' ? null : option)
-                  }
+                  onClick={() => setSelectedCollege(option === 'All Colleges' ? null : option)}
                 >
                   {option}
                 </DropdownMenuItem>

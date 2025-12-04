@@ -56,15 +56,20 @@ export const getCourseCertificate = async (req, res) => {
         // Check if payment is complete
         if (enrollment.paymentStatus !== "FULLY_PAID") {
             const statusMessages = {
-                "UNPAID": "Please complete payment to access your certificate",
-                "PARTIAL_PAYMENT_VERIFICATION_PENDING": "Your partial payment is being verified",
-                "PARTIAL_PAID": "Please complete full payment to access your certificate",
-                "FULLY_PAYMENT_VERIFICATION_PENDING": "Your payment is being verified. Certificate will be available once approved.",
+                UNPAID: "Please complete payment to access your certificate",
+                PARTIAL_PAYMENT_VERIFICATION_PENDING:
+                    "Your partial payment is being verified",
+                PARTIAL_PAID:
+                    "Please complete full payment to access your certificate",
+                FULLY_PAYMENT_VERIFICATION_PENDING:
+                    "Your payment is being verified. Certificate will be available once approved.",
             };
-            
+
             return res.status(403).json({
                 success: false,
-                message: statusMessages[enrollment.paymentStatus] || "Payment required for certificate",
+                message:
+                    statusMessages[enrollment.paymentStatus] ||
+                    "Payment required for certificate",
                 code: ERROR_CODES.PAYMENT_REQUIRED,
                 paymentStatus: enrollment.paymentStatus,
             });

@@ -388,7 +388,13 @@ export const submitQuiz = async (req, res) => {
             });
         }
 
-        const { courseId, moduleId, quizId, answers, answerTimes = {} } = validation.data;
+        const {
+            courseId,
+            moduleId,
+            quizId,
+            answers,
+            answerTimes = {},
+        } = validation.data;
 
         const course = await Course.findById(courseId);
         if (!course) {
@@ -490,10 +496,10 @@ export const submitQuiz = async (req, res) => {
             const MAX_XP = 100;
             const MIN_XP = 40;
             const DECAY_DURATION = 60; // seconds
-            
+
             if (timeInSeconds <= 0) return MAX_XP;
             if (timeInSeconds >= DECAY_DURATION) return MIN_XP;
-            
+
             // Linear decay: 100 - (time * 1) but not below 40
             return Math.max(MIN_XP, MAX_XP - Math.floor(timeInSeconds));
         };
@@ -506,7 +512,7 @@ export const submitQuiz = async (req, res) => {
             const questionId = question._id.toString();
             const userAnswer = answers[questionId];
             const isCorrect = userAnswer === question.correctAnswer;
-            
+
             if (isCorrect) {
                 score++;
                 // Calculate XP based on answer time (only for correct answers)
@@ -514,7 +520,7 @@ export const submitQuiz = async (req, res) => {
                 const questionXP = calculateTimeBasedXP(answerTime);
                 totalXP += questionXP;
             }
-            
+
             results.push({
                 questionId: question._id,
                 userAnswer,

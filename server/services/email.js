@@ -4,7 +4,7 @@ import {
     enrollmentEmailTemplate,
     supportEmailTemplate,
     certificateEmailTemplate,
-    getPaymentRejectionEmailTemplate
+    getPaymentRejectionEmailTemplate,
 } from "./emailTemplates.js";
 
 /**
@@ -129,8 +129,13 @@ export const sendSupportEmailTemplate = async (
  * @param {string} content - Email content/reason
  * @returns {Promise<Object>} Email response
  */
-export const sendPaymentRejectionEmail = async (email, name,title, content) => {
-    const html = getPaymentRejectionEmailTemplate(title,name,content);
+export const sendPaymentRejectionEmail = async (
+    email,
+    name,
+    title,
+    content
+) => {
+    const html = getPaymentRejectionEmailTemplate(title, name, content);
     return sendEmail({
         to: email,
         subject: "Payment Rejected",

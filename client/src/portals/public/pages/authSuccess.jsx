@@ -14,7 +14,7 @@ export default function AuthSuccess() {
 
     if (accessToken && refreshToken) {
       authService.handleOAuthSuccess(accessToken, refreshToken).then(() => {
-        navigate("/");
+        navigate(-2);
       });
     } else {
       toast.error('Authentication tokens not found. Please log in again.');
@@ -38,4 +38,3 @@ export default function AuthSuccess() {
     </div>
   );
 }
-
