@@ -198,4 +198,3 @@ const ActiveStudents = () => {
 };
 
 export default ActiveStudents;
-

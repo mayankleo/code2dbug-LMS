@@ -14,13 +14,14 @@ const LearningCard = memo(({ course, destination }) => {
   // Determine if we should show a gradient background or an image
   const hasImageUrl = useMemo(
     () => course.thumbnail && course.thumbnail.startsWith('http'),
-    [course.thumbnail]
+    [course.thumbnail],
   );
 
   // Memoize progress bar color
   const progressBarClass = useMemo(
-    () => `h-2 rounded-full transition-all duration-500 ${course.progress === 100 ? 'bg-green-500' : 'bg-blue-600'}`,
-    [course.progress]
+    () =>
+      `h-2 rounded-full transition-all duration-500 ${course.progress === 100 ? 'bg-green-500' : 'bg-blue-600'}`,
+    [course.progress],
   );
 
   // Memoize thumbnail style
@@ -33,13 +34,14 @@ const LearningCard = memo(({ course, destination }) => {
             backgroundPosition: 'center',
           }
         : {},
-    [hasImageUrl, course.thumbnail]
+    [hasImageUrl, course.thumbnail],
   );
 
   // Memoize thumbnail class
   const thumbnailClass = useMemo(
-    () => `h-40 w-full relative p-6 flex flex-col justify-between ${!hasImageUrl ? course.image : ''}`,
-    [hasImageUrl, course.image]
+    () =>
+      `h-40 w-full relative p-6 flex flex-col justify-between ${!hasImageUrl ? course.image : ''}`,
+    [hasImageUrl, course.image],
   );
 
   return (
@@ -84,10 +86,7 @@ const LearningCard = memo(({ course, destination }) => {
             </span>
           </div>
           <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
-            <div
-              className={progressBarClass}
-              style={{ width: `${course.progress}%` }}
-            />
+            <div className={progressBarClass} style={{ width: `${course.progress}%` }} />
           </div>
         </div>
 

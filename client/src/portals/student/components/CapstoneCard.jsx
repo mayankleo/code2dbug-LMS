@@ -181,32 +181,49 @@ const ErrorMessage = memo(({ error }) => (
 ErrorMessage.displayName = 'ErrorMessage';
 
 // Input field component
-const InputField = memo(({ icon: Icon, label, required, value, onChange, placeholder, isValid, errorMessage, ringColor = 'ring-yellow-500' }) => (
-  <div className="w-full mb-4">
-    <label className="block text-sm font-medium text-zinc-200 mb-2 text-left">
-      {label} {required ? <span className="text-red-400">*</span> : <span className="text-zinc-500">(Optional)</span>}
-    </label>
-    <div className="relative">
-      <Icon
-        size={18}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400"
-      />
-      <input
-        type="url"
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full pl-12 pr-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:${ringColor} transition-all`}
-      />
+const InputField = memo(
+  ({
+    icon: Icon,
+    label,
+    required,
+    value,
+    onChange,
+    placeholder,
+    isValid,
+    errorMessage,
+    ringColor = 'ring-yellow-500',
+  }) => (
+    <div className="w-full mb-4">
+      <label className="block text-sm font-medium text-zinc-200 mb-2 text-left">
+        {label}{' '}
+        {required ? (
+          <span className="text-red-400">*</span>
+        ) : (
+          <span className="text-zinc-500">(Optional)</span>
+        )}
+      </label>
+      <div className="relative">
+        <Icon
+          size={18}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400"
+        />
+        <input
+          type="url"
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`w-full pl-12 pr-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:${ringColor} transition-all`}
+        />
+      </div>
+      {value && !isValid && (
+        <p className="text-red-400 text-sm mt-2 text-left flex items-center gap-1">
+          <AlertCircle size={14} />
+          {errorMessage}
+        </p>
+      )}
     </div>
-    {value && !isValid && (
-      <p className="text-red-400 text-sm mt-2 text-left flex items-center gap-1">
-        <AlertCircle size={14} />
-        {errorMessage}
-      </p>
-    )}
-  </div>
-));
+  ),
+);
 
 InputField.displayName = 'InputField';
 
@@ -229,7 +246,7 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
     if (capstone) {
       setIsSubmitted(capstone.isSubmitted || capstone.isCompleted || false);
       setSubmissionStatus(
-        capstone.submissionStatus || (capstone.isSubmitted ? 'submitted' : 'pending')
+        capstone.submissionStatus || (capstone.isSubmitted ? 'submitted' : 'pending'),
       );
       if (capstone.githubLink) setGithubLink(capstone.githubLink);
       if (capstone.liveLink) setLiveLink(capstone.liveLink);
@@ -241,11 +258,11 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
   const isLiveLinkValid = useMemo(() => isValidUrl(liveLink), [liveLink]);
 
   // Memoized handlers
-  const handleGithubChange = useCallback((e) => {
+  const handleGithubChange = useCallback(e => {
     setGithubLink(e.target.value);
   }, []);
 
-  const handleLiveLinkChange = useCallback((e) => {
+  const handleLiveLinkChange = useCallback(e => {
     setLiveLink(e.target.value);
   }, []);
 
@@ -273,12 +290,13 @@ const CapstoneCard = ({ capstone, courseId, allModulesCompleted, onComplete }) =
   // Memoized computed values
   const canSubmit = useMemo(
     () => githubLink && isGithubValid && (!liveLink || isLiveLinkValid) && !submitting,
-    [githubLink, isGithubValid, liveLink, isLiveLinkValid, submitting]
+    [githubLink, isGithubValid, liveLink, isLiveLinkValid, submitting],
   );
 
   const buttonClass = useMemo(() => {
     if (submitting) return 'bg-zinc-600 cursor-wait';
-    if (canSubmit) return 'bg-linear-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500';
+    if (canSubmit)
+      return 'bg-linear-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500';
     return 'bg-zinc-600 cursor-not-allowed';
   }, [submitting, canSubmit]);
 

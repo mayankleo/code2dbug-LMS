@@ -40,13 +40,13 @@ const ShortCard = memo(({ course, setModule, cardFor }) => {
           ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
           : 'bg-blue-600 text-white hover:bg-blue-700'
       }`,
-    [course.isLocked]
+    [course.isLocked],
   );
 
   // Memoize item type text
   const itemTypeText = useMemo(
     () => (cardFor === 'assignments' ? 'Assignments' : 'Quizzes'),
-    [cardFor]
+    [cardFor],
   );
 
   return (

@@ -23,7 +23,7 @@ const QuestionOption = memo(({ option, index, isSelected, questionId, onSelect }
       `flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
         isSelected ? 'border-blue-500 bg-blue-900/20' : 'border-zinc-700 hover:bg-zinc-800'
       }`,
-    [isSelected]
+    [isSelected],
   );
 
   return (
@@ -133,7 +133,12 @@ const QuizCard = ({
   const preventKeyboardCopy = useCallback(e => {
     if (
       (e.ctrlKey || e.metaKey) &&
-      (e.key === 'c' || e.key === 'C' || e.key === 'a' || e.key === 'A' || e.key === 'x' || e.key === 'X')
+      (e.key === 'c' ||
+        e.key === 'C' ||
+        e.key === 'a' ||
+        e.key === 'A' ||
+        e.key === 'x' ||
+        e.key === 'X')
     ) {
       e.preventDefault();
       return false;
@@ -207,7 +212,7 @@ const QuizCard = ({
   // Memoized computed values
   const currentQuestion = useMemo(
     () => quiz?.questions?.[currentQuestionIndex],
-    [quiz?.questions, currentQuestionIndex]
+    [quiz?.questions, currentQuestionIndex],
   );
 
   const totalQuestions = useMemo(() => quiz?.questions?.length || 0, [quiz?.questions?.length]);
@@ -216,7 +221,7 @@ const QuizCard = ({
 
   const progressWidth = useMemo(
     () => `${(attempted / totalQuestions) * 100}%`,
-    [attempted, totalQuestions]
+    [attempted, totalQuestions],
   );
 
   const handleNext = useCallback(async () => {
@@ -275,7 +280,7 @@ const QuizCard = ({
       `px-8 py-3 rounded-lg font-bold text-white shadow-lg transition-colors flex items-center gap-2 ${
         !isButtonDisabled ? 'bg-green-600 hover:bg-green-700' : 'bg-zinc-700 cursor-not-allowed'
       }`,
-    [isButtonDisabled]
+    [isButtonDisabled],
   );
 
   if (loadingQuiz) {
@@ -295,13 +300,14 @@ const QuizCard = ({
         <AlertCircle size={40} className="text-yellow-500" />
       );
 
-    const resultBgClass =
-      quizResults.percentage >= 70 ? 'bg-green-900/30' : 'bg-yellow-900/30';
+    const resultBgClass = quizResults.percentage >= 70 ? 'bg-green-900/30' : 'bg-yellow-900/30';
 
     return (
       <div className="max-w-3xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
         <div className="text-center mb-8">
-          <div className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${resultBgClass}`}>
+          <div
+            className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${resultBgClass}`}
+          >
             {resultIcon}
           </div>
           <h2 className="text-2xl font-bold mb-2">
@@ -323,7 +329,12 @@ const QuizCard = ({
             {quizResults.results.map((result, index) => {
               const question = quiz.questions.find(q => q.id === result.questionId);
               return (
-                <ResultItem key={result.questionId} result={result} question={question} index={index} />
+                <ResultItem
+                  key={result.questionId}
+                  result={result}
+                  question={question}
+                  index={index}
+                />
               );
             })}
           </div>
@@ -334,7 +345,10 @@ const QuizCard = ({
           <div className="space-y-4 mb-8">
             <h3 className="font-bold text-lg border-b border-zinc-800 pb-2">Correct Answers</h3>
             {quiz.questions.map((question, index) => (
-              <div key={question.id} className="p-4 rounded-lg border border-zinc-700 bg-zinc-800/50">
+              <div
+                key={question.id}
+                className="p-4 rounded-lg border border-zinc-700 bg-zinc-800/50"
+              >
                 <div className="flex items-start gap-3">
                   <CheckCircle size={20} className="text-blue-500 mt-0.5 shrink-0" />
                   <div>
@@ -343,7 +357,9 @@ const QuizCard = ({
                     </p>
                     <p className="text-sm text-zinc-400">
                       Correct answer:{' '}
-                      <span className="text-green-400">{question.options[question.correctAnswer]}</span>
+                      <span className="text-green-400">
+                        {question.options[question.correctAnswer]}
+                      </span>
                     </p>
                   </div>
                 </div>

@@ -1,7 +1,12 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchDashboard, selectDashboard, invalidateDashboard, selectNavigationTimestamp } from '@/redux/slices';
+import {
+  fetchDashboard,
+  selectDashboard,
+  invalidateDashboard,
+  selectNavigationTimestamp,
+} from '@/redux/slices';
 
 /**
  * Hook for fetching dashboard data (Redux-powered)

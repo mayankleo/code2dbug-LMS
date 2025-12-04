@@ -49,10 +49,11 @@ export const paymentProofSchema = z.object({
         .toUpperCase(),
 
     // Payment Type (required)
-    paymentType: z
-        .enum(["partial", "full"], {
-            errorMap: () => ({ message: "Payment type must be 'partial' or 'full'" }),
+    paymentType: z.enum(["partial", "full"], {
+        errorMap: () => ({
+            message: "Payment type must be 'partial' or 'full'",
         }),
+    }),
 });
 
 // Middleware function

@@ -1,7 +1,13 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchProfile, selectProfile, updateProfileLocal, invalidateProfile, selectNavigationTimestamp } from '@/redux/slices';
+import {
+  fetchProfile,
+  selectProfile,
+  updateProfileLocal,
+  invalidateProfile,
+  selectNavigationTimestamp,
+} from '@/redux/slices';
 import {
   updateProfile,
   updateAvatar,

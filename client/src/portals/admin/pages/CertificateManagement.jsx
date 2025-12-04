@@ -392,4 +392,3 @@ const CertificateManagement = () => {
 };
 
 export default CertificateManagement;
-

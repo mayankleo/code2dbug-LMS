@@ -215,4 +215,3 @@ const CreateCourse = ({ onBack }) => {
 };
 
 export default CreateCourse;
-

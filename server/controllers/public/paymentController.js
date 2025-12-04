@@ -8,7 +8,7 @@ import crypto from "crypto";
  */
 const uploadToR2 = async (file) => {
     const uniqueKey = `final-payment-screenshots/${Date.now()}-${crypto.randomUUID()}-${file.originalname}`;
-    
+
     const uploadParams = {
         Bucket: process.env.R2_BUCKET_NAME,
         Key: uniqueKey,
@@ -17,12 +17,12 @@ const uploadToR2 = async (file) => {
     };
 
     await r2.send(new PutObjectCommand(uploadParams));
-    
+
     // Return the R2 public URL or custom domain URL
-    const publicUrl = process.env.R2_PUBLIC_URL 
+    const publicUrl = process.env.R2_PUBLIC_URL
         ? `${process.env.R2_PUBLIC_URL}/${uniqueKey}`
         : `/api/file/${uniqueKey}`;
-    
+
     return publicUrl;
 };
 
@@ -52,7 +52,8 @@ export const submitPaymentProof = async (req, res) => {
                 console.error("R2 upload error:", uploadError);
                 return res.status(500).json({
                     success: false,
-                    message: "Failed to upload payment screenshot. Please try again.",
+                    message:
+                        "Failed to upload payment screenshot. Please try again.",
                 });
             }
         }

@@ -14,12 +14,12 @@ const uploadMemory = multer({
         const allowedTypes = /jpeg|jpg|png|webp/;
         const extname = allowedTypes.test(file.originalname.toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         }
         cb(new Error("Only image files (jpeg, jpg, png, webp) are allowed"));
-    }
+    },
 }).single("screenshot");
 
 const uploadPaymentScreenshot = (req, res, next) => {

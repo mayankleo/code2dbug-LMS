@@ -1,14 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, memo } from 'react';
-import {
-  Bell,
-  X,
-  CheckCheck,
-  Trash2,
-  Info,
-  Award,
-  BookOpen,
-  AlertCircle,
-} from 'lucide-react';
+import { Bell, X, CheckCheck, Trash2, Info, Award, BookOpen, AlertCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Notify from './Notify';
@@ -55,10 +46,7 @@ const formatTime = timestamp => {
 
 // Memoized notification item component
 const NotificationItem = memo(({ notification, onRemove }) => {
-  const handleRemove = useCallback(
-    () => onRemove(notification.id),
-    [onRemove, notification.id]
-  );
+  const handleRemove = useCallback(() => onRemove(notification.id), [onRemove, notification.id]);
 
   return (
     <div className="p-4 border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors group">
@@ -67,15 +55,9 @@ const NotificationItem = memo(({ notification, onRemove }) => {
           <NotificationIcon type={notification.type} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-white line-clamp-1">
-            {notification.title}
-          </p>
-          <p className="text-xs text-zinc-400 line-clamp-2 mt-1">
-            {notification.message}
-          </p>
-          <p className="text-xs text-zinc-500 mt-2">
-            {formatTime(notification.id)}
-          </p>
+          <p className="text-sm font-medium text-white line-clamp-1">{notification.title}</p>
+          <p className="text-xs text-zinc-400 line-clamp-2 mt-1">{notification.message}</p>
+          <p className="text-xs text-zinc-500 mt-2">{formatTime(notification.id)}</p>
         </div>
         <button
           onClick={handleRemove}
@@ -95,9 +77,7 @@ const EmptyNotifications = memo(() => (
   <div className="p-8 text-center">
     <Bell size={32} className="mx-auto text-zinc-600 mb-3" />
     <p className="text-sm text-zinc-400">No notifications yet</p>
-    <p className="text-xs text-zinc-500 mt-1">
-      We'll notify you when something arrives
-    </p>
+    <p className="text-xs text-zinc-500 mt-1">We'll notify you when something arrives</p>
   </div>
 ));
 
@@ -114,7 +94,7 @@ const StudentTopBar = () => {
   // Memoized page title
   const pageTitle = useMemo(
     () => currentNavigation.split('/').slice(-1)[0].replaceAll('-', ' ') || 'Dashboard',
-    [currentNavigation]
+    [currentNavigation],
   );
 
   // Memoized unread count
@@ -136,7 +116,7 @@ const StudentTopBar = () => {
     id => {
       dispatch(removeNotification(id));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleClearAll = useCallback(() => {
@@ -153,16 +133,15 @@ const StudentTopBar = () => {
 
   // Memoized title visibility class
   const titleVisibilityClass = useMemo(
-    () => `text-xl ms-18 font-bold capitalize transition-all ${studentSidebarOpen ? 'hidden md:block' : 'block'}`,
-    [studentSidebarOpen]
+    () =>
+      `text-xl ms-18 font-bold capitalize transition-all ${studentSidebarOpen ? 'hidden md:block' : 'block'}`,
+    [studentSidebarOpen],
   );
 
   return (
     <div className="h-20 bg-black/50 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between pe-4 sm:pe-8">
       <div className="flex items-center gap-4">
-        <h1 className={titleVisibilityClass}>
-          {pageTitle}
-        </h1>
+        <h1 className={titleVisibilityClass}>{pageTitle}</h1>
       </div>
 
       <div className="flex items-center gap-4 sm:gap-6">

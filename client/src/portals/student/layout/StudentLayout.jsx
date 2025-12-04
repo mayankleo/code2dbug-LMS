@@ -20,7 +20,7 @@ const StudentLayout = () => {
   // Check if we're on the learning page (my-courses/:coursename) - memoized
   const isLearningPage = useMemo(
     () => currentNavigation.split('/').at(-2) === 'my-courses',
-    [currentNavigation]
+    [currentNavigation],
   );
 
   // Memoized callbacks to prevent unnecessary re-renders
@@ -34,23 +34,25 @@ const StudentLayout = () => {
 
   // Memoized class names
   const sidebarContainerClass = useMemo(
-    () => `z-40 fixed md:static h-screen shrink-0 overflow-hidden transition-all ${studentSidebarOpen ? 'w-64' : 'w-0'}`,
-    [studentSidebarOpen]
+    () =>
+      `z-40 fixed md:static h-screen shrink-0 overflow-hidden transition-all ${studentSidebarOpen ? 'w-64' : 'w-0'}`,
+    [studentSidebarOpen],
   );
 
   const mainContentClass = useMemo(
     () => `grow flex flex-col ${isLearningPage ? 'overflow-hidden' : 'overflow-auto'}`,
-    [isLearningPage]
+    [isLearningPage],
   );
 
   const outletContainerClass = useMemo(
     () => `grow ${isLearningPage ? 'overflow-hidden' : 'container mx-auto'}`,
-    [isLearningPage]
+    [isLearningPage],
   );
 
   const toggleButtonClass = useMemo(
-    () => `fixed top-4 z-50 border-2 border-s-0 rounded-e-full overflow-hidden border-zinc-700 text-zinc-400 hover:text-white cursor-pointer transition-all ${studentSidebarOpen ? 'left-64' : 'left-0'}`,
-    [studentSidebarOpen]
+    () =>
+      `fixed top-4 z-50 border-2 border-s-0 rounded-e-full overflow-hidden border-zinc-700 text-zinc-400 hover:text-white cursor-pointer transition-all ${studentSidebarOpen ? 'left-64' : 'left-0'}`,
+    [studentSidebarOpen],
   );
 
   return (

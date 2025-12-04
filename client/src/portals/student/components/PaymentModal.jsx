@@ -31,298 +31,301 @@ const FormField = memo(({ label, required, icon: Icon, children }) => (
 
 FormField.displayName = 'FormField';
 
-const PaymentModal = memo(({
-  isOpen,
-  onClose,
-  enrollmentId,
-  courseTitle,
-  amountRemaining,
-  bankDetails,
-  onSuccess,
-}) => {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    accountHolderName: '',
-    bankName: '',
-    ifscCode: '',
-    accountNumber: '',
-    transactionId: '',
-  });
-  const [screenshot, setScreenshot] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+const PaymentModal = memo(
+  ({ isOpen, onClose, enrollmentId, courseTitle, amountRemaining, bankDetails, onSuccess }) => {
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+      accountHolderName: '',
+      bankName: '',
+      ifscCode: '',
+      accountNumber: '',
+      transactionId: '',
+    });
+    const [screenshot, setScreenshot] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Prefill bank details from previous partial payment
-  useEffect(() => {
-    if (bankDetails) {
-      setFormData({
-        accountHolderName: bankDetails.accountHolderName || '',
-        bankName: bankDetails.bankName || '',
-        ifscCode: bankDetails.ifscCode || '',
-        accountNumber: bankDetails.accountNumber || '',
-        transactionId: '',
-      });
-    }
-  }, [bankDetails]);
-
-  // Cleanup preview URL on unmount
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+    // Prefill bank details from previous partial payment
+    useEffect(() => {
+      if (bankDetails) {
+        setFormData({
+          accountHolderName: bankDetails.accountHolderName || '',
+          bankName: bankDetails.bankName || '',
+          ifscCode: bankDetails.ifscCode || '',
+          accountNumber: bankDetails.accountNumber || '',
+          transactionId: '',
+        });
       }
-    };
-  }, [previewUrl]);
+    }, [bankDetails]);
 
-  const handleInputChange = useCallback(e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  }, []);
+    // Cleanup preview URL on unmount
+    useEffect(() => {
+      return () => {
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+        }
+      };
+    }, [previewUrl]);
 
-  const handleFileChange = useCallback(e => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error('File size should be less than 5MB');
-        return;
-      }
-      setScreenshot(file);
-      // Cleanup previous preview URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  }, [previewUrl]);
+    const handleInputChange = useCallback(e => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }, []);
 
-  const handleSubmit = useCallback(
-    async e => {
-      e.preventDefault();
+    const handleFileChange = useCallback(
+      e => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > MAX_FILE_SIZE) {
+            toast.error('File size should be less than 5MB');
+            return;
+          }
+          setScreenshot(file);
+          // Cleanup previous preview URL
+          if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+          }
+          setPreviewUrl(URL.createObjectURL(file));
+        }
+      },
+      [previewUrl],
+    );
 
-      const { accountHolderName, bankName, ifscCode, accountNumber, transactionId } = formData;
-      if (!accountHolderName || !bankName || !ifscCode || !accountNumber || !transactionId) {
-        toast.error('Please fill in all required fields');
-        return;
-      }
+    const handleSubmit = useCallback(
+      async e => {
+        e.preventDefault();
 
-      setLoading(true);
-      try {
-        const paymentData = {
-          ...formData,
-          screenshot,
-        };
+        const { accountHolderName, bankName, ifscCode, accountNumber, transactionId } = formData;
+        if (!accountHolderName || !bankName || !ifscCode || !accountNumber || !transactionId) {
+          toast.error('Please fill in all required fields');
+          return;
+        }
 
-        await submitFullPayment(enrollmentId, paymentData);
-        toast.success('Payment proof submitted successfully! It will be verified within 24-48 hours.');
-        onSuccess?.();
-        onClose();
-      } catch (error) {
-        console.error('Payment submission error:', error);
-        toast.error(error.response?.data?.message || 'Failed to submit payment proof');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [formData, screenshot, enrollmentId, onSuccess, onClose]
-  );
+        setLoading(true);
+        try {
+          const paymentData = {
+            ...formData,
+            screenshot,
+          };
 
-  // Memoized input base class
-  const inputBaseClass = useMemo(
-    () =>
-      'w-full pl-10 pr-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-    []
-  );
+          await submitFullPayment(enrollmentId, paymentData);
+          toast.success(
+            'Payment proof submitted successfully! It will be verified within 24-48 hours.',
+          );
+          onSuccess?.();
+          onClose();
+        } catch (error) {
+          console.error('Payment submission error:', error);
+          toast.error(error.response?.data?.message || 'Failed to submit payment proof');
+        } finally {
+          setLoading(false);
+        }
+      },
+      [formData, screenshot, enrollmentId, onSuccess, onClose],
+    );
 
-  if (!isOpen) return null;
+    // Memoized input base class
+    const inputBaseClass = useMemo(
+      () =>
+        'w-full pl-10 pr-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+      [],
+    );
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+    if (!isOpen) return null;
 
-      {/* Modal */}
-      <div className="relative bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 p-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-white">Complete Payment</h2>
-            <p className="text-sm text-zinc-400 mt-1">{courseTitle}</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-lg transition-colors">
-            <X size={20} className="text-zinc-400" />
-          </button>
-        </div>
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-        {/* Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Amount Info */}
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-zinc-400">Amount to Pay</span>
-              <span className="text-2xl font-bold text-blue-400">₹{amountRemaining}</span>
+        {/* Modal */}
+        <div className="relative bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          {/* Header */}
+          <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 p-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-white">Complete Payment</h2>
+              <p className="text-sm text-zinc-400 mt-1">{courseTitle}</p>
             </div>
-            <p className="text-xs text-zinc-500 mt-2">
-              Transfer the above amount to our bank account and submit the payment proof below.
-            </p>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <X size={20} className="text-zinc-400" />
+            </button>
           </div>
 
-          {/* Bank Details Info */}
-          <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
-            <h4 className="text-sm font-semibold text-white mb-2">Transfer to:</h4>
-            <div className="space-y-1 text-sm">
-              <p className="text-zinc-400">
-                Account Name: <span className="text-white">{COMPANY_BANK_DETAILS.accountName}</span>
-              </p>
-              <p className="text-zinc-400">
-                Bank: <span className="text-white">{COMPANY_BANK_DETAILS.bank}</span>
-              </p>
-              <p className="text-zinc-400">
-                Account No: <span className="text-white">{COMPANY_BANK_DETAILS.accountNo}</span>
-              </p>
-              <p className="text-zinc-400">
-                IFSC: <span className="text-white">{COMPANY_BANK_DETAILS.ifsc}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Your Bank Details */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Building2 size={16} className="text-zinc-400" />
-              Your Bank Details
-            </h4>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <FormField label="Account Holder Name" required icon={User}>
-                  <input
-                    type="text"
-                    name="accountHolderName"
-                    value={formData.accountHolderName}
-                    onChange={handleInputChange}
-                    placeholder="John Doe"
-                    className={inputBaseClass}
-                  />
-                </FormField>
+          {/* Content */}
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            {/* Amount Info */}
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-400">Amount to Pay</span>
+                <span className="text-2xl font-bold text-blue-400">₹{amountRemaining}</span>
               </div>
+              <p className="text-xs text-zinc-500 mt-2">
+                Transfer the above amount to our bank account and submit the payment proof below.
+              </p>
+            </div>
 
-              <FormField label="Bank Name" required icon={Building2}>
-                <input
-                  type="text"
-                  name="bankName"
-                  value={formData.bankName}
-                  onChange={handleInputChange}
-                  placeholder="HDFC Bank"
-                  className={inputBaseClass}
-                />
-              </FormField>
-
-              <FormField label="IFSC Code" required icon={Hash}>
-                <input
-                  type="text"
-                  name="ifscCode"
-                  value={formData.ifscCode}
-                  onChange={handleInputChange}
-                  placeholder="HDFC0001234"
-                  className={`${inputBaseClass} uppercase`}
-                />
-              </FormField>
-
-              <div className="col-span-2">
-                <FormField label="Account Number" required icon={CreditCard}>
-                  <input
-                    type="text"
-                    name="accountNumber"
-                    value={formData.accountNumber}
-                    onChange={handleInputChange}
-                    placeholder="XXXXXXXXXXXX"
-                    className={inputBaseClass}
-                  />
-                </FormField>
+            {/* Bank Details Info */}
+            <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
+              <h4 className="text-sm font-semibold text-white mb-2">Transfer to:</h4>
+              <div className="space-y-1 text-sm">
+                <p className="text-zinc-400">
+                  Account Name:{' '}
+                  <span className="text-white">{COMPANY_BANK_DETAILS.accountName}</span>
+                </p>
+                <p className="text-zinc-400">
+                  Bank: <span className="text-white">{COMPANY_BANK_DETAILS.bank}</span>
+                </p>
+                <p className="text-zinc-400">
+                  Account No: <span className="text-white">{COMPANY_BANK_DETAILS.accountNo}</span>
+                </p>
+                <p className="text-zinc-400">
+                  IFSC: <span className="text-white">{COMPANY_BANK_DETAILS.ifsc}</span>
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Transaction Details */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-              <FileText size={16} className="text-zinc-400" />
-              Transaction Details
-            </h4>
+            {/* Your Bank Details */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                <Building2 size={16} className="text-zinc-400" />
+                Your Bank Details
+              </h4>
 
-            <div>
-              <label className="block text-sm text-zinc-400 mb-1">
-                Transaction ID / UTR Number <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="transactionId"
-                value={formData.transactionId}
-                onChange={handleInputChange}
-                placeholder="Enter transaction ID or UTR number"
-                className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-zinc-400 mb-1">
-                Payment Screenshot <span className="text-zinc-500">(Optional)</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  id="screenshot-upload"
-                />
-                <label
-                  htmlFor="screenshot-upload"
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-800 border border-zinc-700 border-dashed rounded-lg text-zinc-400 hover:bg-zinc-700/50 hover:border-zinc-600 cursor-pointer transition-colors"
-                >
-                  <Upload size={18} />
-                  {screenshot ? screenshot.name : 'Click to upload screenshot'}
-                </label>
-                {previewUrl && (
-                  <div className="mt-3">
-                    <img
-                      src={previewUrl}
-                      alt="Payment screenshot preview"
-                      className="w-full h-32 object-cover rounded-lg border border-zinc-700"
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <FormField label="Account Holder Name" required icon={User}>
+                    <input
+                      type="text"
+                      name="accountHolderName"
+                      value={formData.accountHolderName}
+                      onChange={handleInputChange}
+                      placeholder="John Doe"
+                      className={inputBaseClass}
                     />
-                  </div>
-                )}
+                  </FormField>
+                </div>
+
+                <FormField label="Bank Name" required icon={Building2}>
+                  <input
+                    type="text"
+                    name="bankName"
+                    value={formData.bankName}
+                    onChange={handleInputChange}
+                    placeholder="HDFC Bank"
+                    className={inputBaseClass}
+                  />
+                </FormField>
+
+                <FormField label="IFSC Code" required icon={Hash}>
+                  <input
+                    type="text"
+                    name="ifscCode"
+                    value={formData.ifscCode}
+                    onChange={handleInputChange}
+                    placeholder="HDFC0001234"
+                    className={`${inputBaseClass} uppercase`}
+                  />
+                </FormField>
+
+                <div className="col-span-2">
+                  <FormField label="Account Number" required icon={CreditCard}>
+                    <input
+                      type="text"
+                      name="accountNumber"
+                      value={formData.accountNumber}
+                      onChange={handleInputChange}
+                      placeholder="XXXXXXXXXXXX"
+                      className={inputBaseClass}
+                    />
+                  </FormField>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <Loader2 size={18} className="animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <CreditCard size={18} />
-                Submit Payment Proof
-              </>
-            )}
-          </button>
+            {/* Transaction Details */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                <FileText size={16} className="text-zinc-400" />
+                Transaction Details
+              </h4>
 
-          <p className="text-xs text-zinc-500 text-center">
-            Your payment will be verified within 24-48 hours. You will receive a notification once
-            verified.
-          </p>
-        </form>
+              <div>
+                <label className="block text-sm text-zinc-400 mb-1">
+                  Transaction ID / UTR Number <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="transactionId"
+                  value={formData.transactionId}
+                  onChange={handleInputChange}
+                  placeholder="Enter transaction ID or UTR number"
+                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-zinc-400 mb-1">
+                  Payment Screenshot <span className="text-zinc-500">(Optional)</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="screenshot-upload"
+                  />
+                  <label
+                    htmlFor="screenshot-upload"
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-800 border border-zinc-700 border-dashed rounded-lg text-zinc-400 hover:bg-zinc-700/50 hover:border-zinc-600 cursor-pointer transition-colors"
+                  >
+                    <Upload size={18} />
+                    {screenshot ? screenshot.name : 'Click to upload screenshot'}
+                  </label>
+                  {previewUrl && (
+                    <div className="mt-3">
+                      <img
+                        src={previewUrl}
+                        alt="Payment screenshot preview"
+                        className="w-full h-32 object-cover rounded-lg border border-zinc-700"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <CreditCard size={18} />
+                  Submit Payment Proof
+                </>
+              )}
+            </button>
+
+            <p className="text-xs text-zinc-500 text-center">
+              Your payment will be verified within 24-48 hours. You will receive a notification once
+              verified.
+            </p>
+          </form>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 PaymentModal.displayName = 'PaymentModal';
 

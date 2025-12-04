@@ -524,4 +524,3 @@ const EnrollmentPayment = () => {
 };
 
 export default EnrollmentPayment;
-

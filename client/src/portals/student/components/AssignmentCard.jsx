@@ -115,13 +115,13 @@ ErrorMessage.displayName = 'ErrorMessage';
 
 const AssignmentCard = ({ task, courseId, moduleId, onComplete }) => {
   const [githubLink, setGithubLink] = useState(task?.githubLink || '');
-  
+
   // Memoized initial states
   const taskIsSubmitted = useMemo(
     () => task?.status === 'Submitted' || task?.isSubmitted || false,
-    [task?.status, task?.isSubmitted]
+    [task?.status, task?.isSubmitted],
   );
-  
+
   const [isSubmitted, setIsSubmitted] = useState(taskIsSubmitted);
   const [submissionStatus, setSubmissionStatus] = useState(
     task?.submissionStatus || task?.status || 'pending',
@@ -130,11 +130,14 @@ const AssignmentCard = ({ task, courseId, moduleId, onComplete }) => {
   const { submit, loading: submitting, error: submitError } = useSubmitAssignment();
 
   // Memoized assignment data
-  const assignment = useMemo(() => ({
-    title: task?.title || 'Assignment',
-    description: task?.description || '',
-    note: 'Submit the GitHub repository link containing your code, along with a demo video and screenshots in the repository.',
-  }), [task?.title, task?.description]);
+  const assignment = useMemo(
+    () => ({
+      title: task?.title || 'Assignment',
+      description: task?.description || '',
+      note: 'Submit the GitHub repository link containing your code, along with a demo video and screenshots in the repository.',
+    }),
+    [task?.title, task?.description],
+  );
 
   // Memoized description items
   const descriptionItems = useMemo(() => {
@@ -146,7 +149,7 @@ const AssignmentCard = ({ task, courseId, moduleId, onComplete }) => {
   const isLinkValid = useMemo(() => isValidGithubUrl(githubLink), [githubLink]);
 
   // Memoized handlers
-  const handleInputChange = useCallback((e) => {
+  const handleInputChange = useCallback(e => {
     setGithubLink(e.target.value);
   }, []);
 

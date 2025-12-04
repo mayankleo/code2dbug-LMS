@@ -273,7 +273,8 @@ export const getCourseDetails = async (req, res) => {
         // Build payment info from partial payment details (for prefilling form)
         const bankDetails = enrollment.partialPaymentDetails
             ? {
-                  accountHolderName: enrollment.partialPaymentDetails.accountHolderName,
+                  accountHolderName:
+                      enrollment.partialPaymentDetails.accountHolderName,
                   bankName: enrollment.partialPaymentDetails.bankName,
                   ifscCode: enrollment.partialPaymentDetails.ifscCode,
                   accountNumber: enrollment.partialPaymentDetails.accountNumber,
@@ -301,7 +302,11 @@ export const getCourseDetails = async (req, res) => {
                 paymentStatus: enrollment.paymentStatus,
                 courseAmount: enrollment.courseAmount || course.price || 500,
                 amountPaid: enrollment.amountPaid || 0,
-                amountRemaining: enrollment.amountRemaining || (enrollment.courseAmount || course.price || 500),
+                amountRemaining:
+                    enrollment.amountRemaining ||
+                    enrollment.courseAmount ||
+                    course.price ||
+                    500,
                 bankDetails,
             },
         });

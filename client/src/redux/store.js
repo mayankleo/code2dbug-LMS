@@ -18,4 +18,3 @@ export const store = configureStore({
     }),
   devTools: import.meta.env.DEV,
 });
-

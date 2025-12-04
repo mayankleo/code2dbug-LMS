@@ -35,7 +35,7 @@ const MOBILE_BREAKPOINT = 768;
 // Memoized sidebar item component for better performance
 const SidebarItem = memo(({ item, isActive, onClick }) => {
   const Icon = item.icon;
-  
+
   return (
     <button
       onClick={onClick}
@@ -65,7 +65,7 @@ const UserProfile = memo(({ displayName, displayAvatar, studentId, onClick }) =>
         .join('')
         .toUpperCase()
         .slice(0, 2),
-    [displayName]
+    [displayName],
   );
 
   return (
@@ -105,8 +105,14 @@ const StudentNavbar = () => {
   const profile = useSelector(selectProfileData);
 
   // Use profile data if available, fallback to user data - memoized
-  const displayName = useMemo(() => profile?.name || user?.name || 'Student', [profile?.name, user?.name]);
-  const displayAvatar = useMemo(() => profile?.avatar || user?.avatar, [profile?.avatar, user?.avatar]);
+  const displayName = useMemo(
+    () => profile?.name || user?.name || 'Student',
+    [profile?.name, user?.name],
+  );
+  const displayAvatar = useMemo(
+    () => profile?.avatar || user?.avatar,
+    [profile?.avatar, user?.avatar],
+  );
   const studentId = useMemo(() => user?.id?.toString().slice(-4) || '----', [user?.id]);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -127,7 +133,7 @@ const StudentNavbar = () => {
         dispatch(setStudentSidebarOpen(false));
       }
     },
-    [navigateAndStore, isMobile, dispatch]
+    [navigateAndStore, isMobile, dispatch],
   );
 
   const handleProfileClick = useCallback(() => {
@@ -135,10 +141,7 @@ const StudentNavbar = () => {
   }, [navigateAndStore]);
 
   // Memoize active state check
-  const isItemActive = useCallback(
-    navigation => activeTab.includes(navigation),
-    [activeTab]
-  );
+  const isItemActive = useCallback(navigation => activeTab.includes(navigation), [activeTab]);
 
   return (
     <div className="h-full w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">

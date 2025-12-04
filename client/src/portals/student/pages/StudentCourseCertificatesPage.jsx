@@ -37,7 +37,7 @@ const StudentCourseCertificatesPage = () => {
   // Show payment required state
   if (paymentStatus && paymentStatus !== 'FULLY_PAID') {
     const isPending = paymentStatus === 'FULLY_PAYMENT_VERIFICATION_PENDING';
-    
+
     return (
       <div className="p-6 sm:p-8 h-full overflow-y-auto custom-scrollbar bg-black text-white w-full">
         <button
@@ -57,7 +57,8 @@ const StudentCourseCertificatesPage = () => {
                 </div>
                 <h2 className="text-xl font-bold text-white mb-2">Payment Verification Pending</h2>
                 <p className="text-zinc-400 mb-6">
-                  Your payment is being verified. Certificate will be available once approved (usually within 24-48 hours).
+                  Your payment is being verified. Certificate will be available once approved
+                  (usually within 24-48 hours).
                 </p>
                 <button
                   onClick={() => navigate('/student/certificates')}
@@ -79,7 +80,9 @@ const StudentCourseCertificatesPage = () => {
                   <div className="bg-zinc-800/50 rounded-lg p-4 mb-6">
                     <div className="flex items-center justify-between">
                       <span className="text-zinc-400">Amount Remaining:</span>
-                      <span className="text-xl font-bold text-blue-400">₹{course.amountRemaining || 0}</span>
+                      <span className="text-xl font-bold text-blue-400">
+                        ₹{course.amountRemaining || 0}
+                      </span>
                     </div>
                   </div>
                 )}

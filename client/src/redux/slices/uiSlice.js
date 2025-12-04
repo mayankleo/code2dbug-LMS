@@ -86,4 +86,3 @@ export const selectNotifications = state => state.ui.notifications;
 export const selectIsLoginPopupOpen = state => state.ui.isLoginPopupOpen;
 
 export default uiSlice.reducer;
-

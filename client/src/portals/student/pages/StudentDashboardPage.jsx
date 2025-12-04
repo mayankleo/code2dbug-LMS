@@ -171,7 +171,7 @@ const StudentDashboardPage = () => {
   // Memoized stats config
   const statsConfig = useMemo(
     () => createStatsConfig(dashboardData?.stats),
-    [dashboardData?.stats]
+    [dashboardData?.stats],
   );
 
   // Memoized navigation handlers

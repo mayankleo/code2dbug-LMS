@@ -37,4 +37,3 @@ const AdminPortal = () => {
 };
 
 export default AdminPortal;
-

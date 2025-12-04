@@ -515,4 +515,3 @@ const Fullstack = () => {
 };
 
 export default Fullstack;
-

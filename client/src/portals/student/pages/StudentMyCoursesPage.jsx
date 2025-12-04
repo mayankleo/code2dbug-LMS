@@ -63,9 +63,10 @@ const StudentMyCoursesPage = () => {
   const { courses, loading, error, refetch } = useMyCourses();
 
   // Memoized course icon creator
-  const createCourseIcon = useCallback((colorIndex) => (
-    <NotepadText size={32} className={COURSE_COLOR_VARIANTS[colorIndex].icon} />
-  ), []);
+  const createCourseIcon = useCallback(
+    colorIndex => <NotepadText size={32} className={COURSE_COLOR_VARIANTS[colorIndex].icon} />,
+    [],
+  );
 
   // Memoized formatted courses
   const formattedCourses = useMemo(() => {
