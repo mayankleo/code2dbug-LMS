@@ -111,8 +111,9 @@ export const getActiveStudents = async () => {
   return response.data;
 };
 
-export const issueCertificateByEnrollmentId = async () => {
-  const response = await api.post('admin/active/students/certificate');
+export const issueCertificateByEnrollmentId = async (data) => {
+  console.log("Data:", data);
+  const response = await api.post('/admin/active/students/certificate', data);
   return response.data;
 };
 
