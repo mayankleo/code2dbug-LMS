@@ -208,7 +208,6 @@ export const getPaymentRejectionEmailTemplate = (title, name, content) => {
     return getEmailTemplate(htmlContent, title);
 };
 
-
 export default {
     getEmailTemplate,
     passwordResetEmailTemplate,

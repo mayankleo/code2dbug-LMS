@@ -34,7 +34,7 @@ const StatsCardsSection = ({ college, fromDate, toDate }) => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const params = {};
         if (college) {
           params.college = college;
@@ -49,7 +49,7 @@ const StatsCardsSection = ({ college, fromDate, toDate }) => {
         }
 
         const response = await adminService.getDashboardStats(params);
-        
+
         if (response.success) {
           setStats(response.data);
         }

@@ -1,8 +1,4 @@
-import {
-    Student,
-    Enrollment,
-    Submission,
-} from "../../models/index.js";
+import { Student, Enrollment, Submission } from "../../models/index.js";
 import { Parser } from "json2csv";
 
 /**
@@ -553,7 +549,10 @@ export const exportStudentsCSV = async (req, res) => {
             {
                 $match: {
                     paymentStatus: {
-                        $nin: ["UNPAID", "PARTIAL_PAYMENT_VERIFICATION_PENDING"],
+                        $nin: [
+                            "UNPAID",
+                            "PARTIAL_PAYMENT_VERIFICATION_PENDING",
+                        ],
                     },
                 },
             },

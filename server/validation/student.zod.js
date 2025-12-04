@@ -23,11 +23,11 @@ export const updateAvatarSchema = z.object({
     avatar: z.string().refine(
         (val) => {
             // Accept regular URLs
-            if (val.startsWith('http://') || val.startsWith('https://')) {
+            if (val.startsWith("http://") || val.startsWith("https://")) {
                 return true;
             }
             // Accept base64 data URLs for image uploads
-            if (val.startsWith('data:image/')) {
+            if (val.startsWith("data:image/")) {
                 return true;
             }
             return false;

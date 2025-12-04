@@ -1,45 +1,35 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchReferralInfo, selectReferral } from '@/redux/slices';
+import { fetchReferralInfo, selectReferral, selectNavigationTimestamp } from '@/redux/slices';
 import { applyReferralCode } from '@/services/student/studentService';
-
-// Cache duration: 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
-
-/**
- * Check if cache is still valid
- */
-const isCacheValid = lastFetched => {
-  if (!lastFetched) return false;
-  return Date.now() - lastFetched < CACHE_DURATION;
-};
 
 /**
  * Hook for fetching referral information (Redux-powered)
+ * Refetches on every tab/navigation change
  */
 export const useReferralInfo = () => {
   const dispatch = useDispatch();
-  const { data: referralInfo, loading, error, lastFetched } = useSelector(selectReferral);
+  const { data: referralInfo, loading, error } = useSelector(selectReferral);
+  const navigationTimestamp = useSelector(selectNavigationTimestamp);
+  const lastFetchedTimestamp = useRef(null);
 
-  const fetchReferral = useCallback(
-    (force = false) => {
-      if (force || !isCacheValid(lastFetched)) {
-        dispatch(fetchReferralInfo());
-      }
-    },
-    [dispatch, lastFetched],
-  );
+  const fetchReferral = useCallback(() => {
+    dispatch(fetchReferralInfo());
+  }, [dispatch]);
 
   useEffect(() => {
-    fetchReferral();
-  }, [fetchReferral]);
+    if (lastFetchedTimestamp.current !== navigationTimestamp) {
+      lastFetchedTimestamp.current = navigationTimestamp;
+      fetchReferral();
+    }
+  }, [navigationTimestamp, fetchReferral]);
 
   return {
     referralInfo,
     loading,
     error,
-    refetch: () => fetchReferral(true),
+    refetch: fetchReferral,
   };
 };
 

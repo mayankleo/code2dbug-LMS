@@ -90,7 +90,7 @@ export const getOngoingStudents = async () => {
 export const approveOngoingStudent = async (enrollmentId, data) => {
   const response = await api.patch(
     `/admin/ongoing/students/${enrollmentId}/update-payment-status`,
-    data
+    data,
   );
   return response.data;
 };
@@ -190,4 +190,3 @@ const adminService = {
 };
 
 export default adminService;
-

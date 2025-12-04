@@ -28,6 +28,7 @@ export {
   toggleLoginPopup,
   selectUI,
   selectCurrentNavigation,
+  selectNavigationTimestamp,
   selectStudentSidebarOpen,
   selectAdminSidebarOpen,
   selectGlobalLoading,
@@ -108,4 +109,3 @@ export {
   selectIsSubmitted,
   selectFullEnrollmentData,
 } from './enrollmentSlice';
-

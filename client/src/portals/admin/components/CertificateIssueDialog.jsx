@@ -28,7 +28,9 @@ const PaymentDetailsCard = ({ title, details }) => {
         </div>
         <div>
           <span className="text-zinc-500 block text-xs">Account Number</span>
-          <span className="text-zinc-200 font-medium font-mono">{details.accountNumber || 'N/A'}</span>
+          <span className="text-zinc-200 font-medium font-mono">
+            {details.accountNumber || 'N/A'}
+          </span>
         </div>
         <div>
           <span className="text-zinc-500 block text-xs">IFSC Code</span>
@@ -37,7 +39,9 @@ const PaymentDetailsCard = ({ title, details }) => {
         <div className="col-span-2 mt-2 pt-2 border-t border-zinc-700/50 flex justify-between items-center">
           <div>
             <span className="text-zinc-500 block text-xs">Transaction ID</span>
-            <span className="text-blue-400 font-mono text-xs">{details.transactionId || 'N/A'}</span>
+            <span className="text-blue-400 font-mono text-xs">
+              {details.transactionId || 'N/A'}
+            </span>
           </div>
           <div className="text-right">
             <span className="text-zinc-500 block text-xs">Amount</span>
@@ -73,7 +77,8 @@ const CertificateIssueDialog = ({ isOpen, onOpenChange, student, onConfirm, isIs
             Issue Certificate
           </DialogTitle>
           <DialogDescription className="text-zinc-400">
-            Review payment details before issuing the certificate for <span className="text-zinc-200 font-medium">{student.name}</span>.
+            Review payment details before issuing the certificate for{' '}
+            <span className="text-zinc-200 font-medium">{student.name}</span>.
           </DialogDescription>
         </DialogHeader>
 
@@ -87,7 +92,9 @@ const CertificateIssueDialog = ({ isOpen, onOpenChange, student, onConfirm, isIs
               </div>
               <div>
                 <span className="text-zinc-500 block text-xs mb-1">Amount Remaining</span>
-                <span className={`text-xl font-bold ${student.amountRemaining > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                <span
+                  className={`text-xl font-bold ${student.amountRemaining > 0 ? 'text-red-400' : 'text-green-400'}`}
+                >
                   ₹{student.amountRemaining || 0}
                 </span>
               </div>
@@ -96,15 +103,25 @@ const CertificateIssueDialog = ({ isOpen, onOpenChange, student, onConfirm, isIs
             {/* Payment Details */}
             <div className="space-y-4">
               {student.partialPaymentDetails ? (
-                <PaymentDetailsCard title="Partial Payment Details" details={student.partialPaymentDetails} />
+                <PaymentDetailsCard
+                  title="Partial Payment Details"
+                  details={student.partialPaymentDetails}
+                />
               ) : (
-                <div className="text-zinc-500 text-sm italic text-center py-2">No partial payment details available</div>
+                <div className="text-zinc-500 text-sm italic text-center py-2">
+                  No partial payment details available
+                </div>
               )}
 
               {student.fullPaymentDetails ? (
-                <PaymentDetailsCard title="Full Payment Details" details={student.fullPaymentDetails} />
+                <PaymentDetailsCard
+                  title="Full Payment Details"
+                  details={student.fullPaymentDetails}
+                />
               ) : (
-                <div className="text-zinc-500 text-sm italic text-center py-2">No full payment details available</div>
+                <div className="text-zinc-500 text-sm italic text-center py-2">
+                  No full payment details available
+                </div>
               )}
             </div>
           </div>

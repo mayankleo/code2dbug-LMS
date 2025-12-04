@@ -204,5 +204,3 @@ export const createEnrollmentWithPayment = async (req, res) => {
         session.endSession();
     }
 };
-
-

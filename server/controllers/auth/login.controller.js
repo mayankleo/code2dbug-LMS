@@ -160,14 +160,15 @@ export const lmsLogin = async (req, res) => {
     }
 };
 
-
 export const verifyAdmin = async (req, res) => {
     try {
         const { password } = req.body;
-        
+
         // Find admin and explicitly select password
-        const admin = await Admin.findOne({ email: req.user.email }).select("+password");
-        
+        const admin = await Admin.findOne({ email: req.user.email }).select(
+            "+password"
+        );
+
         if (!admin) {
             return res.status(401).json({
                 success: false,
@@ -199,4 +200,3 @@ export const verifyAdmin = async (req, res) => {
         });
     }
 };
-

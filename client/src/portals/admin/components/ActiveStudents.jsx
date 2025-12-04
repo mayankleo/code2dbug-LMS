@@ -91,7 +91,7 @@ const ActiveStudents = () => {
   };
 
   // Open Certificate Dialog
-  const handleIssueCertificateClick = (enrollmentId) => {
+  const handleIssueCertificateClick = enrollmentId => {
     const student = studentsData.find(s => s.enrollmentId === enrollmentId);
     if (student) {
       setSelectedStudentForCert(student);
@@ -100,14 +100,12 @@ const ActiveStudents = () => {
   };
 
   // Confirm Issue Certificate
-  const handleConfirmIssueCertificate = async (student) => {
+  const handleConfirmIssueCertificate = async student => {
     try {
       setIsIssuingCert(true);
       toast.loading('Issuing certificate...', { id: 'cert-issue' });
 
       // const response = await adminService.issueCertificateByEnrollmentId({ enrollmentId: student.enrollmentId });
-
-      
     } catch (err) {
       console.error('Error issuing certificate:', err);
       toast.error('Failed to issue certificate', {

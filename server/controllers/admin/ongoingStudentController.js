@@ -7,13 +7,14 @@ import {
 
 /**
  * Get all pending users (students awaiting verification)
- * 
+ *
  */
 export const getOngoingUsers = async (req, res) => {
     try {
         const enrollments = await Enrollment.find({
             paymentStatus: "PARTIAL_PAYMENT_VERIFICATION_PENDING",
-        }).select(
+        })
+            .select(
                 "-completedQuizzes -completedTasks -completedModules -progressPercentage -isCompleted"
             )
             .populate("student")
@@ -49,7 +50,7 @@ export const updatePaymentStatus = async (req, res) => {
         const { action, paymentType, rejectionReason, amountPaid } = req.body;
 
         const enrollment = await Enrollment.findById(enrollmentId)
-        .select(
+            .select(
                 "-completedQuizzes -completedTasks -completedModules -progressPercentage -isCompleted"
             )
             .populate("partialPaymentDetails")

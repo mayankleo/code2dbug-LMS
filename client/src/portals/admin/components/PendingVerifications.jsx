@@ -155,7 +155,10 @@ const PendingVerifications = () => {
           year: enrollment.student?.yearOfStudy,
           domain: enrollment.course?.title,
           coursePrice: enrollment.course?.price,
-          paymentStatus: enrollment.paymentStatus === 'PARTIAL_PAYMENT_VERIFICATION_PENDING' ? 'Pending' : enrollment.paymentStatus,
+          paymentStatus:
+            enrollment.paymentStatus === 'PARTIAL_PAYMENT_VERIFICATION_PENDING'
+              ? 'Pending'
+              : enrollment.paymentStatus,
           paymentDetails: enrollment.partialPaymentDetails,
           enrollmentId: enrollment._id,
         }));
@@ -451,4 +454,3 @@ const PendingVerifications = () => {
 };
 
 export default PendingVerifications;
-

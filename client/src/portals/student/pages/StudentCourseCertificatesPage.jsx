@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useCourseCertificate, useCourseDetails } from '../hooks';
 import { useNavigateWithRedux } from '@/common/hooks/useNavigateWithRedux';
 import PaymentModal from '../components/PaymentModal';
+import { downloadFinalCertificate } from '../utils/downloadFinalCertificate';
 
 const StudentCourseCertificatesPage = () => {
   const { coursename } = useParams();
@@ -25,6 +26,7 @@ const StudentCourseCertificatesPage = () => {
   const { certificate, loading, error, refetch, paymentStatus } = useCourseCertificate(coursename);
   const { course } = useCourseDetails(coursename);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [downloadingCert, setDownloadingCert] = useState(false);
 
   if (loading) {
     return (
@@ -37,7 +39,7 @@ const StudentCourseCertificatesPage = () => {
   // Show payment required state
   if (paymentStatus && paymentStatus !== 'FULLY_PAID') {
     const isPending = paymentStatus === 'FULLY_PAYMENT_VERIFICATION_PENDING';
-    
+
     return (
       <div className="p-6 sm:p-8 h-full overflow-y-auto custom-scrollbar bg-black text-white w-full">
         <button
@@ -57,7 +59,8 @@ const StudentCourseCertificatesPage = () => {
                 </div>
                 <h2 className="text-xl font-bold text-white mb-2">Payment Verification Pending</h2>
                 <p className="text-zinc-400 mb-6">
-                  Your payment is being verified. Certificate will be available once approved (usually within 24-48 hours).
+                  Your payment is being verified. Certificate will be available once approved
+                  (usually within 24-48 hours).
                 </p>
                 <button
                   onClick={() => navigate('/student/certificates')}
@@ -79,7 +82,9 @@ const StudentCourseCertificatesPage = () => {
                   <div className="bg-zinc-800/50 rounded-lg p-4 mb-6">
                     <div className="flex items-center justify-between">
                       <span className="text-zinc-400">Amount Remaining:</span>
-                      <span className="text-xl font-bold text-blue-400">₹{course.amountRemaining || 0}</span>
+                      <span className="text-xl font-bold text-blue-400">
+                        ₹{course.amountRemaining || 0}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -215,23 +220,46 @@ const StudentCourseCertificatesPage = () => {
 
             {/* Actions */}
             <div className="flex flex-wrap justify-center gap-4">
-              {certificate.pdfUrl && (
-                <a
-                  href={certificate.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors"
-                >
-                  <Download size={18} />
-                  Download PDF
-                </a>
-              )}
+              <button
+                onClick={async () => {
+                  setDownloadingCert(true);
+                  try {
+                    await downloadFinalCertificate({
+                      studentName: certificate.studentNameSnapshot,
+                      courseName: certificate.course?.title || certificate.courseNameSnapshot,
+                      certificateId: certificate.certificateId,
+                      issueDate: certificate.issueDate || new Date(),
+                      skills: course?.skills || [],
+                    });
+                    toast.success('Certificate downloaded successfully!');
+                  } catch (err) {
+                    console.error('Failed to download certificate:', err);
+                    toast.error('Failed to download certificate. Please try again.');
+                  } finally {
+                    setDownloadingCert(false);
+                  }
+                }}
+                disabled={downloadingCert}
+                className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 disabled:bg-yellow-700 disabled:cursor-not-allowed transition-colors"
+              >
+                {downloadingCert ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Download size={18} />
+                    Download Certificate (PDF)
+                  </>
+                )}
+              </button>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(
                     `${window.location.origin}/verify/${certificate.certificateId}`,
                   );
-                  alert('Certificate verification link copied!');
+                  toast.success('Certificate verification link copied!');
                 }}
                 className="flex items-center gap-2 px-6 py-3 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors"
               >
