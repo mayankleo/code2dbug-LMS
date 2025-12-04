@@ -86,7 +86,9 @@ const TermsOfService = () => {
                           : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
                       }`}
                     >
-                      <span className={`shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center ${activeSection === item.id ? 'bg-indigo-600 text-white' : 'bg-zinc-700 text-gray-300'}`}>
+                      <span
+                        className={`shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center ${activeSection === item.id ? 'bg-indigo-600 text-white' : 'bg-zinc-700 text-gray-300'}`}
+                      >
                         {item.icon}
                       </span>
                       {item.title}
@@ -132,9 +134,10 @@ const TermsOfService = () => {
               </h2>
               <p className="text-gray-300 leading-relaxed">
                 To use our Services, you must be at least{' '}
-                <span className="font-semibold text-white">18 years old</span> or have the consent of a parent
-                or guardian. By using the Platform, you represent that you are physically in India
-                or comply with the local laws of your jurisdiction regarding online conduct.
+                <span className="font-semibold text-white">18 years old</span> or have the consent
+                of a parent or guardian. By using the Platform, you represent that you are
+                physically in India or comply with the local laws of your jurisdiction regarding
+                online conduct.
               </p>
             </section>
 
@@ -191,29 +194,49 @@ const TermsOfService = () => {
                 Third-Party Content and Curation Policy
               </h2>
               <div className="space-y-6">
-                 <div className="pl-4 border-l-4 border-purple-500">
+                <div className="pl-4 border-l-4 border-purple-500">
                   <h3 className="font-semibold text-white mb-2">Curated Public Resources</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    The educational resources, video tutorials, and reference materials provided within our courses are curated from publicly available platforms (such as YouTube) and other open-source repositories. <span className="text-white font-medium">Code2dbug, a proprietary of NAIR Solutions</span>, does not claim ownership of this external content.
+                    The educational resources, video tutorials, and reference materials provided
+                    within our courses are curated from publicly available platforms (such as
+                    YouTube) and other open-source repositories.{' '}
+                    <span className="text-white font-medium">
+                      Code2dbug, a proprietary of NAIR Solutions
+                    </span>
+                    , does not claim ownership of this external content.
                   </p>
                 </div>
 
-                 <div className="pl-4 border-l-4 border-purple-500">
+                <div className="pl-4 border-l-4 border-purple-500">
                   <h3 className="font-semibold text-white mb-2">Role as Facilitator</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    We act solely as a facilitator and educational aggregator. Our service provides value by structuring these public resources into a cohesive roadmap, providing guidance, and creating a unified learning environment. We ensure that the original creators retain all rights and receive the appropriate views and engagement through their respective platforms.
+                    We act solely as a facilitator and educational aggregator. Our service provides
+                    value by structuring these public resources into a cohesive roadmap, providing
+                    guidance, and creating a unified learning environment. We ensure that the
+                    original creators retain all rights and receive the appropriate views and
+                    engagement through their respective platforms.
                   </p>
                 </div>
 
                 <div className="pl-4 border-l-4 border-purple-500">
                   <h3 className="font-semibold text-white mb-2">Fee Structure</h3>
                   <p className="text-gray-300 leading-relaxed mb-3">
-                    We do not charge any fees for the consumption of third-party intellectual property or public content. The fees charged to users are strictly for:
+                    We do not charge any fees for the consumption of third-party intellectual
+                    property or public content. The fees charged to users are strictly for:
                   </p>
                   <ul className="space-y-2 text-gray-300 list-disc ml-4">
-                    <li><span className="text-indigo-400 font-medium">Platform Infrastructure:</span> Costs associated with hosting and maintaining the website.</li>
-                    <li><span className="text-indigo-400 font-medium">Operations & Guidance:</span> The curation of roadmaps and administrative support.</li>
-                    <li><span className="text-indigo-400 font-medium">Certification:</span> The verification of projects and issuance of certificates.</li>
+                    <li>
+                      <span className="text-indigo-400 font-medium">Platform Infrastructure:</span>{' '}
+                      Costs associated with hosting and maintaining the website.
+                    </li>
+                    <li>
+                      <span className="text-indigo-400 font-medium">Operations & Guidance:</span>{' '}
+                      The curation of roadmaps and administrative support.
+                    </li>
+                    <li>
+                      <span className="text-indigo-400 font-medium">Certification:</span> The
+                      verification of projects and issuance of certificates.
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -315,10 +338,10 @@ const TermsOfService = () => {
               <p className="text-gray-300 leading-relaxed">
                 The Service and its original content (including videos, code skeletons, text,
                 graphics, and logos) are and will remain the exclusive property of{' '}
-                <span className="font-semibold text-white">NAIR Solutions</span>. The content is protected by
-                copyright, trademark, and other laws of both India and foreign countries. You may
-                not reproduce, distribute, or create derivative works from our content without
-                express written permission.
+                <span className="font-semibold text-white">NAIR Solutions</span>. The content is
+                protected by copyright, trademark, and other laws of both India and foreign
+                countries. You may not reproduce, distribute, or create derivative works from our
+                content without express written permission.
               </p>
             </section>
 
@@ -365,7 +388,9 @@ const TermsOfService = () => {
               <div className="bg-zinc-900 rounded-lg p-6 space-y-4">
                 <p className="text-gray-300 leading-relaxed">
                   To the maximum extent permitted by applicable law, in no event shall{' '}
-                  <span className="font-semibold text-white">Code2dbug, a proprietary of NAIR Solutions</span>{' '}
+                  <span className="font-semibold text-white">
+                    Code2dbug, a proprietary of NAIR Solutions
+                  </span>{' '}
                   be liable for any indirect, incidental, special, consequential, or punitive
                   damages, including without limitation, loss of profits, data, use, goodwill, or
                   other intangible losses, resulting from your access to or use of or inability to

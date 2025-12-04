@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Calendar, Shield, Lock, FileText, AlertTriangle, Scale } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Shield,
+  Lock,
+  FileText,
+  AlertTriangle,
+  Scale,
+} from 'lucide-react';
 
 const PrivacyPolicy = () => {
   const lastUpdated = '4 December 2025';
@@ -98,7 +108,9 @@ const PrivacyPolicy = () => {
                           : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
                       }`}
                     >
-                      <span className={`shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center ${activeSection === item.id ? 'bg-indigo-600 text-white' : 'bg-zinc-700 text-gray-300'}`}>
+                      <span
+                        className={`shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center ${activeSection === item.id ? 'bg-indigo-600 text-white' : 'bg-zinc-700 text-gray-300'}`}
+                      >
                         {item.icon}
                       </span>
                       {item.title}
@@ -112,7 +124,7 @@ const PrivacyPolicy = () => {
           {/* Main Content */}
           <main className="lg:col-span-9">
             {/* Introduction */}
-            <div 
+            <div
               id="introduction"
               data-section="introduction"
               className="bg-zinc-900 rounded-lg shadow-md p-8 mb-8 scroll-mt-20"
@@ -122,17 +134,18 @@ const PrivacyPolicy = () => {
                 <div>
                   <h3 className="font-bold text-amber-100 mb-2">Commitment to Privacy</h3>
                   <p className="text-amber-200/80 leading-relaxed">
-                    Code2dbug, a proprietary of <span className="font-semibold">NAIR Solutions</span> ("we,"
-                    "our," or "us"), recognizes the importance of maintaining your privacy.
+                    Code2dbug, a proprietary of{' '}
+                    <span className="font-semibold">NAIR Solutions</span> ("we," "our," or "us"),
+                    recognizes the importance of maintaining your privacy.
                   </p>
                 </div>
               </div>
-              
+
               <p className="text-gray-300 leading-relaxed mb-4">
-                We are committed to maintaining the confidentiality, integrity, and security of all information of our
-                users. This Privacy Policy describes how we collect, store, handle, and transfer certain
-                information of yours when you visit our website or use our mobile application
-                (collectively, the "Platform").
+                We are committed to maintaining the confidentiality, integrity, and security of all
+                information of our users. This Privacy Policy describes how we collect, store,
+                handle, and transfer certain information of yours when you visit our website or use
+                our mobile application (collectively, the "Platform").
               </p>
               <p className="text-gray-300 leading-relaxed">
                 This Privacy Policy is published in compliance with{' '}
@@ -141,8 +154,8 @@ const PrivacyPolicy = () => {
                 </span>
                 , and{' '}
                 <span className="font-semibold text-white">
-                  Rule 4 of the Information Technology (Reasonable Security Practices and Procedures and
-                  Sensitive Personal Data or Information) Rules, 2011
+                  Rule 4 of the Information Technology (Reasonable Security Practices and Procedures
+                  and Sensitive Personal Data or Information) Rules, 2011
                 </span>
                 .
               </p>
@@ -164,25 +177,30 @@ const PrivacyPolicy = () => {
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Personal Information</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    Name, email address, mobile number, educational qualifications, college/university name, and mailing address.
+                    Name, email address, mobile number, educational qualifications,
+                    college/university name, and mailing address.
                   </p>
                 </div>
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Payment Information</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    When you purchase a course (e.g., the ₹500 enrollment fee), your credit/debit card information or UPI details are processed by our secure third-party payment gateways. We do not store your sensitive financial data on our servers.
+                    When you purchase a course (e.g., the ₹500 enrollment fee), your credit/debit
+                    card information or UPI details are processed by our secure third-party payment
+                    gateways. We do not store your sensitive financial data on our servers.
                   </p>
                 </div>
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Project & Assessment Data</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    Assignments, code repositories, Capstone project submissions, and assessment scores required for certification.
+                    Assignments, code repositories, Capstone project submissions, and assessment
+                    scores required for certification.
                   </p>
                 </div>
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Usage Data</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    Information about how you interact with our Platform, including IP address, browser type, device information, and pages visited.
+                    Information about how you interact with our Platform, including IP address,
+                    browser type, device information, and pages visited.
                   </p>
                 </div>
               </div>
@@ -230,7 +248,10 @@ const PrivacyPolicy = () => {
                 Cookies and Tracking Technologies
               </h2>
               <p className="text-gray-300 leading-relaxed">
-                We use cookies and similar tracking technologies to track the activity on our Service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Platform.
+                We use cookies and similar tracking technologies to track the activity on our
+                Service and hold certain information. You can instruct your browser to refuse all
+                cookies or to indicate when a cookie is being sent. However, if you do not accept
+                cookies, you may not be able to use some portions of our Platform.
               </p>
             </section>
 
@@ -250,19 +271,23 @@ const PrivacyPolicy = () => {
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Service Providers</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    With third-party vendors (e.g., payment processors, email services, cloud hosting) who assist in operating the Platform.
+                    With third-party vendors (e.g., payment processors, email services, cloud
+                    hosting) who assist in operating the Platform.
                   </p>
                 </div>
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Legal Requirements</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    If required by Indian law, court order, or government agency to disclose information for identity verification, or for the prevention, detection, or investigation of cyber incidents.
+                    If required by Indian law, court order, or government agency to disclose
+                    information for identity verification, or for the prevention, detection, or
+                    investigation of cyber incidents.
                   </p>
                 </div>
                 <div className="pl-4 border-l-4 border-indigo-600">
                   <h3 className="font-semibold text-white mb-2">Business Transfers</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    In connection with any merger, sale of company assets, or acquisition of all or a portion of our business by another company.
+                    In connection with any merger, sale of company assets, or acquisition of all or
+                    a portion of our business by another company.
                   </p>
                 </div>
               </div>
@@ -281,14 +306,17 @@ const PrivacyPolicy = () => {
                 Data Security
               </h2>
               <div className="flex items-start gap-4">
-                 <Lock className="w-12 h-12 text-indigo-500 shrink-0 opacity-80" />
-                 <p className="text-gray-300 leading-relaxed">
-                  We implement appropriate technical and organizational security measures to protect your data from unauthorized access, misuse, loss, or alteration. Standard encryption protocols (SSL) are used for data transmission. However, no method of transmission over the internet is 100% secure.
+                <Lock className="w-12 h-12 text-indigo-500 shrink-0 opacity-80" />
+                <p className="text-gray-300 leading-relaxed">
+                  We implement appropriate technical and organizational security measures to protect
+                  your data from unauthorized access, misuse, loss, or alteration. Standard
+                  encryption protocols (SSL) are used for data transmission. However, no method of
+                  transmission over the internet is 100% secure.
                 </p>
               </div>
             </section>
 
-             {/* Section 7: User Rights */}
+            {/* Section 7: User Rights */}
             <section
               id="user-rights"
               data-section="user-rights"
@@ -301,7 +329,9 @@ const PrivacyPolicy = () => {
                 User Rights
               </h2>
               <p className="text-gray-300 leading-relaxed">
-                You have the right to review the information you have provided and ensure that any personal information or sensitive personal data or information found to be inaccurate or deficient be corrected or amended as feasible.
+                You have the right to review the information you have provided and ensure that any
+                personal information or sensitive personal data or information found to be
+                inaccurate or deficient be corrected or amended as feasible.
               </p>
             </section>
 
@@ -318,8 +348,8 @@ const PrivacyPolicy = () => {
                 Grievance Officer
               </h2>
               <p className="text-gray-300 leading-relaxed mb-6">
-                In accordance with the Information Technology Act, 2000, and Rules made thereunder, the
-                name and contact details of the Grievance Officer are provided below:
+                In accordance with the Information Technology Act, 2000, and Rules made thereunder,
+                the name and contact details of the Grievance Officer are provided below:
               </p>
 
               <div className="bg-zinc-900 rounded-lg p-6 space-y-4">
@@ -379,19 +409,19 @@ const PrivacyPolicy = () => {
                 Changes to This Policy
               </h2>
               <p className="text-gray-300 leading-relaxed">
-                We may update our Privacy Policy from time to time. We will notify you of any changes by
-                posting the new Privacy Policy on this page.
+                We may update our Privacy Policy from time to time. We will notify you of any
+                changes by posting the new Privacy Policy on this page.
               </p>
             </section>
 
-             {/* Footer Note */}
+            {/* Footer Note */}
             <div className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white rounded-lg shadow-lg p-8 text-center mt-10">
               <p className="text-lg font-semibold mb-2">
-                 If you have any questions about this Privacy Policy, please contact our Grievance Officer.
+                If you have any questions about this Privacy Policy, please contact our Grievance
+                Officer.
               </p>
               <p className="text-indigo-200 text-sm">Last updated on {lastUpdated}</p>
             </div>
-
           </main>
         </div>
       </div>

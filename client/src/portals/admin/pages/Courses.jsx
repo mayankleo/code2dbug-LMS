@@ -158,7 +158,6 @@ const Courses = () => {
     try {
       await adminService.verifyAdmin(password);
 
-
       const isPublished = courseToToggle.status === 'Published';
       const newStatus = !isPublished;
       const statusLabel = newStatus ? 'Publish' : 'Unpublish';
@@ -288,173 +287,179 @@ const Courses = () => {
             </Button>
           </div>
 
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-            <p className="text-red-400 text-sm">{error}</p>
+          {/* Error State */}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+              <p className="text-red-400 text-sm">{error}</p>
+              <Button
+                onClick={handleRefresh}
+                variant="outline"
+                className="mt-2 text-red-400 border-red-500/20 hover:bg-red-500/10"
+              >
+                Try Again
+              </Button>
+            </div>
+          )}
+
+          {/* Search, Filters, and Create Button */}
+          <div className="mb-6 flex items-center gap-4 flex-wrap">
+            <div className="relative flex-1 min-w-[300px]">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search by course title or ID..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full px-4 pl-10 py-1.5 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-zinc-800 text-zinc-100 placeholder:text-zinc-400"
+                disabled={isLoading}
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                  disabled={isLoading}
+                >
+                  Sort by:{' '}
+                  {filters.sortBy === 'date'
+                    ? 'Date'
+                    : filters.sortBy === 'title'
+                      ? 'Title'
+                      : 'Students'}
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => handleSortChange('date')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  Date
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleSortChange('title')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  Title
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleSortChange('students')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  Students
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
+                  disabled={isLoading}
+                >
+                  Status:{' '}
+                  {filters.status === 'all'
+                    ? 'All'
+                    : filters.status === 'published'
+                      ? 'Published'
+                      : 'Draft'}
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('all')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  All
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('published')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  Published
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('draft')}
+                  className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
+                >
+                  Draft
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button
-              onClick={handleRefresh}
-              variant="outline"
-              className="mt-2 text-red-400 border-red-500/20 hover:bg-red-500/10"
+              onClick={handleCreateNew}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={isLoading}
             >
-              Try Again
+              <Plus className="h-5 w-5" />
+              Add Course
             </Button>
           </div>
-        )}
 
-        {/* Search, Filters, and Create Button */}
-        <div className="mb-6 flex items-center gap-4 flex-wrap">
-          <div className="relative flex-1 min-w-[300px]">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search by course title or ID..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full px-4 pl-10 py-1.5 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-zinc-800 text-zinc-100 placeholder:text-zinc-400"
-              disabled={isLoading}
-            />
-          </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4" />
+                <p className="text-zinc-400">Loading courses...</p>
+              </div>
+            </div>
+          ) : (
+            <React.Fragment>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                  <p className="text-zinc-400 text-sm">Total Courses</p>
+                  <p className="text-2xl font-bold text-white mt-1">
+                    <Counter target={courseStats.total} />
+                  </p>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                  <p className="text-zinc-400 text-sm">Published</p>
+                  <p className="text-2xl font-bold text-green-400 mt-1">
+                    <Counter target={courseStats.published} />
+                  </p>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                  <p className="text-zinc-400 text-sm">Drafts</p>
+                  <p className="text-2xl font-bold text-yellow-400 mt-1">
+                    <Counter target={courseStats.draft} />
+                  </p>
+                </div>
+              </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
-                disabled={isLoading}
-              >
-                Sort by:{' '}
-                {filters.sortBy === 'date'
-                  ? 'Date'
-                  : filters.sortBy === 'title'
-                    ? 'Title'
-                    : 'Students'}
-                <Filter className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem
-                onClick={() => handleSortChange('date')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                Date
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleSortChange('title')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                Title
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleSortChange('students')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                Students
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredCourses.map(course => (
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onToggleStatus={handleToggleStatus}
+                  />
+                ))}
+              </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700"
-                disabled={isLoading}
-              >
-                Status:{' '}
-                {filters.status === 'all'
-                  ? 'All'
-                  : filters.status === 'published'
-                    ? 'Published'
-                    : 'Draft'}
-                <Filter className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-zinc-800 border-zinc-700">
-              <DropdownMenuItem
-                onClick={() => handleStatusChange('all')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                All
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleStatusChange('published')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                Published
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleStatusChange('draft')}
-                className="text-zinc-200 hover:bg-zinc-700 cursor-pointer"
-              >
-                Draft
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button
-            onClick={handleCreateNew}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={isLoading}
-          >
-            <Plus className="h-5 w-5" />
-            Add Course
-          </Button>
+              {filteredCourses.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-zinc-400 text-lg mb-2">No courses found</p>
+                  {searchQuery && (
+                    <Button
+                      onClick={handleClearSearch}
+                      variant="outline"
+                      className="mt-2 border-zinc-700 text-zinc-300"
+                    >
+                      Clear Search
+                    </Button>
+                  )}
+                </div>
+              )}
+            </React.Fragment>
+          )}
         </div>
-
-        {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4" />
-              <p className="text-zinc-400">Loading courses...</p>
-            </div>
-          </div>
-        ) : (
-          <React.Fragment>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-zinc-400 text-sm">Total Courses</p>
-                <p className="text-2xl font-bold text-white mt-1"><Counter target={courseStats.total} /></p>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-zinc-400 text-sm">Published</p>
-                <p className="text-2xl font-bold text-green-400 mt-1"><Counter target={courseStats.published} /></p>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-zinc-400 text-sm">Drafts</p>
-                <p className="text-2xl font-bold text-yellow-400 mt-1"><Counter target={courseStats.draft} /></p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCourses.map(course => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onToggleStatus={handleToggleStatus}
-                />
-              ))}
-            </div>
-
-            {filteredCourses.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-zinc-400 text-lg mb-2">No courses found</p>
-                {searchQuery && (
-                  <Button
-                    onClick={handleClearSearch}
-                    variant="outline"
-                    className="mt-2 border-zinc-700 text-zinc-300"
-                  >
-                    Clear Search
-                  </Button>
-                )}
-              </div>
-            )}
-          </React.Fragment>
-        )}
-      </div>
       </div>
 
       <PasswordModal
@@ -464,5 +469,5 @@ const Courses = () => {
       />
     </React.Fragment>
   );
-}
+};
 export default Courses;

@@ -80,9 +80,7 @@ const CourseCard = React.memo(({ course, onEdit, onDelete, onToggleStatus }) => 
           </Badge>
         </div>
 
-        <h3 className="text-lg font-semibold text-zinc-100 mb-1 line-clamp-1">
-          {course.title}
-        </h3>
+        <h3 className="text-lg font-semibold text-zinc-100 mb-1 line-clamp-1">{course.title}</h3>
         <p className="text-sm text-zinc-400 mb-1">{course.category}</p>
         <p className="text-sm text-zinc-500 mb-3">
           {course.modules} Modules • {course.students} Students

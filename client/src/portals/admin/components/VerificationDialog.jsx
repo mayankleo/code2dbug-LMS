@@ -82,12 +82,32 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
         toast.success(`Student ${actionText} successfully`, {
           description: `${student.name} has been ${actionText} and will receive an email.`,
           icon: isRejection ? (
-             <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-             </svg>
+            <svg
+              className="w-5 h-5 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           ) : (
-            <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-5 h-5 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           ),
           duration: 5000,
@@ -145,12 +165,16 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
               </div>
               <div className="col-span-2">
                 <span className="text-zinc-500 block">Payment ID:</span>
-                <span className="font-mono text-blue-400">{student.paymentDetails?.transactionId}</span>
+                <span className="font-mono text-blue-400">
+                  {student.paymentDetails?.transactionId}
+                </span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="paymentType" className="text-zinc-300">Payment Type</Label>
+              <Label htmlFor="paymentType" className="text-zinc-300">
+                Payment Type
+              </Label>
               <Select value={paymentType} onValueChange={setPaymentType}>
                 <SelectTrigger className="bg-zinc-800 border-zinc-700 text-zinc-200">
                   <SelectValue placeholder="Select payment type" />
@@ -163,12 +187,14 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="amountPaid" className="text-zinc-300">Amount Paid</Label>
+              <Label htmlFor="amountPaid" className="text-zinc-300">
+                Amount Paid
+              </Label>
               <Input
                 id="amountPaid"
                 type="number"
                 value={amountPaid}
-                onChange={(e) => setAmountPaid(e.target.value)}
+                onChange={e => setAmountPaid(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-zinc-200"
                 placeholder="Enter amount paid"
               />
@@ -182,7 +208,7 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
                 <Textarea
                   id="rejectionReason"
                   value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
+                  onChange={e => setRejectionReason(e.target.value)}
                   className="bg-zinc-800 border-red-500/50 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-red-500"
                   placeholder="Please explain why this payment is being rejected..."
                 />
@@ -204,10 +230,10 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
             onClick={handleVerify}
             disabled={isVerifying || (showRejectionReason && !rejectionReason.trim())}
             className={cn(
-              "text-white",
-              showRejectionReason 
-                ? "bg-red-600 hover:bg-red-700" 
-                : "bg-green-600 hover:bg-green-700"
+              'text-white',
+              showRejectionReason
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-green-600 hover:bg-green-700',
             )}
           >
             {isVerifying ? (
@@ -215,8 +241,10 @@ const VerificationDialog = ({ isOpen, onOpenChange, student, onVerificationCompl
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Processing...
               </>
+            ) : showRejectionReason ? (
+              'Reject Payment'
             ) : (
-              showRejectionReason ? 'Reject Payment' : 'Verify & Approve'
+              'Verify & Approve'
             )}
           </Button>
         </DialogFooter>

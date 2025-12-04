@@ -12,7 +12,9 @@ const StatsCard = ({ title, value, change, type }) => {
       </div>
       <div className="flex flex-col items-start justify-between gap-4 flex-1">
         <div>
-          <p className="text-3xl font-bold text-zinc-100"><Counter target={10} /></p>
+          <p className="text-3xl font-bold text-zinc-100">
+            <Counter target={10} />
+          </p>
           {change && (
             <div className="flex items-center mt-2">
               <TrendingUp className="w-4 h-4 text-green-400 mr-1" />
@@ -21,7 +23,9 @@ const StatsCard = ({ title, value, change, type }) => {
           )}
         </div>
         <div>
-          <p className="text-3xl font-bold text-zinc-100"><Counter target={38} /></p>
+          <p className="text-3xl font-bold text-zinc-100">
+            <Counter target={38} />
+          </p>
           {change && (
             <div className="flex items-center mt-2">
               <TrendingUp className="w-4 h-4 text-green-400 mr-1" />
@@ -57,7 +61,11 @@ const StatisticsSection = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       {/* Total Active Students */}
-      <StatsCard title="Total Active Students" value={<Counter target={1482} />} change="+52% this month" />
+      <StatsCard
+        title="Total Active Students"
+        value={<Counter target={1482} />}
+        change="+52% this month"
+      />
 
       {/* Students per Domain Chart */}
       <div className="col-span-2">
@@ -74,13 +82,17 @@ const StatisticsSection = () => {
           <div>
             <div className="flex justify-between items-center mb-1">
               <span className="text-base text-zinc-400">Certificates Issued</span>
-              <span className="text-2xl font-bold text-zinc-100"><Counter target={973} /></span>
+              <span className="text-2xl font-bold text-zinc-100">
+                <Counter target={973} />
+              </span>
             </div>
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
               <span className="text-base text-zinc-400">Avg. Completion Rate</span>
-              <span className="text-2xl font-bold text-zinc-100"><Counter target={88} suffix="%" /></span>
+              <span className="text-2xl font-bold text-zinc-100">
+                <Counter target={88} suffix="%" />
+              </span>
             </div>
           </div>
         </div>
