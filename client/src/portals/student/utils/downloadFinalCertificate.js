@@ -148,10 +148,11 @@ export const downloadFinalCertificate = async ({
 // Generate Internship Certificate (Certificate of Achievement) HTML
 function generateInternshipCertificate(studentName, courseName,certificateId, conductedFrom, duration, signatureImg, certificateBgImg) {
   return `
-    <div style="position: relative; width: 100%; height: 100%; background-image: url('${certificateBgImg}'); background-size: cover; background-position: top right; background-repeat: no-repeat; box-sizing: border-box;">
-      
-      <!-- Main Content Overlay -->
-      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 60px; box-sizing: border-box; text-align: center;">
+    <div style="width: 100%; height: 100%; background: #1a365d; padding: 32px; box-sizing: border-box;">
+      <div style="position: relative; width: 100%; height: 100%; background-image: url('${certificateBgImg}'); background-size: cover; background-position: top right; background-repeat: no-repeat; box-sizing: border-box;">
+        
+        <!-- Main Content Overlay -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 50px; box-sizing: border-box; text-align: center;">
       
         <div style="color: #1a365d; position: absolute; top: 32px; left: 32px;">
             <span style="display: block; font-weight: 600; color: #1a365d; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; margin-bottom: 4px;">Certificate ID</span>
@@ -210,6 +211,7 @@ function generateInternshipCertificate(studentName, courseName,certificateId, co
           </div>
         </div>
       </div>
+    </div>
     </div>
   `;
 }
