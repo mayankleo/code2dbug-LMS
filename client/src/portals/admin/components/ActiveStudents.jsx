@@ -108,18 +108,7 @@ const ActiveStudents = () => {
       toast.loading('Issuing certificate...', { id: 'cert-issue' });
 
       // Generate certificate ID using browser crypto API with fallback
-      let certificateId;
-       certificateId = `C2D-${crypto.randomUUID().substring(0, 8).toUpperCase()}`;
-        
-      
-      console.log('Generated Certificate ID:', certificateId);
-      console.log('Issuing certificate with data:', {
-        enrollmentId: student.enrollmentId,
-        certificateId,
-        amountRemaining: 0,
-        paymentStatus: 'FULLY_PAID'
-      });
-
+      let certificateId=`C2D-${crypto.randomUUID().substring(0, 8).toUpperCase()}`;
       const requestData = { 
         enrollmentId: student.enrollmentId, 
         certificateId: certificateId,
