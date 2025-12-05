@@ -164,9 +164,7 @@ export const updatePaymentStatus = async (req, res) => {
             success: false,
             message: "Failed to update payment status",
             error:
-                process.env.NODE_ENV === "development"
-                    ? error.message
-                    : undefined,
+                 error.message,
         });
     } finally {
         session.endSession();
