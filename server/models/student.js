@@ -136,9 +136,20 @@ studentSchema.methods.generateRefreshToken = function () {
 };
 
 studentSchema.methods.generateLmsId = function () {
-    const uuid = crypto.randomUUID();
+    const randomBytes = crypto.randomBytes(4);
+    const uuid = randomBytes.toString('base64')  
+        .replace(/\+/g, 'A')  
+        .replace(/\//g, 'B')  
+        .replace(/=/g, '')    
+        .slice(0, 8);         
     this.lmsId = `LMS00-${uuid}`;
     return this.lmsId;
+};
+
+studentSchema.methods.generateLmsPassword = async function () {
+    const randomPassword = crypto.randomBytes(8).toString("hex");
+    this.lmsPassword = randomPassword;
+    return randomPassword;
 };
 
 
